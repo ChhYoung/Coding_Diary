@@ -1,4 +1,4 @@
-# <center>Coding Dairy
+# <center> Coding Dairy
 >This repo contains some funny projects . It will include the following themes:
 >- machine learning and deep learning
 >- data mining
