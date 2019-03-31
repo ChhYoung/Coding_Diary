@@ -7,6 +7,15 @@ import sklearn
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 
+#######################################
+#                tuning               #
+from sklearn import metrics
+from sklearn.model_selection import PredefinedSplit
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from scipy.sparse import vstack
+from sklearn.metrics import accuracy_score
+
 def MakeWordsSet(words_file):
     """
     函数说明:读取文件里的内容，并去重
@@ -18,7 +27,7 @@ def MakeWordsSet(words_file):
     words_set = set()
     with open(words_file, 'r') as fp:
         for line in fp.readlines():
-            word = line.strip().decode("utf-8")
+            word = line.strip()#.decode("utf-8")
             if len(word)>0 and word not in words_set: # 去重
                 words_set.add(word)
     return words_set
@@ -56,11 +65,11 @@ def TextProcessing(folder_path, test_size=0.2):
             word_list = list(word_cut) # genertor转化为list，每个词unicode格式
           
             data_list.append(word_list)
-            class_list.append(folder.decode('utf-8'))
+            class_list.append(folder)#.decode('utf-8')
             j += 1
 
     # 划分训练集和测试集
-    data_class_list = zip(data_list, class_list)
+    data_class_list = list(zip(data_list, class_list))
     random.shuffle(data_class_list)
     index = int(len(data_class_list)*test_size)+1
     train_list = data_class_list[index:]
@@ -72,14 +81,15 @@ def TextProcessing(folder_path, test_size=0.2):
     all_words_dict = {} 
     for word_list in train_data_list:
         for word in word_list:
-            if all_words_dict.has_key(word):
+            #if all_words_dict.has_key(word):
+            if word in all_words_dict.keys():
                 all_words_dict[word] += 1
             else:
                 all_words_dict[word] = 1
 
     # 根据键的值倒序排序
     all_words_tuple_list = sorted(all_words_dict.items(), key=lambda f:f[1], reverse=True) # 内建函数sorted参数需为list
-    all_words_list = list(zip(*all_words_tuple_list)[0])
+    all_words_list = list(zip(all_words_tuple_list))[0]
 
     return all_words_list, train_data_list, test_data_list, train_class_list, test_class_list
 
@@ -124,6 +134,18 @@ def TextFeatures(train_data_list, test_data_list, feature_words):
     test_feature_list = [text_features(text, feature_words) for text in test_data_list]
     return train_feature_list, test_feature_list
 
+def tuning(X_train, Y_train, X_val, Y_val, classifier, params):
+    param_search = GridSearchCV(classifier, params,
+        scoring=metrics.make_scorer(metrics.f1_score,
+        average='macro'),
+        cv=ps,
+        return_train_score=True)
+    param_search.fit(X,Y)
+    results = param_search.cv_results_
+    best_params = param_search.best_params_
+    return best_params, results
+
+
 def TextClassifier(train_feature_list, test_feature_list, train_class_list, test_class_list):
     """
     函数说明:分类器
@@ -135,15 +157,18 @@ def TextClassifier(train_feature_list, test_feature_list, train_class_list, test
     Returns:
         test_accuracy - 分类器精度
     """
-    
-    """
-    
-        请编写这部分代码
+    test_accuracy = []
+    train_feature_list = np.array(train_feature_list)
+    train_class_list = np.array(train_class_list)
+    test_feature_list = np.array(test_feature_list)
+    test_class_list = np.array(test_class_list)
 
-    """
-
+    clf = MultinomialNB(alpha = best_alpha)
+    y_pred = clf.predict(test_feature_list)
+    test_accuracy = accuracy_score(test_class_list, y_pred)
+    pass
     
-    return test_accuracy
+    #return test_accuracy
 
 
 if __name__ == '__main__':
@@ -159,4 +184,9 @@ if __name__ == '__main__':
     deleteN = 450
     feature_words = words_dict(all_words_list, deleteN, stopwords_set)
     train_feature_list, test_feature_list = TextFeatures(train_data_list, test_data_list, feature_words)
-       
+
+    # HyperParamater Tuning 
+    params_NB = {'alpha':np.linspace(0.001,0.01,100)}
+    best_alpha, results = tuning(train_feature_list,train_class_list,test_feature_list,test_class_list, MultinomialNB(), params_NB)
+    #best_alpha, results = tuning(X_trainf, Y_trainf, X_valf, Y_valf, MultinomialNB(), params_NB)
+
