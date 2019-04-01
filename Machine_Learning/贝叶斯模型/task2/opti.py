@@ -137,7 +137,8 @@ def TextFeatures(train_data_list, test_data_list, feature_words):
     test_feature_list = [text_features(text, feature_words) for text in test_data_list]
     return train_feature_list, test_feature_list
 
-def TextClassifier(train_feature_list, test_feature_list, train_class_list, test_class_list):
+def TextClassifier(train_feature_list, test_feature_list, 
+                    train_class_list, test_class_list,):
     """
     函数说明:分类器
     Parameters:
@@ -145,46 +146,16 @@ def TextClassifier(train_feature_list, test_feature_list, train_class_list, test
         test_feature_list - 测试集向量化的特征文本
         train_class_list - 训练集分类标签
         test_class_list - 测试集分类标签
+        classifier      - 使用的分类器函数
+        params          - 分类器要优化的参数
     Returns:
         test_accuracy - 分类器精度
     """
-    
-    """
-    
-        请编写这部分代码
-
-    """
-    pass
-
-    
-    #return test_accuracy
-
-def Tuning():
-    pass
-
-if __name__ == '__main__':
-    # 文本预处理
-    folder_path = './Database/SogouC/Sample'
-    all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = TextProcessing(folder_path, test_size=0.2)
-
-    # 生成stopwords_set
-    stopwords_file = './stopwords_cn.txt'
-    stopwords_set = MakeWordsSet(stopwords_file)
-
-    # 文本特征提取和分类
-    deleteN = 450
-    feature_words = words_dict(all_words_list, deleteN, stopwords_set)
-    train_feature_list, test_feature_list = TextFeatures(train_data_list, test_data_list, feature_words)
-   ################# tuning #####################################    
     train_feature_list = list(train_feature_list)
     train_class_list = list(train_class_list)
     test_feature_list = list(test_feature_list)
     test_class_list = list(test_class_list)
-    
 
-    params = {'alpha':np.linspace(0.001,1,10000)}
-    classifier = MultinomialNB()
-    
     X_train = train_feature_list
     Y_train  = train_class_list
 
@@ -194,25 +165,22 @@ if __name__ == '__main__':
     X_val  = test_feature_list
     Y_val = test_class_list
 
-
     len_X_train = len(X_train)
     len_X_val = len(X_val)
-    '''
-    X_train.append(X_val)
-    X = X_train
-    Y_train.extend(Y_val)
-    Y = Y_train'''
+
     X = vstack([X_train,X_val])
     X = np.array(X)
     Y_train.extend(Y_val)
     Y = np.array(Y_train)
-    
 
     #Mark the training-validation splits
     train_i = np.ones((len_X_train,), dtype = int) * -1
     valid_i = np.zeros((len_X_val,), dtype = int)
     split_fold = np.concatenate((train_i, valid_i))
     ps = PredefinedSplit(split_fold)
+    
+    params = {'alpha':np.linspace(0.0001,1,10000)}
+    classifier = MultinomialNB()
     
     param_search = GridSearchCV(classifier,
                             params, 
@@ -226,5 +194,30 @@ if __name__ == '__main__':
     clf = MultinomialNB(alpha = best_params['alpha'])
     clf.fit(X_train_c,Y_train_c)
     Y_pred = clf.predict(X_val)
-    f1 = metrics.f1_score(Y_val, Y_pred, average='macro')
-    print(f1)
+    test_accuracy = metrics.f1_score(Y_val, Y_pred, average='macro')
+
+    return test_accuracy
+
+if __name__ == '__main__':
+    acc = []
+    for i in range(10):
+    # 文本预处理
+        folder_path = './Database/SogouC/Sample'
+        all_words_list, train_data_list, test_data_list, train_class_list, test_class_list = TextProcessing(folder_path, test_size=0.2)
+
+    # 生成stopwords_set
+        stopwords_file = './stopwords_cn.txt'
+        stopwords_set = MakeWordsSet(stopwords_file)
+
+    # 文本特征提取和分类
+        deleteN = 450
+        feature_words = words_dict(all_words_list, deleteN, stopwords_set)
+    
+    #acc = []
+    #for i in range(10):
+        train_feature_list, test_feature_list = TextFeatures(train_data_list, test_data_list, feature_words)
+
+        m = TextClassifier(train_feature_list, test_feature_list, 
+                    train_class_list, test_class_list)
+        acc.extend([m])
+    print(acc)
