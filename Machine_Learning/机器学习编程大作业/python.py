@@ -15,7 +15,7 @@ from sklearn.model_selection import GridSearchCV
 
 param={'max_depth':np.linspace(1,60,60)}
 classifier = 
-param_search = GridSearchCV(classifier,
+        param_search = GridSearchCV(classifier,
                             params, 
                     scoring=metrics.make_scorer(metrics.f1_score, average='macro'),
                                 cv=ps,
