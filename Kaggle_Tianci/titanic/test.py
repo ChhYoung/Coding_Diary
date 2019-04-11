@@ -79,3 +79,21 @@ data_train,rfr=set_missing_ages(data_train)
 data_train =set_Cabin_type(data_train)
 
 
+def train(epoch):
+    net.train()
+    print("train epoch:", epoch)
+    optimizer = torch.optim.Adam(net.parameters(), lr=opt.get_lr(epoch))
+    for batch_idx, (inputs, targets) in enumerate(trainloader):
+        if opt.USE_CUDA:
+            inputs, targets = inputs.cuda(), targets.cuda()
+        inputs = torch.autograd.Variable(inputs)
+        targets = torch.autograd.Variable(targets)
+        optimizer.zero_grad()
+        output_1, output_2, output_3 = net(inputs)
+        loss_1 = criterion(output_1, targets[:, 0])
+        loss_2 = criterion(output_2, targets[:, 1])
+        loss_3 = criterion(output_3, targets[:, 2])
+        loss = loss_1+loss_2+loss_3
+        loss.backward()
+        optimizer.step()
+    print("train epoch %d finished" % epoch)

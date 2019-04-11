@@ -1,83 +1,25 @@
-
+import pandas as pd
+import numpy as np
+from pandas import Series,DataFrame
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputRegressor
-
-
-# Create a random dataset
-
-X_train, X_test, y_train, y_test = cos_vali(np.array(data_train_add).tolist(),train_loc_list)
-X_train, X_test, y_train, y_test = np.array(X_train),np.array(X_test),np.array(y_train),np.array(y_test)
-
-from sklearn.model_selection import GridSearchCV
-
-param={'max_depth':np.linspace(1,60,60)}
-classifier = 
-        param_search = GridSearchCV(classifier,
-                            params, 
-                    scoring=metrics.make_scorer(metrics.f1_score, average='macro'),
-                                cv=ps,
-                                return_train_score=True)
-
-
-
-
-
-
-
-
-
-
-max_depth = 30
-regr_multirf = MultiOutputRegressor(RandomForestRegressor(n_estimators=100,
-                                                          max_depth=max_depth,
-                                                          random_state=0))
-regr_multirf.fit(X_train, y_train)
-
-regr_rf = RandomForestRegressor(n_estimators=100, max_depth=max_depth,
-                                random_state=2)
-regr_rf.fit(X_train, y_train)
-
-# Predict on new data
-y_multirf = regr_multirf.predict(X_test)
-y_rf = regr_rf.predict(X_test)
-
-# Plot the results
-plt.figure()
-s = 50
-a = 0.4
-plt.scatter(y_test[:, 0], y_test[:, 1], edgecolor='k',
-            c="navy", s=s, marker="s", alpha=a, label="Data")
-plt.scatter(y_multirf[:, 0], y_multirf[:, 1], edgecolor='k',
-            c="cornflowerblue", s=s, alpha=a,
-            label="Multi RF score=%.2f" % regr_multirf.score(X_test, y_test))
-plt.scatter(y_rf[:, 0], y_rf[:, 1], edgecolor='k',
-            c="c", s=s, marker="^", alpha=a,
-            label="RF score=%.2f" % regr_rf.score(X_test, y_test))
-plt.xlim([-6, 6])
-plt.ylim([-6, 6])
-plt.xlabel("target 1")
-plt.ylabel("target 2")
-plt.title("Comparing random forests and the multi-output meta estimator")
-plt.legend()
-plt.show()
-
-
-
-
-
-import pandas as pd
-import numpy as np
-from pandas import Series,DataFrame
+# data file name  /dataAll.csv  /testAll.csv
 data_train = pd.read_csv('dataAll.csv')
-data_train.head()
-data_train_add = data_train.iloc[:,:30].applymap(lambda x: x)
+#data_train.head()
+data_train_add = data_train.iloc[:,:30].applymap(lambda x: x)#+126.23
 train_loc = data_train.iloc[:,30:]
 data_train_add.to_csv("./processed_data/train_pro.csv",index = False)
 m = data_train_add.describe()
 m.to_csv("./processed_data/des_pro.csv",index = False)
+train_loc_list=[]
+for i in range(len(train_loc)):
+    train_loc_list.append([train_loc.iloc[i,0],train_loc.iloc[i,1]])
+len(train_loc_list)
+
+
 
 def cos_vali(data_list,class_list,test_size = 0.2):
     data_class_list = list(zip(data_list, class_list))
@@ -89,5 +31,22 @@ def cos_vali(data_list,class_list,test_size = 0.2):
     train_data_list, train_class_list = zip(*train_list)
     test_data_list, test_class_list = zip(*test_list)
     return list(train_data_list),list(test_data_list),list(train_class_list),list(test_class_list)
+# Create a random dataset
+def error(y_test,y_pre):
+    m = y_test-y_pre
+    m=np.square(m)
+    m=m.sum(axis=1)
+    m=np.sqrt(m)
+    return m.sum()/len(y_test)
+
 X_train, X_test, y_train, y_test = cos_vali(np.array(data_train_add).tolist(),train_loc_list)
-train_data_list, test_data_list, train_class_list, test_class_list = cos_vali(np.array(data_train_add).tolist(),train_loc_list)
+X_train, X_test, y_train, y_test = np.array(X_train),np.array(X_test),np.array(y_train),np.array(y_test)
+regr_multirf = MultiOutputRegressor(RandomForestRegressor(n_estimators=100,
+                            max_depth=27,min_samples_leaf=2,oob_score=True))
+regr_multirf.fit(X_train, y_train)
+
+y_multirf = regr_multirf.predict(X_test)
+       
+m=error(y_test,y_multirf)
+        
+print(m)
