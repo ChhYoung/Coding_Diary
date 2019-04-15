@@ -59,3 +59,100 @@ figure,imshow(uint8(imgn))
 
 ![](pic/双线性1.png)
 ![](pic/双线性2.png)
+**matlab实现**
+```matlab
+% BILINEAR-INTERPLOT SOUCE-IMAGE TO GET A DESTINATE-IMAGE 
+% MAXIMUM SCALOR == 5.0, MINIMUM SCALOR == 0.2 
+% read source image into memory, and get the primitive rows and cols  
+close all; clear all;
+I=imread('girl.jpg'); 
+imshow(I);
+I = rgb2gray(I);
+[nrows,ncols]=size(I);  
+
+% acquire scale-factor, the range is 0.2-5.0 
+K = str2double(inputdlg('please input scale factor (must between 0.2 - 5.0)', 'INPUT scale factor', 1, {'0.5'}));  
+% Validating  
+if (K < 0.2) | (K > 5.0) 
+    errordlg('scale factor beyond permitted range(0.2 - 5.0)', 'ERROR');  
+    error('please input scale factor (must between 0.2 - 5.0)');  
+end
+
+% output image width and height are both scaled by factor K  
+width = K * nrows;  
+height = K * ncols;  
+J = uint8(zeros(width,height));  
+
+% width scale and height scale  
+heightScale = nrows/width;  
+widthScale = ncols/height;  
+
+% bilinear interplot  
+for x = 5:width - 5  
+    for y = 5:height - 5  
+        xx = x * widthScale;  
+        yy = y * heightScale;  
+        if (xx/double(uint16(xx)) == 1.0) & (xx/double(uint16(xx)) == 1.0)  
+            J(x,y) = I(int16(xx),int16(yy));  
+        else % a or b is not integer  
+        %  b+1->y2  b->y1 a->x1  a+1->x2
+        % matlab中int8这类为四舍五入，所以x1<a<x2,y1<b<y2
+            a = double(uint16(xx)); % (a,b) is the base-dot 
+            b = double(uint16(yy));  
+            q11 = double(I(a,b)); % q11 <- I(a,b)  
+            q12 = double(I(a,b+1)); % q12 <- I(a,b+1)  
+            q21 = double(I(a+1,b)); % q21 <- I(a+1,b)  
+            q22 = double(I(a+1,b+1)); % q22 <- I(a+1,b+1)  
+            J(x,y) = uint8( (b+1-yy) * ((xx-a)*q21 + (a+1-xx)*q11) + (yy-b) * ((xx-a)*q22 +(a+1-xx) * q12) ); % calculate J(x,y)  
+        end
+    end
+end  % show the interplotted image  
+
+imwrite(J, 'girl2.jpg', 'jpg');  
+figure;  
+imshow(J);
+```
+### 6.影响图像清晰度的因素
+> - 亮度
+> - 对比度：图像中灰度反差的大小，最大亮度/最小亮度
+> - 分辨率
+> - 细微层次
+> - 颜色饱和度
+
+### 7.像素间的关系
+> **相邻** ： 4邻域，D邻域，8邻域
+> **联通** : 4连通，8连通，m连通;用来描述区域和边界
+
+**7.1 相邻：**
+4邻域：
+![](pic/四邻域.png)
+
+D邻域:
+![](pic/D邻域.png)
+
+8邻域:
+![](pic/八邻域.png)
+
+**7.2 联通：**
+对于具有**集合V**中数值的像素p,q
+4联通：两像素在各自四邻域内
+![](pic/四联通.png)
+8联通：同理
+![](pic/八联通.png)
+m联通：
+>q在p的四邻域内  或者
+>q在p的D邻域内，但相交的4邻域的值不属于V
+
+![](pic/m联通.png)
+
+### 8.像素间的距离
+>欧式
+D4
+D8
+
+欧式
+![](pic/欧式距离.png)
+D4
+![](pic/D4.png)
+D8
+![](pic/D8.png)
