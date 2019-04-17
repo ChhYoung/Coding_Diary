@@ -23,5 +23,6 @@
         "typeinfo": "cpp",
         "cmath": "cpp",
         "string_view": "cpp"
-    }
+    },
+    "python.linting.pylintEnabled": true
 }
