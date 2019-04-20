@@ -26,27 +26,37 @@
 根据拉格朗日对偶性转换成如下形式，再由KKT条件求出满足α*，由α\*得到最优的w\*，b\*
 ![](pics/SVM.png)
 再得
+
 $$
 w^*=\sum_{i=1}^N\alpha_i^*y_ix_i
 $$
+
 $$
 b^*=y_j-\sum_{i=1}^N\alpha_i^*y_i(x_i^Tx_j)
 $$
 ##### 2. 软间隔SVM:
-当数据集不是线性可分时，样本点不满足函数间隔大于等于1的约束条件，为解决该问题引入非负松弛变量ξ，使约束条件变为$$y_i(w^Tx_i+b)\geq1-\xi_i$$
-引入惩罚系数C>0,则目标函数变为$$\frac{1}{2}||w||^2+C\sum_{i=1}^N\xi_i$$
+当数据集不是线性可分时，样本点不满足函数间隔大于等于1的约束条件，为解决该问题引入非负松弛变量ξ，使约束条件变为
+$$y_i(w^Tx_i+b)\geq1-\xi_i$$
+
+引入惩罚系数C>0,则目标函数变为
+
+$$\frac{1}{2}||w||^2+C\sum_{i=1}^N\xi_i$$
 
 C越大越接近于硬间隔
 问题又变成
 $$\min_{w,b,\xi} \frac{1}{2}||w||^2+C\sum_{i=1}^N\xi_i$$
+
 ##### s.t.    
 $$  y_i(w^Tx_i+b)\geq1-\xi_i$$
+
 $$\xi_i\geq0$$
 ##### 3. 核函数:
 若数据不线性可分，则引入核函数，将其映射到新的空间
 **核函数**：设X为输入空间(欧式空间$R^n$的子集)，H为特征空间(希尔伯特空间)，存在一个X到H的映射$$\Phi(x):X\rightarrow H$$
 则核函数为$${x,z}\in X$$
+
 $$K(x,z)=\Phi(x)^T\Phi(z)^T$$
+
 SVM求解又变成
 ![](pics/核函数.png)
 
@@ -59,22 +69,34 @@ SVM求解又变成
 > 2. 否则：取两个变量，固定其他变量，针对这两个变量构建一个二次规划问题，优化这两个变量
 
 **两个变量α的更新：**
+
 $$未剪辑 \alpha_2^{new,unc}=\alpha^{old}_2+\frac{y_2(E_1-E_2)}{\eta}$$
+
 $$\alpha^{old}_2=\begin{cases}H,\alpha_2^{new,unc}>H\\
 \alpha_2^{new,unc},L\leq\alpha_2^{new,unc}\leq H\\
 L,\alpha_2^{new,unc}>L\end{cases}$$
+
 $$\alpha^{new}_1=\alpha_{old}+y_1y_2(\alpha^{old}_2-\alpha^{old}_2)$$
+
 其中：$$\eta=||\Phi(x_1)-\Phi(x_2)||^2$$
+
 $$误差 E_i = (\sum_{j=1}^N\alpha_jy_jK(x_j,x_i)+b)-y_i$$
+
 $$L=\begin{cases}\max(0,\alpha_2^{old}-\alpha_1^{new}) ,y_1=y_2\\
 \max(0,\alpha_2^{old}-\alpha_1^{new}-C) ,y_1\neq y_2\end{cases}$$
+
 $$H=\begin{cases}\min(C,C+\alpha_2^{old}+\alpha_1^{new}) ,y_1=y_2\\
 \min(C,\alpha_2^{old}+\alpha_1^{new}) ,y_1\neq y_2\end{cases}$$
+
 **阈值b的更新：**
 $$b_1^{new}=-E_1-y_1K_{11}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{21}(\alpha_2^{new}-\alpha_2^{old})+b^{old}$$
+
 $$b_2^{new}=-E21-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{new}-\alpha_2^{old})+b^{old}$$
+
 如果$\alpha_1^{new}$,$\alpha_2^{new}$,同时满足0<$\alpha_i^{new}$<C,则$b_1^{new}=b_2^{new}$
+
 如果$\alpha_1^{new}$,$\alpha_2^{new}$,是0或C，则取中点为$b^{new}$
+
 **变量的选择：**
 > 1. 称第一个变量的选择为外层循环，在外层循环中选取违反KKT条件最严重的样本点
 >2. 称第二个变量的选择为内层循环，第二个变量的选择标准是希望能使$\alpha_2$有足够大的变化，使得$|E_1-E_2|$最大。
