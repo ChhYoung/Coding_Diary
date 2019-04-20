@@ -65,9 +65,32 @@ public:
         reuturn clone;
     }
 };
-
-
-
-
 ```
+#### 24.Swap Nodes in Pairs
+> Given a linked list, swap every two adjacent nodes and return its head.
+You may not modify the values in the list's nodes, only nodes itself may be changed.
+> Given 1->2->3->4, you should return the list as 2->1->4->3.
 
+1.利用递归：从尾部开始每两个元素换位置；
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(!head || !head->next) return head;
+        ListNode *next = head->next;
+        ListNode *n = swapPairs(head->next->next);
+        next->next = head;
+        head->next = n;
+        return next;
+    }        
+};
+```
