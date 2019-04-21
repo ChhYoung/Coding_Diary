@@ -143,3 +143,22 @@ int countOnes_3(unsigned int n){
     return n;
 }
 ```
+
+> **1.2 用O(1)的辅助空间，将数组A[0,n)中的元素左移位**
+> (1)：暴力版 时间复杂度O(nk)
+> (2)：迭代版
+> (3)：倒置版 时间复杂度 O(3n)
+
+```cpp
+void shift0(int* A, int n,int k){
+    while(k--){
+        shift(A,n,0,1);
+    }
+}
+
+void shift2(int* A, int n, int k){
+    reverse(A,k);
+    reverse(A+k,n-k);
+    reverse(A,n); 
+}
+```

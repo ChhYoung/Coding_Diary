@@ -22,7 +22,18 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "cmath": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "sstream": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "deque": "cpp",
+        "optional": "cpp",
+        "algorithm": "cpp"
     },
     "python.linting.pylintEnabled": true
 }
