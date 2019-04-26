@@ -1,5 +1,5 @@
 im = imread('./pics/hofi.bmp');
 imshow(im);
-im =- im +255;
+im =255 - im;
 figure;
 imshow(im);
