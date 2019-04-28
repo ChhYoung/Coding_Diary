@@ -33,7 +33,9 @@
         "utility": "cpp",
         "deque": "cpp",
         "optional": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "list": "cpp",
+        "complex": "cpp"
     },
     "python.linting.pylintEnabled": true
 }

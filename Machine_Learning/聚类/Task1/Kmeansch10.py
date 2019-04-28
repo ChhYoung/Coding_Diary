@@ -21,6 +21,7 @@ def distEclud(vecA, vecB):
     return sqrt(sum(power(vecA - vecB, 2)))
 
 #随机生成簇中心函数
+# 生成 K×N ： centroids, 每行即为一个中心点
 def randCent(dataSet, k):
     n = shape(dataSet)[1]
     centroids = mat(zeros((k,n)))
@@ -52,7 +53,7 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
             if clusterAssment[i,0] != minIndex: clusterChanged = True
             clusterAssment[i,:] = minIndex,minDist**2
     #打印簇中心
-        print (centroids)
+        #print (centroids)
     #由于样本划分发生变化，因此需要重新计算簇中心
         for cent in range(k):
     #提取处属于同一簇的所有样本
@@ -80,7 +81,7 @@ def biKmeans(dataSet, k, distMeas=distEclud):
             centroidMat, splitClustAss = kMeans(ptsInCurrCluster, 2, distMeas)
             sseSplit = sum(splitClustAss[:,1])
             sseNotSplit = sum(clusterAssment[nonzero(clusterAssment[:,0].A!=i)[0],1])
-            print ("sseSplit, and notSplit: ",sseSplit,sseNotSplit)
+            #print ("sseSplit, and notSplit: ",sseSplit,sseNotSplit)
             if (sseSplit + sseNotSplit) < lowestSSE:
                 bestCentToSplit = i
                 bestNewCents = centroidMat
@@ -89,8 +90,8 @@ def biKmeans(dataSet, k, distMeas=distEclud):
     #一个簇拆分为二后，其中一个簇新增加簇索引，另一个保存原簇索引号
         bestClustAss[nonzero(bestClustAss[:,0].A == 1)[0],0] = len(centList) 
         bestClustAss[nonzero(bestClustAss[:,0].A == 0)[0],0] = bestCentToSplit
-        print ('the bestCentToSplit is: ',bestCentToSplit)
-        print ('the len of bestClustAss is: ', len(bestClustAss))
+        #print ('the bestCentToSplit is: ',bestCentToSplit)
+        #print ('the len of bestClustAss is: ', len(bestClustAss))
     #重置簇中心
         centList[bestCentToSplit] = bestNewCents[0,:].tolist()[0]
         centList.append(bestNewCents[1,:].tolist()[0])
@@ -131,8 +132,11 @@ def clusterClubs(numClust=5):
     ax1=fig.add_axes(rect, label='ax1', frameon=False)
     #采用不同图形标识不同簇
     for i in range(numClust):
-        ptsInCurrCluster = datMat[nonzero(clustAssing[:,0].A==i)[0],:]
+        # 找到第i类簇的点
+        ptsInCurrCluster = datMat[nonzero(clustAssing[:,0].A == i)[0],:]
+        # 选择标注类型
         markerStyle = scatterMarkers[i % len(scatterMarkers)]
+        # 在该点位置标注
         ax1.scatter(ptsInCurrCluster[:,0].flatten().A[0], ptsInCurrCluster[:,1].flatten().A[0], marker=markerStyle, s=90)
     #采用‘+’表示簇中心
     ax1.scatter(myCentroids[:,0].flatten().A[0], myCentroids[:,1].flatten().A[0], marker='+', s=300)
