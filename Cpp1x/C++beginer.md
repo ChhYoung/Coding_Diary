@@ -6,3 +6,4 @@ end()
 binary_search:用于有序，返回true,false
 find: 用于无序，返回iterator
 max_element
+**samrt pointers**

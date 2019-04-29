@@ -6,6 +6,7 @@
 #include<algorithm>
 #include<string>
 #include<functional>
+#include<thread>
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -99,7 +100,8 @@ void test4(){
     else
         std::cout<<"None"<<std::endl;
 }
-// test 5 
+/*
+// test 4
 // function object adapter
 template< typename InputIterator, typename OutputIterator,
             typename ElmType, typename Comp>
@@ -107,12 +109,89 @@ OutputIterator filter_ver2(InputIterator first,InputIterator last,
                             OutputIterator at,const ElmType &val,Comp pred){
         while((first = find_if(first,last,bind2nd())))
 
+}*/
+// test 5
+
+void test5(){
+    []{
+        std::cout<<"lambda 1"<<std::endl;
+    }();
+
+    
+    auto l = [](const std::string& s){
+        std::cout<<s<<std::endl;
+    };
+    l("lambda 2");
+}
+
+// test 6  可变参数模板
+int Fac(){
+    return 1;
+}
+
+template<typename T,typename... Types>
+int Fac(T firstArg,Types... args){
+    return firstArg*Fac(args...);
+}
+
+void test6(){
+    std::cout<<"1,2,3,4,5的连乘"<<std::endl;
+    std::cout<<Fac(1,2,3,4,5)<<std::endl;
+}
+//  test 7 返回最大值
+template<int N,int...args>
+class Max;
+
+template<int N>
+class Max<N> : public std::integral_constant<int,N>
+{};
+
+template<int N1, int N2,int ...args>
+class Max<N1,N2,args...> : public
+    std::integral_constant<int,N1<N2 ?
+        Max<N2,args...>::value :
+        Max<N1,args...>::value >
+{};
+
+void test7(){
+    std::cout<<"max element of 5,2,3,4,8,9"<<std::endl;
+    std::cout<<Max<5,2,3,4,8,9>::value<<std::endl;
+}
+
+// test8 展开循环 dot product
+template<int N,typename T>
+struct DotProduct{
+    static T value(T* x,T* y){
+        return *x * *y + DotProduct<N-1,T>::value(x+1,y+1);
+    }
+};
+
+template<typename T>
+struct DotProduct<1,T>{
+    static T value(T* x,T*y){
+        return *x * *y;
+    }
+};
+
+template<int N, typename T>
+auto dotProcudt(T* x,T* y){
+    return DotProduct<N,T>::value(x,y);
+}
+
+void test8(){
+    int x[2]={1,2};
+    int y[2]={3,4};
+    std::cout<<dotProcudt<2>(x,y)<<std::endl;
 }
 
 int main(){
     //test1();
     //test2();
     //test3_2();
-    test4();
+    //test4();
+    //test5();
+    //test6();
+    //test7();
+    test8();
     return 1;
 }

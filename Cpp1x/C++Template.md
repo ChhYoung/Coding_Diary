@@ -205,5 +205,38 @@ template <> struct DoWork<int> {};
 template <typename... Ts> class Y{};
 template <typename... Ts,typename U> class Y<U,TS...>{};
 ```
+```C++
+// 计算连乘
+int Fac(){
+    return 1;
+}
 
+template<typename T, typename... Types> // Types是一个参数包类型
+int Fac(T firsetArg, Types... args){
+    return firsetArg*Fac(args...);
+}
+
+std::cout << Fac(1,2,3,4,5);
+```
+```C++
+//返回最大值
+template<int N,int...args>
+class Max;
+
+template<int N>
+class Max<N> : public std::integral_constant<int,N>
+{};
+
+template<int N1, int N2,int ...args>
+class Max<N1,N2,args...> : public
+    std::integral_constant<int,N1<N2 ?
+        Max<N2,args...>::value :
+        Max<N1,args...>::value >
+{};
+
+void test7(){
+    std::cout<<"max element of 5,2,3,4,8,9"<<std::endl;
+    std::cout<<Max<5,2,3,4,8,9>::value<<std::endl;
+}
+```
 
