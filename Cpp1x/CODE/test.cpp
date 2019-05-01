@@ -7,6 +7,10 @@
 #include<string>
 #include<functional>
 #include<thread>
+#include<map>
+#include<memory>
+#include<unordered_map>
+#include<tuple>
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -184,6 +188,273 @@ void test8(){
     std::cout<<dotProcudt<2>(x,y)<<std::endl;
 }
 
+void test9(){
+    std::vector<int> letters{1,2,3,4,5,6,7,8,9,10};
+    auto ptr = letters.end();
+    std::cout<<"letter.back: "<<letters.back()<<std::endl;
+    std::cout<<"before --ptr: "<<*ptr<<std::endl;
+    --ptr;
+    std::cout<<"after --ptr: "<<*ptr<<std::endl;
+}
+
+// test 10
+// 结构化绑定
+// 利用tuple返回多个值
+// -std=c++17
+std::tuple<int, double,std::string> f(){
+    return std::make_tuple(1, 2.3, "string:456");
+}
+
+void test10(){
+    auto [x,y,z] = f();
+    std::cout<<x<<",  "<<y<<"  ,  "<<z<<std::endl;
+}
+
+// test 11折叠表达式
+// C++17
+template<typename ...T>
+auto sum(T... t){
+    return (t + ...);
+}
+void test11(){
+    std::cout<<sum(1,2,3,4,5,6,7,8,9,10)<<std::endl;
+}
+
+// lambda 
+// lambda捕获
+void learn_lambad_1(){
+    int value_1 = 1;
+    std::cout<<"value of value_1 is "<<value_1<<std::endl;
+    //传递引用
+    auto copy_value_1 = [&value_1]{
+    //值捕获
+    //auto copy_value_1 = [value_1]{
+        return value_1;
+    };
+    
+    value_1 = 100;
+    std::cout<<"value of value_1 is "<<value_1<<std::endl;
+
+    auto stored_value_1 = copy_value_1();
+
+    std::cout<< "value of lambda is "<< stored_value_1<<std::endl;
+}
+
+void test12(){
+    learn_lambad_1();
+}
+
+
+// TODO : 1. 多参数
+//        2. 容器 vector is done
+template<typename T,size_t N=0 > void print_every_thing(T a){
+    std::cout<<a<<std::endl;
+}
+
+template<typename T,size_t N=0> void print_every_thing(std::vector<T> a){
+    std::cout<<"elements of this vector is (seperated by , ) :"<<std::endl;
+    for(const auto &m : a)
+        std::cout<<m<<" , ";
+    std::cout<<std::endl;
+}
+
+template<typename T,size_t N> void print_every_thing(std::array<T,N> a){
+    std::cout<<"elements of this array is (seperated by , ) :"<<std::endl;
+    for(const auto &m : a)
+        std::cout<<m<<" , ";
+    std::cout<<std::endl;
+}
+
+template<typename ...T,size_t  N=0> void print_every_thing(std::map<T...> a){
+        std::cout<<" map "<<std::endl;
+        for(const auto &b:a)
+            std::cout<<"Key:["<<b.first<<"] Values:["<<b.second<<"]\n";
+};
+
+template<typename ...T,size_t  N=0> void print_every_thing(std::unordered_map<T...> a){
+        std::cout<<" unordered_map "<<std::endl;
+        for(const auto &b:a)
+            std::cout<<"Key:["<<b.first<<"] Values:["<<b.second<<"]\n";
+};
+
+
+void test13(){
+    std::vector<int> a{1,2,3,4,5,6};
+    std::vector<std::string> b{"abc","bcd"};
+    std::array<int,5> c{1,2,3,4,5};
+    std::map<int,std::string> d{
+        {1,"1"},
+        {4,"4"},
+        {2,"2"},
+        {3,"3"}
+    };
+    std::unordered_map<int,std::string> e{
+        {1,"1"},
+        {4,"4"},
+        {2,"2"},
+        {3,"3"}
+    };
+    print_every_thing('a');
+    print_every_thing("test13");
+    print_every_thing(12);
+    print_every_thing(&a);
+    print_every_thing(a);
+    print_every_thing(b);
+    print_every_thing(c);
+    print_every_thing(d);
+    print_every_thing(e);
+}
+
+// test 14
+
+template <int X>
+constexpr int fact(){
+    return X*fact<X-1>();
+}
+
+template <>
+constexpr int fact<0>(){
+    return 1;
+}
+
+void test14(){
+    auto x = fact<5>();
+    print_every_thing(x);
+}
+
+void test15(){
+    std::vector<int> v;
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
+    print_every_thing(v);
+    print_every_thing(v.size());
+    print_every_thing(v.capacity());
+
+    v.push_back(4);
+    v.push_back(5);
+    print_every_thing(v);
+    print_every_thing(v.size());
+    print_every_thing(v.capacity());
+
+    v.clear();
+    print_every_thing(v);
+    print_every_thing(v.size());
+    print_every_thing(v.capacity());
+
+    v.shrink_to_fit();
+    print_every_thing(v);
+    print_every_thing(v.size());
+    print_every_thing(v.capacity());
+}
+
+// array
+
+void test16(){
+    std::array<int,5> a={5,3,9,5,1};
+    print_every_thing(a);
+    std::sort(a.begin(),a.end());
+    print_every_thing(a);
+}
+// test 17 无序容器
+// 比较 map 和 unordered_map
+void test17(){
+    std::unordered_map<int,std::string> u{
+        {1,"1"},
+        {4,"4"},
+        {2,"2"},
+        {3,"3"}
+    };
+
+    std::map<int,std::string> v{
+        {1,"1"},
+        {4,"4"},
+        {2,"2"},
+        {3,"3"}
+    };
+}
+
+// test 18 tuple 
+auto get_tuple(){
+    return std::make_tuple(3.5, 'A', "张珊");
+}
+
+template <class T>
+void test(T t){
+    int a[std::tuple_size<T>::value];//编译器运行
+    std::cout<<std::tuple_size<T>::value<<'\n'; // 运行期使用
+    //print_every_thing(a);
+}
+
+void test18(){
+     auto student = get_tuple();
+     test(get_tuple());
+}
+
+// test 19
+// shared_ptr
+void test19(){
+    auto pointer = std::make_shared<int> (10);
+    auto pointer2 = pointer; //引用计数+1
+    auto pointer3 = pointer; //引用计数+1
+    
+    //通过get()获得原始指针，不会增加引用次数
+    int *p = pointer.get();
+    print_every_thing(pointer.use_count()); //3
+    print_every_thing(pointer2.use_count());//3
+    print_every_thing(pointer3.use_count());//3
+
+    pointer.reset();
+    //3个指针共享权相同
+    print_every_thing(pointer.use_count()); //0
+    print_every_thing(pointer2.use_count());//2
+    print_every_thing(pointer3.use_count());//2
+}
+
+// test 20
+// unique_ptr
+
+void test20_1(){
+    std::unique_ptr<int> pointer = std::make_unique<int>(10);
+
+    // error : it's  a unique_ptr
+    //std::unique_ptr<int> pointer2 = pointer;
+}
+
+struct Foo{
+    Foo(){print_every_thing("Foo::Foo");}
+    ~Foo(){print_every_thing("Foo::~Foo");}
+    void foo(){print_every_thing("Foo::foo");}
+};
+
+void f(const Foo&){
+    print_every_thing("f(const Foo&)");
+}
+
+void test20_2(){
+    std::unique_ptr<Foo> p1{std::make_unique<Foo>()};
+    print_every_thing("1");
+    if(p1) p1->foo();
+    {   print_every_thing("1");
+        std::unique_ptr<Foo> p2{std::move(p1)};
+        print_every_thing("1");
+        f(*p2);
+        print_every_thing("1");
+        if(p2) p2->foo();
+        print_every_thing("1");
+        if(p1) p1->foo();
+        print_every_thing("1");
+        p1 = std::move(p2);
+        print_every_thing("1");
+        if(p2) p2->foo();
+        print_every_thing("p2被销毁");
+    }
+    print_every_thing("1");
+    if(p1) p1->foo();
+}
+
+
+
 int main(){
     //test1();
     //test2();
@@ -192,6 +463,18 @@ int main(){
     //test5();
     //test6();
     //test7();
-    test8();
+    //test8();
+    //test9();
+    //test10();
+    //test11();
+    //test12();
+    //test13();
+    //test14();
+    //test15();
+    //test16();
+    //test17();
+    //test18();
+    //test19();
+    test20_2();
     return 1;
 }
