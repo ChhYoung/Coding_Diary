@@ -145,7 +145,7 @@ figure;imhist(A);
 
 > **直方图意义**
 > - 低端分布，图像较暗
-> - 高端分布，图像太两
+> - 高端分布，图像太亮
 > - 分布狭窄，对比度不够
 > - 多个峰值，一般对应多类目标
 
@@ -154,25 +154,167 @@ figure;imhist(A);
 - 规定化：符合特定分布，找兴趣目标
 
 **直方图均衡化**：
-累计直方图
+累计直方图:由累加概率来对应不同灰度级，以此改变单个像素的灰度
+```matlab
+I=imread('./pics/huafen.bmp');
+A = rgb2gray(I);
+J = histeq(A);
+subplot(2,2,1),imshow(A);
+subplot(2,2,2),imshow(J);
+subplot(2,2,3),imhist(A);
+subplot(2,2,4),imhist(J);
+```
+![](pics/直方图均衡化1.png)
+![](pics/直方图均衡化.png)
+
+**直方图规定化**：
+变换概率分布,有选择性的增强
+
+
+#### 1.8 算术逻辑增强
+**图像加法去噪声**
+将一个含噪声的图集相加
+```matlab
+clear all;
+A = imread('./pics/xingxi.bmp');
+A = A(:,:,1);
+n = 0.005;
+N1 = imnoise(A,'gaussian',0,n);
+N2 = imnoise(A,'gaussian',0,n);
+N3 = imnoise(A,'gaussian',0,n);
+N4 = imnoise(A,'gaussian',0,n);
+N5 = imnoise(A,'gaussian',0,n);
+N6 = imnoise(A,'gaussian',0,n);
+N7 = imnoise(A,'gaussian',0,n);
+N8 = imnoise(A,'gaussian',0,n);
+
+B = 0.125*N1+0.125*N2+0.125*N3+0.125*N4+0.125*N5+0.125*N6+0.125*N7+0.125*N8;
+figure(1);
+subplot(1,3,1) ;imshow(A); title('原图');
+subplot(1,3,2) ;imshow(N2); title('有噪声图');
+subplot(1,3,3) ;imshow(B,[]); title('去噪处理');
+```
+![](pics/加法去噪.png)
+**图像减法**
+应用
+> - 显示差异，如同一场景两幅图像之间的变化
+> - 去除重叠图案
+> - 图像分割：如分割运动车辆，减法去静止部分，剩余运动元素和噪声
+
+减法中负数的处理，减后范围为-255~+255
+- 先加255，变成0-510，除2 得 0~255
+- 加上最小负数得绝对值，得到0-255
+
+**逻辑运算**
+与或非，提取出感兴趣区域
+![](pics/逻辑运算.png)
+
+#### 1.9 空域图像滤波
+使用空间模板进行处理
+可以进行去噪，或增强图像细节
+分类一：线性空间滤波，如平滑线性滤波器
+        非线性空间滤波，如中值滤波
+分类二：平滑(低通)滤波器
+        锐化(高通)滤波器
+
+> - 低通滤波器 : 去噪，平滑，但降低图像清晰度
+> - 高通滤波器 ： 使细节和边缘突出，但加强了噪声
+> - 空间平滑滤波器 ：模糊处理，去除不重要得细节，减小噪声
 
 
 
+**线性滤波器**
+模板超出边缘得部分，补0，补常数
+![](pics/线性滤波.png)
 
+均值滤波实现
+```matlab
+clear all;
+close all;
+im = imread('./pics/standard_lena.bmp');
+% 模板操作，最后相加，所以除25
+h = ones(5,5)/25;
+out = imfilter(im,h);
+subplot(1,2,1);imshow(im);
+subplot(1,2,2);i
+```
+![](pics/均值滤波.png)
 
+```matlab
+im = imread('./pics/xingxing.bmp');
+im = rgb2gray(im);
+subplot(1,3,1);imshow(im);
+h = ones(5,5)/25;
+im = imfilter(im,h);
+level = graythresh(im);
+bw = im2bw(im,level);
+// 均值滤波
+subplot(1,3,2);imshow(im);
+// 二值化
+subplot(1,3,3);imshow(bw);
+```
+![](pics/test.png)
 
+**统计排序滤波器**
+模板区域内的统计特征
+- 中值滤波器：
+- 最大值滤波器
+- 最小值滤波器
 
+**中值滤波器**
+- 用模板像素点的中间值，突消除孤立的亮(暗)点
+- 去除噪音的同时，保留边缘锐度和图像细节
+- 有效去除脉冲噪声(黑白点叠加)
 
+```matlab
+clear all;close all;
+im = imread('./pics/zaosheng.bmp');
+im = im(:,:,1);
+out = medfilt2(im,[3 3]);
+h = ones(3,3)/9;
+out2 = imfilter(im,h);
+subplot(1,3,1);imshow(im);title('原始图像');
+subplot(1,3,2);imshow(out);title('3X3中值滤波');
+subplot(1,3,3);imshow(out2);title('3X3均值滤波');
+```
+![](pics/中值滤波2.png)
 
+**锐化滤波器**
+- 增强图像的细节
+- 印刷中增强细微层次,弥补扫描产生的图像钝化
+- 超声探测成像，分辨率低，边缘模糊，通过锐化来改善
+- 图像识别中，分割前的边缘提取
+- 锐化处理恢复过度钝化、暴光不足的图像
+- 目标识别、定位
 
+分类
+> - 二阶微分--拉普拉斯算子
+> - 一阶微分--梯度算子
 
+![](pics/梯度.png)
 
+**比较**
+> - 一阶产生较宽的边缘
+> - 二阶产生细边缘
+> - 二阶对细节响应较强
+> - 图像增强二阶更好
 
-
-
-
-
-
+```matlab
+clear all;close all;
+im = imread('./pics/moon.bmp');
+im = im(:,:,1);
+imshow(im);
+f = im2double(im);
+w = fspecial('laplacian',0);
+% w = [1 1 1;1 -8 1;1 1 1];
+g1 = imfilter(f,w,'replicate');
+f = f-g1;
+figure,imshow(f);
+```
+其他算子
+![](pics/roberts.png)
+![](pics/prewitt.png)
+![](pics/sobel.png)
 
 
 
