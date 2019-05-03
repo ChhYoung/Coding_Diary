@@ -11,6 +11,7 @@
 #include<memory>
 #include<unordered_map>
 #include<tuple>
+#include"my_algorithm.h"
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -453,8 +454,36 @@ void test20_2(){
     if(p1) p1->foo();
 }
 
+// test21  find my_algorithm.h
+void test21(){
+    std::vector<int> v{9,8,1,4,6,5,2,10};
+    auto m = my_algorithm::find(v.begin(),v.end(),10);
+    print_every_thing(*m);
+}
 
-
+// test22 search
+void test22(){/*
+    std::string str1 = "why waste time learning, when ignorance is instantaneous?";
+    std::string str2 = "learning";
+    std::string str3 = "leearing";*/
+    std::vector<int> str1{1,2,3,4,5,6,7,8};
+    std::vector<int> str2{2,3,4};
+    std::vector<int> str3{6,5};
+    auto res1 = std::search(str1.begin(),str1.end(),str2.begin(),str2.end());
+    auto res2 = std::search(str1.begin(),str1.end(),str3.begin(),str3.end());
+    if(res1 != str1.end()){
+        print_every_thing("first element is ");
+        print_every_thing(*res1);
+        }
+    if(res2 != str1.end()){
+        print_every_thing("first element is ");
+        print_every_thing(*res2);
+        }
+    else if(res2 == str1.end()){
+        print_every_thing("wrong match");
+        //print_every_thing(*res2);
+        }
+}
 int main(){
     //test1();
     //test2();
@@ -475,6 +504,9 @@ int main(){
     //test17();
     //test18();
     //test19();
-    test20_2();
+    //test20_2();
+    //test21();
+    test22();
     return 1;
+    
 }

@@ -35,7 +35,12 @@
         "optional": "cpp",
         "algorithm": "cpp",
         "list": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "chrono": "cpp",
+        "ctime": "cpp",
+        "memory": "cpp",
+        "ratio": "cpp",
+        "thread": "cpp"
     },
     "python.linting.pylintEnabled": true
 }
