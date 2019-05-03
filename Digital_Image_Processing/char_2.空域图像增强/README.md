@@ -306,7 +306,6 @@ im = im(:,:,1);
 imshow(im);
 f = im2double(im);
 w = fspecial('laplacian',0);
-% w = [1 1 1;1 -8 1;1 1 1];
 g1 = imfilter(f,w,'replicate');
 f = f-g1;
 figure,imshow(f);

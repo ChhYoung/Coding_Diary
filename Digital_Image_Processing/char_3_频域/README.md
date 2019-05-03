@@ -3,3 +3,102 @@
 ![](pics/二维傅里叶变换及反变换.png)
 **1.1 性质**
 **平移性质**
+![](pics/平移性质.png)
+**中点化**
+![](pics/中点化.png)
+```matlab
+clear all;close all;
+im = zeros(400,400);
+im(195:255,195:205)=255;
+subplot(1,4,1);imshow(im);title('空域');
+im_DFT1 = fft2(im);
+subplot(1,4,2);imshow(log(abs(im_DFT1)),[]);title('未中心化频域');
+im_DFT2 = fftshift(im_DFT1);
+subplot(1,4,3);imshow(log(abs(im_DFT2)),[]);title('中心化频域');
+im2 = ifft2(im_DFT2);
+subplot(1,4,4);imshow(im2);title('空域');
+figure();mesh(log(abs(im_DFT1)));title('未中心化频域');
+figure();mesh(log(abs(im_DFT2)));title('中心化频域');
+```
+![](pics/中心化.png)
+**旋转不变性**
+![](pics/旋转不变性.png)
+**相关定理**
+![](pics/相关性.png)
+![](pics/对称性.png)
+![](pics/周期性.png)
+
+#### 频域滤波
+![](pics/频域滤波步骤.png)
+> - **中心化后中点对应低频分量，外围为高频分量**
+
+**滤波器类型**
+> - 陷波滤波器
+> - 低通(平滑)滤波器
+> - 高通(锐化)滤波器
+
+**1. 陷波滤波器**
+![](pics/陷波滤波器.png)
+> - 将均值点设为0，降低了图像的整体灰度级
+> - 用于识别特定，局部化频域成分引起的空间图像效果
+> - 若均值为0则会出现负灰度级
+```matlab
+clear all;close all;
+I = imread('./pics/Fig4.jpg');
+figure;imshow(I);
+F = fft2(I);
+F = fftshift(F);
+[M , N ] = size(F);
+h = ones(M,N);
+h(M/2+1,N/2+1)=0;
+figure;mesh(h);
+result = h.*F;
+result = ifftshift(result);
+I2 = ifft2(result);
+I3 = uint8(real(I2));
+figure;imshow(I3);
+```
+![](pics/陷波.png)
+
+![](pics/滤波器.png)
+
+> - 可以在高通滤波器的中心加个常量防止图像灰度级过低
+
+**2. 低通滤波器**
+- 理想低通
+- 巴特沃斯低通
+- 高斯低通
+![](pics/理想低通.png)
+![](pics/振铃.png)
+**原因：** 矩形窗的傅里叶变换为sinc函数
+
+**3. 低通巴特沃斯**
+![](pics/低通巴特沃斯.png)
+> - 用于平滑处理，如当图像由于量化不足时产生虚假轮廓，常用低通滤波器进行平滑以改进图像质量
+> - 效果比理想低通好
+
+**4. 高斯低通**
+![](pics/高斯低通.png)
+> - 不能达到有相同截至频率的二阶巴特沃斯平滑效果
+> - 无振铃
+
+#### 低通滤波器的应用
+> - 字符识别： 通过模糊图像，桥接断裂字符的裂缝
+> - 印刷和出版业：将尖锐的原始图像改为平滑，柔和的，如人脸减少皮肤细纹的锐化程度和小斑点
+> - 处理卫星和航空图像：模糊细节，保留重要特征
+
+**高通滤波器**
+![](pics/锐化.png)
+**理想高通**
+![](pics/理想高通.png)
+**巴特沃斯高通**
+![](pics/把高.png)
+**高斯高通**
+![](pics/高高.png)
+
+#### 同态滤波
+在频域中压缩动态范围增强局部对比度
+
+**同态滤波的实现**
+
+
