@@ -6,9 +6,9 @@
   <br/><br/><br/><br/>
   <br/><br/><br/><br/>
 ### <center> 姓名：杨崇焕
-### <center> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;学号：U201610531
-### <center> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班级：电信中英1601
-### <center> &nbsp;&nbsp;&nbsp;&nbsp;实验内容：聚类
+### <center> 学号：U201610531
+### <center> 班级：电信中英1601
+### <center> 实验内容：聚类
   <br/><br/><br/><br/>
     <br/><br/><br/><br/>
       <br/><br/><br/><br/>
@@ -187,3 +187,110 @@ K-means
 ![](Task1/bikmeans.jpg)
 
 #### 任务二：根据用户采集的 WiFi 信息对用户进行聚类
+
+- 方案一：对于每个finLabel，将不存在的RBSSIDLabel对应的RSSLabel设置为-100，再聚类
+- 方案二：将不纯在的的设置为0，存在的设置为1，再聚类
+
+##### 方案一：
+**1.1 数据处理**
+每种BSSID为一个特征，接受不到的BSSID取值-100
+```python
+fin = {}
+BSSID_list = np.asarray([-100 for i in range(len(BSSID_type))])
+for fin_i in fin_type:
+    indexx = []
+    TD_index = pd.Index(TrainSet1.iloc[:,-1])
+    sliced_TD = TrainSet1[TD_index.get_loc(fin_i)]
+    for i in sliced_TD.iloc[:,0]:
+        index = pd.Index(BSSID_type).get_loc(i)
+        #indexx.extend([index])
+        indexx.append(index)
+    BSSID_list[np.asarray(indexx)] = TrainSet1.iloc[np.asarray(indexx),1]
+    fin[fin_i] = []
+    fin[fin_i].extend(BSSID_list.tolist())
+    # add label at the end
+    fin[fin_i].extend([sliced_TD.iloc[0,2]]) 
+fin = pd.DataFrame(fin).T
+```
+得到结果如下
+![](Task2/1.jpg)
+再对数据进行标准化,NaN用0填充
+```python
+m = m.apply(lambda x: (x - x.mean())  / (x.std()))
+m = m.fillna(0)
+```
+**1.2聚类**
+用k=8的Kmean聚类，并计算出DBS
+```python
+X = np.array(m)
+km = KMeans(n_clusters=8, random_state=0).fit(X)
+labels = km.labels_
+k1 = km.fit_transform(X)
+sk.metrics.davies_bouldin_score(k1, labels)
+```
+得到DBS为
+![](Task2/DBS.jpg)
+**1.3 可视化**
+利用MDS分别在3D，2D空间可视化得到的结果
+```python
+# 3D
+embedding = MDS(n_components=3)
+# 2D
+#embedding = MDS(n_components=2)
+X_transformed = embedding.fit_transform(k1[:500])
+X_transformed.shape
+fig = plt.figure()
+# 3D
+
+ax = fig.add_subplot(111, projection='3d')
+rect=[0.0,0.0,1.0,1.0]
+# 2D
+#ax=fig.add_axes(rect, label='ax1', frameon=False)  
+scatterMarkers=['s', 'o', '^', '8', 'p', 'd', 'v', 'h', '>', '<']
+
+# 3D
+
+for i in np.unique(labels):
+    a = np.where(labels == i)
+    ax.scatter(X_transformed[a,0],X_transformed[a,1],X_transformed[a,2],marker='o', s=90)
+# 2D
+'''
+for i in np.unique(labels):
+    a = np.where(labels == i)
+    ax.scatter(X_transformed[a,0],X_transformed[a,1],marker='o', s=90)
+'''
+plt.show()
+```
+![](Task2/3D.png)
+![](Task2/2D.png)
+
+##### 方案二：
+将存在的BSSID设置为1，不存在的设置为0
+```python
+fin = {}
+BSSID_list = np.asarray([0 for i in range(len(BSSID_type))])
+#BSSID_list = [0 for i in range(len(BSSID_type))]
+for fin_i in fin_type:
+    indexx = []
+    TD_index = pd.Index(TrainSet1.iloc[:,-1])
+    sliced_TD = TrainSet1[TD_index.get_loc(fin_i)]
+    for i in sliced_TD.iloc[:,0]:
+        index = pd.Index(BSSID_type).get_loc(i)
+        #indexx.extend([index])
+        indexx.append(index)
+    BSSID_list[np.asarray(indexx)] = 1 
+    fin[fin_i] = []
+    fin[fin_i].extend(BSSID_list.tolist())
+    # add label at the end
+    fin[fin_i].extend([sliced_TD.iloc[0,2]]) 
+fin = pd.DataFrame(fin).T
+```
+同上可得
+BDS为：
+![](Task2/DBS2.jpg)
+同方法一相同
+![](Task2/2D2.png)
+![](Task2/3D2.png)
+
+### 五.实验小结：
+通过这次实验，我更进一步了解K-mean 二分K-mean,DBSCAN等聚类算法流程，及如何实现它们。同时也学习了一些数据可视化的操作。
