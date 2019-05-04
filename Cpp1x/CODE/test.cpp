@@ -12,6 +12,7 @@
 #include<unordered_map>
 #include<tuple>
 #include"my_algorithm.h"
+#include<array>
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -140,8 +141,8 @@ int Fac(T firstArg,Types... args){
 }
 
 void test6(){
-    std::cout<<"1,2,3,4,5的连乘"<<std::endl;
-    std::cout<<Fac(1,2,3,4,5)<<std::endl;
+	std::cout << "1,2,3,4,5的连乘 " << std::endl;
+	std::cout << Fac(1, 2, 3, 4, 5) << std::endl;
 }
 //  test 7 返回最大值
 template<int N,int...args>
@@ -277,12 +278,12 @@ template<typename ...T,size_t  N=0> void print_every_thing(std::unordered_map<T.
         for(const auto &b:a)
             std::cout<<"Key:["<<b.first<<"] Values:["<<b.second<<"]\n";
 };
-
+/*
 
 void test13(){
     std::vector<int> a{1,2,3,4,5,6};
     std::vector<std::string> b{"abc","bcd"};
-    std::array<int,5> c{1,2,3,4,5};
+	std::array<int, 5> c{ 1,2,3,4,5 };
     std::map<int,std::string> d{
         {1,"1"},
         {4,"4"},
@@ -305,7 +306,7 @@ void test13(){
     print_every_thing(d);
     print_every_thing(e);
 }
-
+*/
 // test 14
 
 template <int X>
@@ -448,7 +449,7 @@ void test20_2(){
         p1 = std::move(p2);
         print_every_thing("1");
         if(p2) p2->foo();
-        print_every_thing("p2被销毁");
+        print_every_thing("p2被销毁.");
     }
     print_every_thing("1");
     if(p1) p1->foo();
