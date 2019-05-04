@@ -88,7 +88,9 @@ add_executable(leptjson_test test.c)
 target_link_libraries(leptjson_test leptjson)
 ```
 
-
+**正则表达式**
+元字符 `\b`,`\w`,`.`,`*`
+`0\d{2}-\d{8}`
 
 
 

@@ -485,6 +485,22 @@ void test22(){/*
         //print_every_thing(*res2);
         }
 }
+
+// test 23
+void test23() {
+	int res[] = { 1,2,3,4 };
+	std::unordered_map<int, int> m = {
+		{1,2},
+		{3,4},
+		{5,6},
+		{7,8}
+	};
+
+	int res1[] = { 1,m[1],3 };
+	print_every_thing(m[1]);
+	std::vector<int> a = { res1, res1+2 ,res1+3};
+	print_every_thing(a);
+}
 int main(){
     //test1();
     //test2();
@@ -507,7 +523,8 @@ int main(){
     //test19();
     //test20_2();
     //test21();
-    test22();
+    //test22();
+	test23();
     return 1;
     
 }
