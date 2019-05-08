@@ -40,7 +40,9 @@
         "ctime": "cpp",
         "memory": "cpp",
         "ratio": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "cstddef": "cpp",
+        "cstring": "cpp"
     },
     "python.linting.pylintEnabled": true
 }
