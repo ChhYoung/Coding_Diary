@@ -1,6 +1,180 @@
 # leetcode
 
+#### 1. Two Sum
+
+> Given an array of integers, return **indices** of the two numbers such that they add up to a specific target.
+>
+> You may assume that each input would have **exactly** one solution, and you may not use the *same* element twice.
+>
+> **example**:
+>
+> ```
+> Given nums = [2, 7, 11, 15], target = 9,
+> Because nums[0] + nums[1] = 2 + 7 = 9,
+> return [0, 1].
+> ```
+
+1. 暴力解法：
+时间复杂度O(n^2)  
+空间复杂度O(1)
+```c++
+class Solution{
+public:
+    vector<int> twoSum(vector<int>& num, int target){
+        for(int i = 0;i < nums.size(); ++i){
+            for(int j = i+1;j < nums.size(); ++j){
+                if(nums[i] + nums[j] == target)
+                return [i,j];
+            }
+        }
+        throw invalid_argument("the input has no solution");
+    }
+};
+```
+2. hash 用一个hash表，存储每个数对应的下标,复杂度O(N)
+```c++
+class Solution{
+public:
+    vector<int> twoSum(vector<int>& num, int target){
+        unordered_map<int,int> mapping;
+        vector<int> result;
+        for(int i=0;i<num.size();++i){
+            mapping[num[i]] = i;
+        }
+        for(int i=0;i<num.size();++i){
+            const int gap = target - num[i];
+            if(mapping.find(gap) != mapping.end() && mapping[gap] > i){
+                result.push_back(i);
+                result.push_back(mapping[gap]);
+                break;
+            }
+        }
+        return result;
+    }
+};
+```
+#### 2. add two sum
+You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+- example
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+Explanation: 342 + 465 = 807.
+
+1. 普通方法建立一个新链表，这个解法的关键在于链表边界的判断与确定，结果超过10后，如何来确定carrier
+时间复杂度 O(n)
+空间复杂度 O(n)
+
+```c++
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+class Solution{
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2){
+        ListNode *p1 = l1, *p2 = l2;
+        ListNode *dummyHead = new ListNode(-1);
+        ListNode *cur = dummyHead;
+        int carrier = 0;
+        while(p1 || p2){
+            // 边界确定
+            int a = p1 ? p1->val : 0;
+            int b = p2 ? p2->val : 0;
+            cur->next = new ListNode((a + b + carrier) % 10);
+            carrier = (a + b + carrier)/10;
+
+            // 边界确定
+            cur = cur->next;
+            p1 = p1 ? p1->next : NULL;
+            p2 = p2 ? p2->next : NULL;
+        }
+
+        // 边界确定
+        cur->next = carrier ? new ListNode(1) : NULL;
+        ListNode* ret = dummyHead->next;
+        delete dummyHead;
+        return ret;
+    }
+};
+```
+2. using l1 as the result list
+时间复杂度 O(n)
+空间复杂度 O(n)
+```c++
+class Solution{
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2){
+        ListNode *p1 = l1;
+        ListNode *p2 = l2;
+        ListNode *pre = NULL;
+        int carrier = 0;
+        while(p1 || p2){
+            int a = p1 ? p1->val : 0;
+            int b = p2 ? p2->val : 0;
+            if(p1)
+                p1->val = (a + b + carrier) % 10;
+            else{
+                pre->next = new ListNode((a + b + carrier) % 10);
+                p1 = pre;
+            }
+            carrier = (a + b + carrier) / 10;
+            pre = p1;
+            p1 = p1->next;
+            if(p2)
+                p2 = p2->next;
+        }
+        pre->next = carrier ? new ListNode(1) : NULL;
+        return l1;
+    }
+};
+```
+3. 用最长的list来保存结果
+时间复杂度 O(n)
+空间复杂度 O(1)
+```c++
+class Solution{
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2){
+        int len1 = getLen(l1),len2 = getLen(l2);
+        // 一个指向长的，一个指向短的
+        ListNode *p1 = len1 > len2 ? l1 : l2;
+        ListNode *p2 = len2 > len1 ? l1 : l2;
+
+        ListNode* pre =NULL;
+        int carrier = 0;
+        while(p1){
+            int a = p1->val;
+            int b = p2 ? p2->val : 0;
+            p1->val = (a + b + carrier) % 10;
+            carrier = (a + b + carrier) / 10;
+
+            pre = p1;
+            p1 = p1->next;
+            p2 = p2 ? p2->next : NULL;
+        }
+        pre->next = carrier ? new ListNode(1) : NULL;
+        return len1 > len2 ? l1 : l2;
+    }
+
+private:
+    int getLen(ListNode* l){
+        int res = 0;
+        while(l){
+            ++res;
+            l = l->next;
+        }
+        return res;
+    }
+};
+```
+
 #### 138.Copy List with Random Pointer
+
 >A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
 Return a deep copy of the list.
 
