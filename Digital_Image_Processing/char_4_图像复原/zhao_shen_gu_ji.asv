@@ -1,6 +1,0 @@
-clear all;close all;
-I(1:256,1:256)=unit8(50);
-I(20:120,50:100)=140;
-I(150:220,20:230)=200;
-
-I1 = imnoise(I,'salt & pepper'

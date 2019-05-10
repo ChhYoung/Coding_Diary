@@ -93,6 +93,17 @@ FROM Student;
 SELECT Sname, 'Year of Birth:', 2019 - Sage, ISLOWER(Sdept)
 FROM Student;
 ```
+- 例6 查找XS表中1984年1月1日以前出生的学生的姓名和借书量，并列出其属于计算机专业还是英语专业的情况，1表示是，0表示否。
+```sql
+select 姓名，借书量，计算机，英语
+from XS
+pivot(
+    count(借书证号),
+    for 专业
+    in(计算机，英语)
+)as pvt
+where 出生时间<'1984-01-01'
+```
 ![](../../pics/例5.png)
 **3.4.2 选择若干元组**
 能够消除重复的行

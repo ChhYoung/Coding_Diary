@@ -13,6 +13,7 @@
 #include<tuple>
 #include"my_algorithm.h"
 #include<array>
+#include<cmath>
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -498,9 +499,26 @@ void test23() {
 
 	int res1[] = { 1,m[1],3 };
 	print_every_thing(m[1]);
-	std::vector<int> a = { res1, res1+2 ,res1+3};
-	print_every_thing(a);
+	//std::vector<int> a = {res1[0], res1 ,res1};
+	//print_every_thing(a);
 }
+
+// test 24
+void test24(){
+    int num = 17;
+    print_every_thing(std::log10(num));
+    int m = 1 ;
+    auto  res = std::log10(num) - m;
+    print_every_thing(res);
+}
+
+// test25
+void test25() {
+	std::string a = "abcdefg";
+	for (auto i : a)
+		print_every_thing(i);
+}
+
 int main(){
     //test1();
     //test2();
@@ -524,7 +542,9 @@ int main(){
     //test20_2();
     //test21();
     //test22();
-	test23();
+	//test23();
+	//test24();
+	test25();
     return 1;
     
 }
