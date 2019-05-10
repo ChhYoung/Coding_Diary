@@ -173,6 +173,108 @@ private:
 };
 ```
 
+#### 342.Power of Four
+
+Given an integer (signed 32 bits), write a function to check whether it is a power of 4.
+
+1. 暴力解法: 
+
+   - runtime : 4ms, faster than 99.37%
+
+   - memory usage : 8.2MB,  less than 11.97%
+
+   ```c++
+   class Solution {
+   public:
+       bool isPowerOfFour(int num) {
+          
+           while(num != 0 && num%4 == 0){
+               num /= 4;
+           }
+           if (num == 1)
+               return true;
+           else 
+               return false;    
+       }
+   };
+   ```
+
+2. 利用二进制规律
+
+在二进制中4的幂次方中1都在奇数位。
+
+* 首先判断是否是2的次幂
+* 再与 0x55555555相与，如果得到的结果是本身则是4的次幂
+
+- runtime : 4ms, faster than 99.37%
+- memory usage : 8.1 MB,  less than 28.87%
+
+```c++
+    bool isPowerOfFour(int num) {
+		return num > 0 && !(num & (num - 1)) && (num & 0x55555555) == num;   
+    }
+```
+
+#### 3. Longest subtring without repeating characters
+
+> Given a string, find the length of the **longest substring**  without repeating  character
+
+exmaple 1 : 
+
+- input : "abcabcabb"
+- ouput: 3
+- the answer is "abc" ，with the length of 3
+
+exmaple 2 :
+
+- input : "bbbbb"
+- output : 1 
+- the answer is "b", with the length of 1
+
+exmaple 3:
+
+- input : "pwwkew"
+- output : 3
+- the answer is "wke",with the length of 3
+
+**分析：**利用贪心算法，从左向右扫描，遇到重复字母，用以上重复字母的index+1为新的扫描起点，重新开始扫描，直到最后一个字母。(注意最大长度与搜索开始位置)
+
+- 时间复杂度O(n)
+- 空间复杂度O(1)
+
+```c++
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+		const int ASCII_MAX = 255;
+        int last[ASCII_MAX]; // 用来记录字符所在位置   'a' == 97
+        int start = 0; // 开始位置
+        // 初始化 last
+        fill(last, last + ASCII_MAX,-1);
+        int max_len = 0;
+        for(int i = 0; i < s.size(); ++i){
+            // 找到一个重复，置开始位,得长度
+            // 注意这个loop中只解决有重复出现得最大长度，当无重复时还没有更新
+            if(last[s[i]] >= start){
+                max_len = max(i - start,max_len);
+                start = last[s[i]] + 1;
+            }
+            // 置last中对应字符数为其在s中的 当前的 index
+            last[s[i]] = i;
+        }
+        // 对于无重复的最后一次，  如"abcd"
+        return max((int)s.size()-start, max_len);
+    }
+};
+
+```
+
+
+
+
+
+
+
 #### 138.Copy List with Random Pointer
 
 >A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
