@@ -237,7 +237,7 @@ exmaple 3:
 - output : 3
 - the answer is "wke",with the length of 3
 
-**分析：**利用贪心算法，从左向右扫描，遇到重复字母，用以上重复字母的index+1为新的扫描起点，重新开始扫描，直到最后一个字母。(注意最大长度与搜索开始位置)
+**分析:**利用贪心算法，从左向右扫描，遇到重复字母，用以上重复字母的index+1为新的扫描起点，重新开始扫描，直到最后一个字母。(注意最大长度与搜索开始位置)
 
 - 时间复杂度O(n)
 - 空间复杂度O(1)
@@ -253,6 +253,7 @@ public:
         fill(last, last + ASCII_MAX,-1);
         int max_len = 0;
         for(int i = 0; i < s.size(); ++i){
+            // 本来应该是-1，如果出现重复则last对应的要比start大
             // 找到一个重复，置开始位,得长度
             // 注意这个loop中只解决有重复出现得最大长度，当无重复时还没有更新
             if(last[s[i]] >= start){
@@ -269,9 +270,98 @@ public:
 
 ```
 
+#### 4. Median of Two Sorted Arrays
 
+There are two sorted arrays **nums1** and **nums2** of size m and n respectively.
 
+Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
 
+You may assume **nums1** and **nums2** cannot be both empty.
+
+> example 1 : 
+>
+> nums1 = [1,3]
+>
+> nums2 = [2]
+>
+> the median is 2.0
+
+>example 2 :
+>
+>nums1 = [1,2]
+>
+>nums2 = [3,4]
+>
+>the median is 2.5
+
+- 思路一：时间复杂度O(m+n)
+
+  找到第  k 大的数
+
+  一个计数器 c ，记当前已经找到第 c 大的数
+
+  用 merge sort 一个指针pA指向A，一个pB指向B，A的小则++ pA, B的小则++ pB,  同时 ++c，当c == k
+
+  即为要找的数，时间复杂度 O(k) ,当k接近 m + n 时接近 O( m + n )
+
+  这里相当于每次删除 一个一定小于K的元素
+
+  每次删除一半，类似二分查找，充分利用有效性
+
+- 思路二：时间复杂度O(log(m+n))
+
+  > 先从第k大的元素开始入手，**假设A和B的元素个数都大于k/2**，将A的第k/2个元素`A[k/2-1]`与B的第k/2个元素`B[k/2-1]`相比较，如果**A[k/2 - 1] < B[k/2 - 1] **,则说明`A[0]--A[k/2-1]`一定在AB整体的前k个元素内部，则可以删除`A[0]--A[k/2-1]`, 同理**A[k/2 - 1] > B[k/2 - 1]**则删除`B[0]--B[k/2-1]`
+
+  - `A[k/2 - 1] < B[k/2 - 1]` 删除`A[0]--A[k/2-1]`
+  - `A[k/2 - 1] > B[k/2 - 1]`删除`B[0]--B[k/2-1]`
+  - `A[k/2 - 1] = B[k/2 - 1]`则找到第k大的元素
+
+  > **若有一个小于长度k/2,**则 假设A的长度最小，比较A[m-1] 与 B[k - m - 1]的大小
+
+  - A[m - 1]  <  B[k - m - 1]， 即一个长度要为0的情况，则可以直接得到结果
+  - A[m - 1]  >  B[k - m - 1],    删除`B[0]--B[k - m - 1]`
+  - A[m - 1]  >  B[k - m - 1],    则找到第k大的元素
+
+  **实现细节**
+
+```c++
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& A, vector<int>& B) {
+        const int m = A.size();
+        const int n = B.size();
+        int total = m + n;
+        // 判断总长度是奇数还是偶数
+        if (total & 0x1)
+            // 总长为奇数则直接找第  int((m+n)/2) + 1  大的数
+            return find_kth(A.begin() , m , B.begin() , n , total/2 + 1);
+        else 
+            // 总长为偶数则找 第 int((m+n)/2) 和 第 int((m+n)/2) + 1 大的数
+            return (find_kth(A.begin() , m , B.begin() , n , total/2)
+                  + find_kth(A.begin() , m , B.begin() , n , total/2 + 1))/ 2.0;
+    }
+
+private:
+    static int find_kth(std::vector<int>::const_iterator A, int m,
+                        std::vector<int>::const_iterator B, int n, int k){
+        // 始终令 m <= n
+        if (m > n) return find_kth(B, n, A, m,k);
+        if ( m == 0 ) return  *(B + k - 1);
+        if ( k == 1) return min(*A,*B);
+        
+        // 将k划为两部分
+        // 考虑一个小于k/2的情况,则令一个为本身长度(不划分)
+        int ia = min(k / 2, m), ib = k - ia;
+        // A[k/2 - 1] < B[k/2 - 1]
+        if ( *(A + ia -1) < *(B + ib -1))
+            return find_kth(A + ia , m - ia, B, n,k - ia);
+        else if ( *(A + ia -1) > *(B + ib -1))
+            return find_kth(A , m , B + ib , n - ib,k - ib);
+        else 
+            return A[ia - 1];
+    }
+};
+```
 
 
 
