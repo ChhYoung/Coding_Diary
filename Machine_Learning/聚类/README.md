@@ -6,9 +6,9 @@
   <br/><br/><br/><br/>
   <br/><br/><br/><br/>
 ### <center> 姓名：杨崇焕
-### <center> 学号：U201610531
-### <center> 班级：电信中英1601
-### <center> 实验内容：聚类
+### <center> &emsp;&emsp;&nbsp;&nbsp;学号：U201610531
+### <center> &emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;班级：电信中英1601
+### <center> &emsp;&emsp;实验内容：聚类
   <br/><br/><br/><br/>
     <br/><br/><br/><br/>
       <br/><br/><br/><br/>
@@ -43,9 +43,13 @@
 
 ### 三.实验环境：
 &emsp;&emsp;&emsp;- ubuntu 18.04
+
 &emsp;&emsp;&emsp;- python 3.6
+
 &emsp;&emsp;&emsp;- numpy 1.14.3
+
 &emsp;&emsp;&emsp;- pandas 0.23.0
+
 &emsp;&emsp;&emsp;- scikit-learn 0.19.1
 
 ### 四.实验过程：
@@ -215,6 +219,7 @@ fin = pd.DataFrame(fin).T
 得到结果如下
 ![](Task2/1.jpg)
 再对数据进行标准化,NaN用0填充
+
 ```python
 m = m.apply(lambda x: (x - x.mean())  / (x.std()))
 m = m.fillna(0)
@@ -232,6 +237,7 @@ sk.metrics.davies_bouldin_score(k1, labels)
 ![](Task2/DBS.jpg)
 **1.3 可视化**
 利用MDS分别在3D，2D空间可视化得到的结果
+
 ```python
 # 3D
 embedding = MDS(n_components=3)

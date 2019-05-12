@@ -354,6 +354,7 @@ private:
         int ia = min(k / 2, m), ib = k - ia;
         // A[k/2 - 1] < B[k/2 - 1]
         if ( *(A + ia -1) < *(B + ib -1))
+            // 更新长度 找第 看 k-ia 大小的
             return find_kth(A + ia , m - ia, B, n,k - ia);
         else if ( *(A + ia -1) > *(B + ib -1))
             return find_kth(A , m , B + ib , n - ib,k - ib);
