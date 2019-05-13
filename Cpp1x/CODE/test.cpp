@@ -514,9 +514,10 @@ void test24(){
 
 // test25
 void test25() {
-	std::string a = "abcdefg";
-	for (auto i : a)
-		print_every_thing(i);
+	int i = -1;
+	print_every_thing(i % 10);
+	int m = 1;
+	print_every_thing(m % 10);
 }
 
 

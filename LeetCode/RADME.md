@@ -364,6 +364,52 @@ private:
 };
 ```
 
+#### 7. Longest Palindromic Substring
+
+Given a string S, find the longest palindromic substring in S. You may assume that the maximum length
+of S is 1000, and there exists one unique longest palindromic substring.
+
+解法：
+
+- 备忘录法，复杂度O(n^2) ，用f[i][j]表示[i,j]间最长的回文子串
+- 动态规划,
+
+![](C:\Users\RRYou\Desktop\Code_D\Coding_Diary\LeetCode\pics\_tongtaioguihua.png)
+
+- Manacher，
+
+```c++
+// 动态规划
+class Solution{
+public:
+    string longestPalindrome(const string& s){
+     	const int n = s.size();
+        // 状态表
+        bool f[n][n];
+        fill_n(&f[0][0], n*n, false);
+        
+        // 最大回文串的长度，起点
+        size_t max_len = 1, start = 0;
+        
+        for(size_t i = 0; i < s.size();++i){
+            // i == j
+            // 设置 f[i][i] 为 true
+    	    f[i][i] = true;
+            for(size_t j = 0; j < i; j++){
+                // 
+                f[j][i] = (s[j] == s[i] && (i - j < 2 || f[j+1][i-1]));
+                if( f[j][i] && max_len < (i - j + 1)){
+                    max_len = i - j + 1;
+                    start = j;
+                }
+            }
+        }
+        return s.substr(start,max_len);
+    }
+};
+
+```
+
 
 
 #### 138.Copy List with Random Pointer
@@ -433,7 +479,32 @@ public:
     }
 };
 ```
+#### 7. reverse integer
+
+> given a 32 bit signed integer , reverse digits of an integer.
+
+**重点在于 overflow**
+
+解法一： using long type ,注意INT_MAX 和INT_MIN
+
+```c++
+class Solution{
+public:
+    int reverse(int x){
+        long result = 0;
+        while(x != 0){
+            result = result * 10 + x % 10;
+            x /= 10;
+        }
+        return (result > INT_MAX || result < INT_MIN) ？ 0 ： resul;
+    }
+};
+```
+
+
+
 #### 24.Swap Nodes in Pairs
+
 > Given a linked list, swap every two adjacent nodes and return its head.
 You may not modify the values in the list's nodes, only nodes itself may be changed.
 > Given 1->2->3->4, you should return the list as 2->1->4->3.
@@ -461,7 +532,35 @@ public:
     }        
 };
 ```
+2.直接遍历
+
+```c++
+class Solution{
+public:
+    ListNode* swapPairs(ListNode* head) {
+		ListNode * dummyHead = new ListNode(0);
+        dummyHead->next = head;
+        ListNode* p = dummyHead;
+        while(p->next && p->next->next){
+            ListNode* node1 = p->next;
+            ListNode* node2 = node1->next;
+            ListNode* next  = node2->next;
+            node2->next = node1;
+            node1->next = next;
+            p->next = node2;
+            p = node1;
+        }
+        ListNode* retHead = dummyHead->next;
+        delete dummyHead;
+        return retHead;
+    }        
+};
+```
+
+
+
 #### 67.Add Binary
+
 >Given two binary strings, return their sum (also a binary string).
 The input strings are both non-empty and contains only characters 1 or 0.
 >Input: a = "11", b = "1"
