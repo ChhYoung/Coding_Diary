@@ -464,3 +464,4 @@ EXEC SQL DECLARE <游标名> CURSOR
 不执行SELECT语句，而是向系统申请一个数据空间，用于存放未来执行SELECT的结果的数据集
 **例子**
 ![](../../pics/游标.png)
+
