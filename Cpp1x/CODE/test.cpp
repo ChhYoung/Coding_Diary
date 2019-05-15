@@ -272,13 +272,13 @@ template<typename ...T,size_t  N=0> void print_every_thing(std::map<T...> a){
         std::cout<<" map "<<std::endl;
         for(const auto &b:a)
             std::cout<<"Key:["<<b.first<<"] Values:["<<b.second<<"]\n";
-};
+}
 
 template<typename ...T,size_t  N=0> void print_every_thing(std::unordered_map<T...> a){
         std::cout<<" unordered_map "<<std::endl;
         for(const auto &b:a)
             std::cout<<"Key:["<<b.first<<"] Values:["<<b.second<<"]\n";
-};
+}
 /*
 
 void test13(){
@@ -520,6 +520,45 @@ void test25() {
 	print_every_thing(m % 10);
 }
 
+// test26
+void test26() {
+	std::string a = "abcdef";
+	auto s = a.substr(2, 1);
+	print_every_thing(s);
+}
+
+// test 27
+std::string Manancher(std::string s) {
+	std::string t = "$#";
+	for (int i = 0; i < s.size(); ++i) {
+		t += s[i];
+		t += "#";
+	}
+	std::vector<int> p(t.size(), 0);
+	int mx = 0, id = 0, resLen = 0, resCenter = 1;
+	for (int i = 1; i < t.size(); ++i) {
+		p[i] = mx > i ? std::min(p[2 * id - i], mx - i) : 1;
+		while (t[i + p[i]] == t[i - p[i]])
+			++p[i];
+		if (mx < i + p[i]) {
+			mx = i + p[i];
+			id = i;
+		}
+		if (resLen < p[i]) {
+			resLen = p[i];
+			resCenter = i;
+		}
+	}
+	/*
+	print_every_thing(resCenter);
+	print_every_thing(resLen);*/
+	return s.substr((resCenter - resLen) / 2, resLen - 1);
+}
+
+void test27() {
+	std::string s = "babadc";
+	print_every_thing(Manancher(s));
+}
 
 int main(){
     //test1();
@@ -546,7 +585,9 @@ int main(){
     //test22();
 	//test23();
 	//test24();
-	test25();
+	//test25();
+	//test26();
+	test27();
     return 1;
     
 }

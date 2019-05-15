@@ -373,9 +373,7 @@ of S is 1000, and there exists one unique longest palindromic substring.
 
 - 备忘录法，复杂度O(n^2) ，用f[i][j]表示[i,j]间最长的回文子串
 - 动态规划,
-
-![](C:\Users\RRYou\Desktop\Code_D\Coding_Diary\LeetCode\pics\_tongtaioguihua.png)
-
+![](pics/_tongtaioguihua.png)
 - Manacher，
 
 ```c++
