@@ -560,6 +560,36 @@ void test27() {
 	print_every_thing(Manancher(s));
 }
 
+bool isPalindrome(int x) {
+	if (x < 0)
+		return false;
+	else {
+		int length = log10(x);
+		int res = 0;
+		int n = x;
+		for (int i = 0; i < length; ++i) {
+			res += (n % 10) * pow(10, length - i);
+			n /= 10;
+		}
+		if (res == x)
+			return true;
+		else
+			return false;
+	}
+}
+
+void test28() {
+	int x = 121;
+	int length = log10(x);
+	int res = 0;
+	int n = x;
+	for (int i = 0; i <= length; ++i) {
+		res += (n % 10) * pow(10, length - i);
+		n /= 10;
+	}
+	print_every_thing(res);
+
+}
 int main(){
     //test1();
     //test2();
@@ -587,7 +617,8 @@ int main(){
 	//test24();
 	//test25();
 	//test26();
-	test27();
+	//test27();
+	test28();
     return 1;
     
 }
