@@ -194,6 +194,9 @@ subplot(1,2,1),imshow(I);
 subplot(1,2,2),imshow(I1);
 ```
 
+![](./pics/彩色分层.bmp)
+
+
 - 彩色图像亮度调整
 
 对于RBG空间，用相同的变换函数映射每个分量

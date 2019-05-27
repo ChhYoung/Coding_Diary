@@ -661,6 +661,16 @@ public:
     }
 };
 ```
+#### 13.Roman to Integer
 
+```c++
+class Solution{
+public:
+    int romanToInt(string s){
+        unordered_map
+    }
+};
+
+```
 
 
