@@ -99,3 +99,74 @@ $\beta(A) = A - (A \ominus B)$
 - 消除间断点
 - 先细化$A^c$,再求补
 
+### 10.Matlab 操作实现
+
+**10.1膨胀**
+
+```matlab
+%% 膨胀
+clc
+clear
+
+A1 = imread('./pics/Fig9.05(a).jpg');
+A1 = 255 - A1;
+B =[0 1 0
+    1 1 1
+    0 1 0];
+A2 = imdilate(A1,B);
+A3 = imdilate(A2,B);
+A4 = imdilate(A3,B);
+
+subplot(2,2,1),imshow(A1),title('A1');
+subplot(2,2,2),imshow(A2),title('A2');
+subplot(2,2,3),imshow(A3),title('A3');
+subplot(2,2,4),imshow(A4),title('A4');
+```
+
+![](./pics/res1.bmp)
+
+**10.2腐蚀**
+
+```matlab
+%% 腐蚀
+clc 
+clear
+A1 = imread('./pics/Fig9.07(a).jpg');
+
+se1 = strel('disk',5);
+A2 = imerode(A1,se1);
+
+se2 = strel('disk',10);
+A3 = imerode(A1,se2);
+
+se3 = strel('disk',15);
+A4 = imerode(A1,se3);
+
+subplot(2,2,1),imshow(A1),title('A1');
+subplot(2,2,2),imshow(A2),title('A2');
+subplot(2,2,3),imshow(A3),title('A3');
+subplot(2,2,4),imshow(A4),title('A4');
+```
+
+![](./pics/res2.bmp)
+
+**10.3开闭运算**
+
+```matlab
+%% 开闭运算
+clc 
+clear
+A1 = imread('./pics/Fig0905(a)(wirebond-mask).tif');
+se1 = strel('disk',10);
+A2 = imopen(A1,se1);
+A3 = imclose(A1,se1);
+subplot(2,2,1),imshow(A1),title('原始图像');
+subplot(2,2,2),imshow(A2),title('开运算');
+subplot(2,2,3),imshow(A3),title('闭运算');
+%subplot(2,2,4),imshow(A4),title('A4');
+```
+
+![](./pics/res3.bmp)
+
+
+
