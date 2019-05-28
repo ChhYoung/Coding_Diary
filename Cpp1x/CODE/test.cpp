@@ -14,6 +14,7 @@
 #include"my_algorithm.h"
 #include<array>
 #include<cmath>
+#include<numeric>
 /**********************************************************************/
 // 泛型编程风格
 // test 1
@@ -590,6 +591,43 @@ void test28() {
 	print_every_thing(res);
 
 }
+
+// test for search
+void test29(){
+    std::string str1 = "why waste time learning, when ignorance is instantaneous?";
+    std::string str2 = "learning";
+    auto res = std::search(str1.begin(),str1.end(),
+                            str2.begin(),str2.end());
+    print_every_thing("the right answer should be \"w\"\n");
+    print_every_thing("the output is : ");
+    std::cout<<*(res+10)<<'\n';
+}
+
+
+// test for all_of
+void test30(){
+    std::vector<int> v(10,2);
+    std::partial_sum(v.cbegin(),v.cend(),v.begin());
+    std::cout<<"among the numbers : ";
+    std::copy(v.cbegin(),v.cend(),std::ostream_iterator<int>(std::cout," "));
+    std::cout<<'\n';
+
+    if(std::all_of(v.cbegin(),v.cend(),[](int i){return i%2 == 0;})){
+        std::cout<<"all numbers are even\n";
+    }
+    if(std::none_of(v.cbegin(),v.cend(),[](int i){return i%2 == 1;})){
+        std::cout<<"none of the number are odd\n";
+    }
+
+    struct DivisibleBy{
+        const int d;
+        DivisibleBy(int n) : d(n){};
+        bool operator()(int n) const {return n%d == 0;}
+    };
+    if(std::any_of(v.cbegin(),v.cend(),DivisibleBy(7))){
+        std::cout<<"at least one number is divisible by 7\n";
+    }
+}
 int main(){
     //test1();
     //test2();
@@ -618,7 +656,9 @@ int main(){
 	//test25();
 	//test26();
 	//test27();
-	test28();
+	//test28();
+    //test29();
+    test30();
     return 1;
     
 }

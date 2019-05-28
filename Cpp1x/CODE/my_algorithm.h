@@ -21,7 +21,7 @@ Input find(Input first, Input last,const T& value){
 }
 
 template<typename Input,typename UnaryPredicate>
-bool find_if(Input first,Input last,UnaryPredicate p){
+Input find_if(Input first,Input last,UnaryPredicate p){
     for(;first != last;++first){
         if(p(*first)){
             return first;
@@ -31,7 +31,7 @@ bool find_if(Input first,Input last,UnaryPredicate p){
 }
 
 template<typename Input,typename UnaryPredicate>
-bool find_if_not(Input first,Input last,UnaryPredicate p){
+Input find_if_not(Input first,Input last,UnaryPredicate p){
     for(;first != last;++first){
         if(!p(*first)){
             return first;
@@ -64,6 +64,26 @@ constexpr ForwardIt1 search(ForwardIt1 first, ForwardIt1 last,
         }
     }
 }
+
+/////////////////////////   3
+// std::all_of
+// std::any_of
+// std::none_of
+template<typename InputIt,typename UnaryPredicate>
+bool all_of(InputIt first,InputIt last,UnaryPredicate p){
+	return find_if_not(first,last,p) == last;
+}
+
+template<typename InputIt,typename UnaryPredicate>
+bool any_of(InputIt first,InputIt last,UnaryPredicate p){
+	return find_if(first,last,p) != last;
+}
+
+template<typename InputIt,typename UnaryPredicate>
+bool none_of(InputIt first,InputIt last,UnaryPredicate p){
+	return find_if(first,last,p) == last;
+}
+
 
 ////////////////////////////////
 /////////    Manancher's Algorithm
