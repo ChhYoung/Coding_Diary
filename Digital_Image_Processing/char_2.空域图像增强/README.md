@@ -1,4 +1,5 @@
-# <center>空域图像增强
+# 空域图像增强
+[TOC]
 **方法分为**
 > - 点处理
 > - 模板处理
@@ -290,8 +291,10 @@ subplot(1,3,3);imshow(out2);title('3X3均值滤波');
 分类
 > - 二阶微分--拉普拉斯算子
 > - 一阶微分--梯度算子
-
+**梯度算子**
 ![](pics/梯度.png)
+**拉普拉斯算子**
+![](./pics/拉普拉斯.png)
 
 **比较**
 > - 一阶产生较宽的边缘
@@ -314,7 +317,6 @@ figure,imshow(f);
 ![](pics/roberts.png)
 ![](pics/prewitt.png)
 ![](pics/sobel.png)
-
 
 
 

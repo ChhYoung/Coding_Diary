@@ -1,0 +1,18 @@
+clear all;close all;
+im = imread('./pics/test.bmp');
+im = rgb2gray(im);
+imshow(im);
+[m n]=size(im);
+im = medfilt2(im,[7,7]);
+figure;imshow(im);
+figure;imhist(im);
+
+T1 = 117;
+T2 = 177;
+
+for x=1:m
+    for y=1:n
+        if(im(x,y)<T1)
+            im(x,y)=0;
+        else
+            

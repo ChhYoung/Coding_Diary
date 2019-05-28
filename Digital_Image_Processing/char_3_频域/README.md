@@ -1,4 +1,7 @@
 # 频域图像增强
+
+[TOC]
+
 #### [二维傅里叶变换](https://www.zhihu.com/question/22611929/answer/621009581)
 ![](pics/二维傅里叶变换及反变换.png)
 **1.1 性质**
@@ -6,6 +9,7 @@
 ![](pics/平移性质.png)
 **中点化**
 ![](pics/中点化.png)
+
 ```matlab
 clear all;close all;
 im = zeros(400,400);

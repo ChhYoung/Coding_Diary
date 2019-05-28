@@ -1,0 +1,11 @@
+clear aall;close all;
+im = imread('./pics/0084.jpg');
+subplot(2,3,1),imshow(im);
+h = ones(5,5)/25;
+im = imfilter(im,h);
+subplot(2,3,2),imhist(im);
+im_bw = imbinarize(im,105/255);
+subplot(2,3,3),imshow(im_bw);
+
+T = graythresh(im);
+

@@ -1,6 +1,7 @@
-# <center>数字图像处理基础
- 
-  
+# 数字图像处理基础
+
+[TOC]
+
 ### 1. HVS(human vision system)：
 
 **人类视觉系统特性**
