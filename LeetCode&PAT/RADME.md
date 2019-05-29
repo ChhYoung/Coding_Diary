@@ -618,7 +618,194 @@ public:
 }
 ```
 
-#### 6.ZigZag
+#### 53. Maximum Subarray
 
-找数学规律，对每一层垂直元素的坐标(i,j)=（j+1)*n+i; 对于每两层垂直元素之间插入元素(斜对角线元素),(i,j)=(j+1)*n-i
+> Given an integer array `nums`, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+
+example:
+
+Input  : [-2,1,-3,4,-1,2,1,-5,4]
+
+Output: 6
+
+[4,-1,2,1] has the max sum
+
+**解决：**
+
+**1.利用动态规划**
+
+> 在遍历整个数组时对于每个元素，它有两种选择，
+>
+> 1. 加入之前的subarray，2.  自己建一个新的subarray
+>
+> 在动态规划中：
+>
+> 1. 若之前的subarray总体的和小于等于0，则认为 它对后面的sub和 没有贡献
+>
+>    sum + nums[j]  <= nums[j]
+>
+> 2. 若大于0，则认为它对后面的sub和有贡献,即以当前nums[j]结尾的subarray的sum，
+>
+>    sum + nums[j]  > nums[j]
+>
+> 设当前状态f[j] 表示以nums[j]结尾的subarray的和，则f[j]的状态转移方程为
+>
+> f[j] =  max( f[j-1]+nums[j]  ,  nums[j] )
+>
+> res = max{ f[i] }   0<=i<=n-1
+>
+> **利用f[j]来记录前面的subarray和**
+>
+> **利用res来记录最大的f[j]**
+
+
+
+时间复杂度：O（n）
+
+- runtime : 4ms    faster than 99.79%
+- memory uage : 9.4MB   less than 59.66%
+
+```c++
+class Solution{
+public:
+    int maxSubArray(vector<int>& nums) {
+        int res = MIN_INT， f = 0;
+        for(int i = 0; i<nums.size();++i){
+            f = max(f+nums[i],nums[i]);
+            res = max(res,f);
+        }
+        return res;
+    }
+};
+```
+
+**2. 处理后后枚举，连续子序列的和 为两个前缀和的差值，找到最大和最小的前缀和，求差值**
+
+时间复杂度: O(n)
+
+- runtime : 4ms   faster than 99.79%
+- memory usage: 9.6MB   less than 53.95%
+
+```c++
+class Solution{
+public:
+    int maxSubArray(vector<int>& nums){
+        return mcss(nums.begin(),nums.end());
+    }
+private:
+    template<typename Iter>
+    static int mcss(Iter begin,Iter end){
+        int result,cur_min;
+        const int n = distance(begin,end);
+        int *sum = new int[n+1]; //求前n项和
+        
+        sum[0] = 0;
+        result = INT_MIN;
+        cur_min = sum[0];
+        for(int i = 1;i<=n;++i){
+            sum[i] = sum[i-1] + *(begin+i-1);
+        }
+        for(int i = 0;i<=n;++i){
+            res = max(res , sum[i]-cur_min);
+            cur_min = min(cur_min,sum[i]);
+        }
+        delete[] sum;
+        return res;
+    }
+};
+
+```
+
+#### 70.Climbing Stairs
+
+You are climbing a stair case. It takes *n* steps to reach to the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+**Note:** Given *n* will be a positive integer.
+
+**example 1 :**
+
+input: 2
+
+output: 2
+
+```
+1. 1 step + 1 step
+2. 2 steps
+```
+
+**example 2 :**
+
+input: 3
+
+output: 3
+```
+1. 1 step + 1 step + 1 step
+2. 1 step + 2 steps
+3. 2 steps + 1 step
+```
+
+**方法1：递归**
+
+**当数字较大是会超时,不行**
+
+```c++
+class Solution{
+public:
+    int climbStairs(int n){
+        if(n <= 0)
+            return 0;
+        else if(n == 1)
+            return 1;
+        else if(n == 2)
+            return 2;
+        return climbStairs(n-2)+climbStairs(n-1);
+    }    
+};
+```
+
+**注意到这是一个fib数列，可以利用迭代求fib数列和的方法，或者利用fib数列求和公式来求解**
+
+**方法二：迭代求fib数列和**
+
+时间复杂度O(n)
+
+空间复杂度O(1)
+
+runtime:  4ms  faster than 89.77%
+
+memory usage : 8.4 MB    less than 55.73%
+
+```c++
+class Solution{
+public:
+    int climbStairs(int n){
+		int prev = 0;
+        int cur = 1;
+        for(int i = 1; i<= n;++i){
+            int tmp = cur;
+            cur += prev;
+            prev = tmp;
+        }
+        return cur;
+    }    
+};
+```
+
+**方法三：**利用fib求和公式
+
+时间复杂度O(1)
+
+空间复杂度O(1)
+
+```c++
+class Solution{
+public:
+    int climbStairs(int n){
+		const double s = sqrt(5);
+        return floor( (pow((1+s)/2,n+1) + pow((1-s)/2,n+1))/s+0.5);
+    }    
+};
+```
 

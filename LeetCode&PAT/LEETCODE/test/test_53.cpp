@@ -14,8 +14,8 @@
 #include<array>
 #include<cmath>
 #include<numeric>
+#include<climits>
 
-#define INT_MIN -32516
 using namespace std;
 
 class Solution{
