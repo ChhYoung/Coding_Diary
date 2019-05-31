@@ -14,6 +14,8 @@
 
 ### 2.膨胀
 
+B在点z位置时至少与A有一个交点
+
 $A \bigoplus B$
 
 - B的中心点绕A的边界区域平移,
@@ -24,9 +26,11 @@ $A \bigoplus B$
 	![](./pics/膨胀应用.png)
 ### 3.腐蚀
 
+B在点z时，B所覆盖的范围必须都在A内
+
 $A \ominus B$
 
-- B 平移后刚好覆盖A的边界
+- B 平移平移Z所覆盖的点 ，必须在A内
 
   ![](./pics/腐蚀.png)
 
@@ -55,7 +59,7 @@ $A \ominus B$
 
 ### 5.击中击不中变换
 
-$A \odot B = (A \ominus X ) - (A - \oplus (W-X))$
+$A \odot B = (A \ominus X ) \cap (A ^c\ominus (W-X))$
 
 - 对多个目标构成的图像用腐蚀操作来进行目标检测
 
