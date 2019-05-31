@@ -8,7 +8,7 @@
 >- data structure and algoeithm in C++ for leetcode and Kaoyan
 >- the implement and design of SGI STL,mlpack,rapid json  
 >- small C++ game projects
->- OS
+>- OS 
 
 **Talk is cheap,here is the code**
  
