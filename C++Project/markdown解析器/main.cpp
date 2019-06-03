@@ -1,4 +1,4 @@
-#include<fostream>
+#include<fostream>          // std::ofstream
 #include"mdtransformer.hpp"
 
 int main(){
@@ -6,6 +6,7 @@ int main(){
     MarkdownTranform transformer("test,md");
 
     // getTableOfCOntents()方法获取Markdown文件的HTML格式
+    // 获取目录
     std::string table = transformer.getTableOfCOntents();
 
     // getContents()方法获取Markdown转成HTML后的内容
