@@ -28,8 +28,12 @@ C++ 实现markdown解析器
 6. `>`使用`<blockquote>`标签
 7. `—` `1.`分别用用`<u1>`和`<ol>`进行包裹，最后将整个内容使用`<li>`进行包装
 8. `_`和`*`分别用`<em>`和`<strong>`标签
+9. 
 
 设计关键字token
+
+
+
 ```
 * 0: null                          |开始
 * 1: <p>                           |段落
@@ -73,6 +77,7 @@ public:
 ```
 
 因为Markdown和HTML类似都具有类似DOM tree的结构，所以需要去实现一个树结构
+
 ```C++
 // 保存目录
 typedef struct Cnode{
@@ -138,6 +143,7 @@ inline std::pair<int , char*> start(char* src){
 `>`和空格则为引用
 数字加`.`则为有序列表
 否则就是普通段落
+
 ```c++
 // 判断当前行的类型
 // src: 源串
@@ -166,14 +172,7 @@ inline bool isHref(node *v) {
 }
 
 ```
-```c++
-// 判断当前行的类型
-// src ： 源串
-// return 当前行的类型和除去行标志性关键字的正是内容的 char* 指针组成的 std::pair
-inline std::pair<int , char*>JudgeType(char* src){
-    //TODO
-}
-```
+
 
 
 

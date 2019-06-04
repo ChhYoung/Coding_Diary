@@ -1,13 +1,13 @@
-#include<fostream>          // std::ofstream
-#include"mdtransformer.hpp"
+#include<fstream>          // std::ofstream
+#include"mdtransformer.h"
 
 int main(){
     // 装载markdown测试文件
-    MarkdownTranform transformer("test,md");
+    MarkdownTransform transformer("test.md");
 
     // getTableOfCOntents()方法获取Markdown文件的HTML格式
     // 获取目录
-    std::string table = transformer.getTableOfCOntents();
+    std::string table = transformer.getTableOfContents();
 
     // getContents()方法获取Markdown转成HTML后的内容
     std::string contents = transformer.getContents();
@@ -24,7 +24,7 @@ int main(){
 
     // 结果写到文件中
     std::ofstream out;
-    out.open("output/index.html");
+    out.open("index.html");
 
     // 将转换的内容构造到 HTML的<article></article>标签内部
     out << head + table + contents + end;
