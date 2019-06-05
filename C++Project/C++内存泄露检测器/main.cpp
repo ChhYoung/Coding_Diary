@@ -1,7 +1,5 @@
 #include<iostream>
-
-
-
+#include"LeakDetector.h"
 class Err {
 public:
 	Err(int n) {
@@ -16,11 +14,11 @@ private:
 };
 
 int main() {
+	
 	// 忘记释放指针b的内存，从而导致内存泄露
 	int* a = new int;
 	int* b = new int;
-	//delete a;
-	//delete b;
+	delete a;
 
 	// 0 为参数传递给构造函数将发生异常，从而导致异常分支的内存泄露
 	
@@ -32,4 +30,5 @@ int main() {
 		std::cout << "Exception catch: " << ex << std::endl;
 	};
 	return 1;
+
 }

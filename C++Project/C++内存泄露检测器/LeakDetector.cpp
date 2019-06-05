@@ -1,4 +1,3 @@
-
 #include<iostream>
 #include<cstring>
 
@@ -112,7 +111,7 @@ void operator delete[](void* _ptr) noexcept {
 
 unsigned int _leak_detector::LeakDetector(void) noexcept {
 	unsigned int count = 0;
-	// 遍历列表，有内存泄露则_LeakRoot.next 中不是指向自己
+	// 遍历列表，有内存泄露则_LeakRoot.next 总不是指向自己
 	_MemoryList* ptr = _root.next;
 	while (ptr && ptr != &_root) {
 		// 输出存在泄露的信息
