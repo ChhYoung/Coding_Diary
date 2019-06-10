@@ -1,13 +1,14 @@
 # 数据结构 c++
+[TOC]
 ## 预备知识：
 
->**g++**:
+### g++:
 编译   g++ -std=c++11 -c countOnes.cpp 生成对象文件countOnes.o
 链接   g++ -std=c++11 -o countOnes countOnes.o 链接生成可执行文件countOnes
 简便操作   g++ -std=c++11 -o countOnes countOnes.cpp
 多个文件 g++ -o simple main.cpp simple.cpp
 
->**gdb**:
+### gdb:
 首先生成debug文件 g++ countOnes.cpp -o bugging -g
 进入gdb调试: gdb bugging
 退出gdb调试: quit
@@ -23,7 +24,7 @@
 | finish  |  |  运行到函数结束  |
 | continue  | c |  继续运行  |
 | delete  | d |  删除断点  |
->**makefile**:
+### makefile:
 >基本结构
 >终极目标：依赖A  依赖B 依赖C
     终极目标命令
@@ -88,7 +89,7 @@ add_executable(leptjson_test test.c)
 #指定执行文件所依赖的静态库
 target_link_libraries(leptjson_test leptjson)
 ```
-
+### 杂知识
 **正则表达式**
 元字符 `\b`,`\w`,`.`,`*`
 `0\d{2}-\d{8}`
