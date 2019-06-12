@@ -22,6 +22,7 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "cstring": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "fstream": "cpp"
     }
 }
