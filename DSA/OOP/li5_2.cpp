@@ -1,0 +1,47 @@
+// li5_2.cpp
+// 静态联编
+
+#include<iostream>
+
+const double PI = 3.1415926;
+
+class Figure{
+public:     
+    Figure(){};
+    double area() const {return 0.0;}    
+};
+
+class Circle:public Figure{
+private: 
+    double R;
+public:
+    Circle(double myr){ R = myr;}
+    double area() const {return R*R*PI;}       
+};
+
+class Rectangle:public Figure{
+private: 
+    double l,w;
+public:
+    Rectangle(double myl,double myw){ l = myl;w = myw;}
+    double area() const {return l*w;}       
+};
+
+void Func(Figure &p){
+    std::cout<<p.area()<<std::endl;
+}
+
+int main(){
+    Figure fig;
+    std::cout<<"area of figure is ";
+    Func(fig);
+    Circle c(1.0);
+    std::cout<<"area of circle is ";
+    Func(c);
+    Rectangle d(2,3);
+    std::cout<<"area of rectangle is ";
+    Func(d);
+    return 1;
+}
+// 由于在编译期就已经完成，将p的area联编到Figure的area上，所以输出结果都是0，
+// 需要采用 动态联编；或者单个调用 c.area(),d.area()
