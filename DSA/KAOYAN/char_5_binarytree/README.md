@@ -18,7 +18,7 @@
 
 
 
-**version 0.1 **
+**version 0.1**
 
 ```c++
 #ifndef CODE_DIARY_DSA_BINNODE_H__
