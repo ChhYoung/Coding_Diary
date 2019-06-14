@@ -1,5 +1,7 @@
 # leetcode
 
+[TOC]
+
 #### 1. Two Sum
 
 > Given an array of integers, return **indices** of the two numbers such that they add up to a specific target.
@@ -668,6 +670,37 @@ class Solution{
 public:
     int romanToInt(string s){
         unordered_map
+    }
+};
+```
+
+#### 83.  Remove Duplicates from Sorted List
+
+Given a sorted linked list, delete all duplicates such that each element appear only *once*.
+
+**example 1：**
+
+```c++
+input : 1->1->2
+output : 1->2
+```
+
+```c++
+// _83.cpp
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        for(ListNode* p=head;p&&p->next;){
+            if(p->val==p->next->val){
+                auto temp=p->next;
+                p->next=temp->next;
+                // memory leak
+                delete temp;
+                continue;
+            }
+            p=p->next;
+        }
+        return head;
     }
 };
 ```
