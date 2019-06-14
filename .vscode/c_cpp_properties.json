@@ -5,19 +5,20 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceRoot}"
+                "${workspaceRoot}/include"
             ],
             "defines": [],
             "browse": {
                 "path": [
                     "/usr/include",
                     "/usr/local/include",
-                    "${workspaceRoot}"
+                    "/usr/local/include",
+                    "${workspaceRoot}/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
             },
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": ["/usr/bin/clang","/usr/bin/gcc"],
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
