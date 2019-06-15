@@ -23,6 +23,15 @@
         "typeinfo": "cpp",
         "cstring": "cpp",
         "new": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "ctime": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "functional": "cpp",
+        "memory": "cpp",
+        "sstream": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }
