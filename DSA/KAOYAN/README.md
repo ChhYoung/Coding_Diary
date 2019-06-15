@@ -1,3 +1,5 @@
+https://blog.csdn.net/scylhy/article/details/72699166
+
 # 数据结构 c++
 [TOC]
 ## 预备知识：

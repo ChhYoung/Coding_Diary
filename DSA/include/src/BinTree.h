@@ -1,8 +1,14 @@
 // ./DSA/include/src/BinTree.h
+#pragma once 
+
 #ifndef _DSA_INCLUDE_SRC_BINTREE_H__
 #define _DSA_INCLUDE_SRC_BINTREE_H__
 #include"BinNode.h" 
 #include"release.h"
+
+#if TEST_BUILD
+#include <stdlib.h>  // rand
+#endif
 
 namespace DSA {
 
@@ -16,9 +22,10 @@ public:
 	typedef BinTreeType* BinTreePtr;
 
 protected:
-		// 规模
+	// 树的属性， 其他的如树的具体结构等为节点的属性在 BinNode 中
+	// 规模
 	int size_;
-		// 树根
+	// 树根
 	NodePtr root_;
 
 		// 更新节点node的高度
@@ -49,6 +56,7 @@ protected:
 
 public:
 	// 来自父亲的引用
+	// 父节点指向当前节点的指针
 	NodePtr& fromParentTo(NodePtr node) {
 		return node->isRoot() ? root_ : (node->isLChild() ? node->parent_->lChild_ : node->parent_->rChild_);
 	}
@@ -102,9 +110,47 @@ public:
 		return x;
 	}
 
+	// 删除二叉树中x节点及其后代，返回被删除的节点的个数
+	static int removeAt(NodePtr x) {
+		if (!x) { return 0; }
+		int n = 1 + removeAt(x->lChild_) + removeAt(x->rChild_);
+		release(x->data_);
+		release(x);
+		return n;
+	}
 
+	// 删除以位置x处节点为根的只数，返回该子树原先的规模
+	int remove(NodePtr x) {
+		// 切断来自父节点的引用
+		fromParentTo(x) = nullptr;
+		// 更新高度
+		updateHeightAbove(x->parent_);
+		int n = removeAt(x);
+		size_ -= n;
+		return n;
+	}
 
+	// 将子树x从当前树中摘除，并转换为一颗独立的树
+	BinTreePtr secede(NodePtr x) {
+		fromParentTo(x) = nullptr;
+		updateHeightAbove(x->parent_);
+		auto tree = new BinTreeType();
+		x->parent_ = nullptr;
+		tree->root_ = x;
+		tree->size_ = x->size();
+		size_ -= tree->size;
+		return tree;
+	}
 
+	/*********************************************************************************************/
+	//  二叉树的遍历
+	// 先序遍历
+	template<typename VST>
+	void travPreOrder(VST& visit) {
+		if (root_) {
+#if TEST_BUILD
+		}
+	}
 
 
 };// end of BinTree
