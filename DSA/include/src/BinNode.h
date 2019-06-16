@@ -3,6 +3,7 @@
 
 #ifndef _DSA_INCLUDE_SRC_BINNODE_H__
 #define _DSA_INCLUDE_SRC_BINNODE_H__ 
+#include"stack.h"
 
 namespace DSA {
 
@@ -168,8 +169,8 @@ public:
 	}
 	// 先序遍历迭代版 v2
 	//  1. 辅助函数
-//  从当前节点出发，沿左分支不断深入，直至没有左分支节点,
-//  沿途节点遇到就访问,并将遇到的节点的右节点压入栈中
+	//  从当前节点出发，沿左分支不断深入，直至没有左分支节点,
+	//  沿途节点遇到就访问,并将遇到的节点的右节点压入栈中
 	template<typename VST>
 	static void visitAlongLeftBranch(Ptr node, VST& visit, Stack<Ptr>& stack) {
 		while (node) {
