@@ -298,9 +298,9 @@ static void visitTravPre(Ptr node, VST& visit) {
 ```
 **迭代实现**:
 
-**版本1：**观察上述递归实现，从右子树入手可知这是一个**尾递归**，利用栈的结构，将访问到的根先入栈，
+**版本1：**观察上述递归实现，从右子树入手可知这是一个[**尾递归**](https://www.zhihu.com/question/20761771)，利用栈的结构，将访问到的根先入栈，[尾递归参考网站](http://www.ruanyifeng.com/blog/2015/04/tail-call.html)
 
-尾递归：递归实例调用发生在算法的最后一步，任何实例都终止在这一递归调用，实例出现在最后一步
+尾递归：递归实例调用发生在算法的最后一步，任何实例都终止在这一递归调用**if (!node) { return; }**，实例出现在最后一步,  尾递归的特点： 操作的最后一步是调用自身的递归，不需要用大量的栈来保存之前的环境，**尾递归只会占用恒量的内存**
 
 ```c++
 template <typename VST>
@@ -351,7 +351,7 @@ static void travPre_I2(Ptr node, VST& visit){
 	auto x = this;
 	while(true){
 		// 遍历左
-		visitAlongLeftBranch(node,visit,s);
+		visitAlongLeftBranch(x,visit,s);
 		if(s.empty()){ break;}
 		// 自底向上进入右
 		x = s.pop();
@@ -372,7 +372,7 @@ static void visitTravIn(Ptr node, VST& visit) {
 	visitTravPre(node->rChild_, visit);
 }
 ```
-**迭代实现中序遍历 v1:**
+**版本一 ：迭代实现中序遍历 v1:**
 
 对于中序遍历的左树，其递归的实例调用发生在根节点，右树还未遍历,右树的递归遍历为尾递归，调用递归实例`return`
 
@@ -417,6 +417,147 @@ void travIn_I1(VST& visit) {
 }
 ```
 
+- 在中序遍历的中 没有直接前驱(后继)的节点称为首(末)节点
+- 对于二叉搜索树，找到一个节点的直接后继非常重要
+
+相关的算法为:
+
+> - 若节点有右孩子，则直接后继必在该节点的右子树中（书上图 5.17的dfe    fg
+> - 若无有孩子，则直接后继将当前节点包含于其左子树的最低的祖先
+
+实现
+
+```c++
+Ptr succ(){
+    // 记录后继的临时变量
+    Ptr s = this;
+    // 存在右孩子
+    if(rChild_){
+        s = rChild_;
+        while(s->lChild_){
+            s = s->lChild_;
+        }
+    }
+    // 否则，找到 将当前节点包含在左子树的最低祖先
+    else {
+        while(s->isRChild){
+            s = s->parent;
+        }
+        s = s->parent;
+    }
+    return s;
+}
+```
+
+**版本二：消去辅助函数版的中序遍历实现**
+
+```c++
+template<typename VST>
+void travIn_I2(VST& visit){
+	Stack<Ptr> s;
+	auto x = this;
+	while(true){
+		// 辅助函数的功能，走到最左边
+		if(x){
+			s.push(x);
+			x = x->lChild_;
+		}
+		else if(!s.empty()){		
+			// 访问最左节点
+			x = x.pop();
+			visit(x->data_);
+			// 进入右支
+			x = x->rChild_;
+		}
+		else{
+			break;
+		}
+	}
+}
+```
+
+**版本三：不使用栈**: 使用 succ 来寻找直接后继
+
+使用栈会带来额外空间开销，最差时中总节点数相当
+
+对版本二进行改进，反复利用其`parent_`指针, 使空间复杂度将为`O(1)`，但由于反复调用`succ`时间复杂度有所增加
+
+- 增加一个标志位来判断是否刚做过一次自下向上的回溯(部分遍历完后，利用`succ`找到直接后继)
+- 若不是则按照 中序遍历的规则来访问其左子树
+- 若是则访问其右子树
+
+```c++
+	template<typename VST>
+	void travIn_I3(VST& visit) {
+		// 初始将回溯标准置否
+		bool backtrack = false;
+		auto x = this;
+		while (true) {
+			// 若有左树  且   刚刚没有回溯(避免重复访问)
+			// 则 深入遍历左树---> 按照中序遍历的方式到达最左端
+			if (!backtrack && x->lChild_) {
+				x = x->lChild;
+			}
+			// 若无左树  或者  刚刚回溯过
+			// 则 
+			// 若存在右树则进入右树继续遍历
+			// 若不存在则找到直接后继，再进入其右树遍历
+			else {
+				visit(x->data_);
+				if (x->rChild_) {
+					x = x->rChild_;
+					backtrack = false;
+				}
+				else {
+					// 无右子树情况，进行回溯找到后继
+					// 退出条件： 最后一个元素的后继为空
+					if (!(x = x->succ())) { break; }
+					// 重设回溯标志位
+					backtrack = true;
+				}
+			}
+		}
+	}
+```
+
+**版本四：不使用辅助栈 和 标志位**
+
+- 不断利用succ来跳转到直接后继
+
+```c++
+	// 迭代实现中序遍历 v4
+	// 不使用标志位与栈
+	// 但要多次调用 succ
+	template <typename VST>
+	void travIn_I4(VST& visit) {
+		auto x = this;
+		while (true) {
+			// 到达最左端
+			if (x->lChild_) {
+				x = x->lChild_;
+			}
+			else {
+				visit(x->data_);
+				// 若无右支则回溯
+				// 若一直无右支则不断的回溯
+				// -
+				// -------不断在无右支处回溯至直接后继
+				while (!x->rChild_) {
+					// 退出条件： 最后一个元素的后继为空
+					if (!(x = x->succ())) { return; }
+					else {
+						// 访问直接后继的数据
+						visit(x->data_);
+					}
+				}
+				// 若存在右支
+				// 则进入非空右支
+				x = x->rChild_;
+			}
+		}
+	}
+```
+
 
 
 
@@ -434,7 +575,25 @@ static void visitTravPost(Ptr node, VST& visit) {
 }
 ```
 
+**后序遍历的特点**
 
+- 将二叉树放置在平面上，设所有节点都不透明，入口为最左端的可见节点**v**    (最高左侧的可见节点) 
+- 找到根到该节点的唯一通路为主通路
+- 从**v**开始沿主通路自底向上 ，按左右根的顺序访问
+
+**具体实现**
+
+```c++
+template <typename VST>
+void travPost_I(VST& visit){
+	// go to the highest leaf visiable from left 
+	static auto goToHLVFL = [](Stack<Ptr>& stack){
+		while(auto node = stack.top()){
+		
+		}
+	}
+}
+```
 
 
 

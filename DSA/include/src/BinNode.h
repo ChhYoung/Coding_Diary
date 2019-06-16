@@ -3,7 +3,6 @@
 
 #ifndef _DSA_INCLUDE_SRC_BINNODE_H__
 #define _DSA_INCLUDE_SRC_BINNODE_H__ 
-#include"stack.h"
 
 namespace DSA {
 
@@ -169,8 +168,8 @@ public:
 	}
 	// 先序遍历迭代版 v2
 	//  1. 辅助函数
-	//  从当前节点出发，沿左分支不断深入，直至没有左分支节点,
-	//  沿途节点遇到就访问,并将遇到的节点的右节点压入栈中
+//  从当前节点出发，沿左分支不断深入，直至没有左分支节点,
+//  沿途节点遇到就访问,并将遇到的节点的右节点压入栈中
 	template<typename VST>
 	static void visitAlongLeftBranch(Ptr node, VST& visit, Stack<Ptr>& stack) {
 		while (node) {
@@ -188,7 +187,7 @@ public:
 		auto x = this;
 		while (true) {
 			// 遍历左
-			visitAlongLeftBranch(node, visit, s);
+			visitAlongLeftBranch(x, visit, s);
 			if (s.empty()) { break; }
 			// 自底向上进入右
 			x = s.pop();
@@ -245,41 +244,127 @@ public:
 			}
 		}
 	}
-
 	// 迭代实现中序遍历 v3
+	// 使用 succ ,不使用辅助栈，减少额外空间开销，
+	// 但增加了时间开销
+	// 通过一个 标志位 backtrack 来判断一个节点是否已经回溯(部分遍历完后利用succ找到直接遍历)
+	// 
 	template<typename VST>
 	void travIn_I3(VST& visit) {
-		// 前一步是否刚从右子树回溯
+		// 初始将回溯标准置否
 		bool backtrack = false;
 		auto x = this;
 		while (true) {
-			// 若有左子树 且 不是刚刚回溯
-			// 则深入遍历左子树
+			// 若有左树  且   刚刚没有回溯(避免重复访问)
+			// 则 深入遍历左树---> 按照中序遍历的方式到达最左端
 			if (!backtrack && x->lChild_) {
-				x = x->lChild_;
+				x = x->lChild;
 			}
-			//  若无左子树或刚刚回溯
-			//  存在右子树则进入右子树，
-			//  不存在则 调用succ找到直接后继(回溯)
-			//   回溯即左访问完，开始访问右边
+			// 若无左树  或者   刚刚回溯过
+			// 则 
+			// 若存在右树则进入右树继续遍历
+			// 若不存在则找到直接后继，再进入其右树遍历
 			else {
 				visit(x->data_);
-				// 若右子树非空,进入右子树继续遍历
 				if (x->rChild_) {
 					x = x->rChild_;
 					backtrack = false;
 				}
 				else {
-					// 回溯
-					if (!(x = x->succ())) {
-						break;
-					}
+					// 无右子树情况，进行回溯找到后继
+					// 退出条件： 最后一个元素的后继为空
+					if (!(x = x->succ())) { break; }
+					// 重设回溯标志位
 					backtrack = true;
 				}
 			}
 		}
 	}
+	
+	// 迭代实现中序遍历 v4
+	// 不使用标志位与栈
+	// 但要多次调用 succ
+	template <typename VST>
+	void travIn_I4(VST& visit) {
+		auto x = this;
+		while (true) {
+			// 到达最左端
+			if (x->lChild_) {
+				x = x->lChild_;
+			}
+			else {
+				visit(x->data_);
+				// 若无右支则回溯
+				// 若一直无右支则不断的回溯
+				// -
+				// -------不断在无右支处回溯至直接后继
+				while (!x->rChild_) {
+					// 退出条件： 最后一个元素的后继为空
+					if (!(x = x->succ())) { return; }
+					else {
+						// 访问直接后继的数据
+						visit(x->data_);
+					}
+				}
+				// 若存在右支
+				// 则进入非空右支
+				x = x->rChild_;
+			}
+		}
+	}
 
+	// 迭代实现后续遍历
+	// 利用一个辅助函数： go to highest leaf visible from left
+	template<typename VST>
+	void travPost_I(VST& visit) {
+		// 辅助函数
+		// go to highest leaf visible from left
+		// 压入栈的节点为主通路上节点的左右节点
+		static auto goToHLVFL = [](Stack<Ptr> & stack) {
+			// 从根节点开始按照顺序压栈，使得出栈的都是左节点
+			while (auto node = stack.top()) {
+				// 尽量向左
+				if (node->lChild_) {
+					if (node->rChild_) { stack.push(node->rChild_); }
+					stack.push(node->lChild_);
+				}
+				// 实在不行则向右
+				else {
+					stack.push(node->rChild_);
+				}
+			}
+			//弹出栈顶空节点
+			stack.pop();
+		}
+		
+		Stack<Ptr> 2s;
+		auto x = this;
+		s.push(x);
+		while (!s.empty()) {
+			// 沿主通路访问
+			if (s.top() != x->parent_) {
+				// goToHLVFL保证定位到每个子树的HLVFL节点，
+				// 利用辅助栈存储右节点来实现宏观上凭借每个子树遍历的结果
+				goToHLVFL(s);
+			}
+			x = s.pop();
+			visit(x->data_);
+		}
+	}
+
+	// 层次遍历
+	// 利用队列 先进先出
+	template <typename VST>
+	void travLevel(VST& visit) {
+		Queue<Ptr> q;
+		q.enqueue(this);
+		while (!q.empty()) {
+			auto x = q.dequeue();
+			visit(x->data_);
+			if (x->lChild_) { q.enqueue(x->lChild_);}
+			if (x->rChild_) { q.enqueue(x->rChild_); }
+		}
+	}
 
 
 };// end of BinNode

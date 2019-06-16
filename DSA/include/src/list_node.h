@@ -3,21 +3,21 @@
 namespace dtl 
 {
 
-//! ÖÈ
+//! ç§©
 typedef int Rank;
 
-//! Á´±í½Úµã
+//! é“¾è¡¨èŠ‚ç‚¹
 template <typename T>
 struct ListNode
 {
 	typedef ListNode<T> Node;
 	typedef Node* Ptr;
 
-	//! Êı¾İ
+	//! æ•°æ®
 	T data;
-	//! Ç°Çı
+	//! å‰é©±
 	Ptr pred;
-	//! ºó¼Ì
+	//! åç»§
 	Ptr succ;
 
 	ListNode() : data(), pred(nullptr), succ(nullptr) {}
