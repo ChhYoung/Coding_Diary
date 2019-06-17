@@ -302,6 +302,28 @@ static void visitTravPre(Ptr node, VST& visit) {
 
 尾递归：递归实例调用发生在算法的最后一步，任何实例都终止在这一递归调用**if (!node) { return; }**，实例出现在最后一步,  尾递归的特点： 操作的最后一步是调用自身的递归，不需要用大量的栈来保存之前的环境，**尾递归只会占用恒量的内存**
 
+#### 算法的正确性：
+
+- 无遗漏：
+
+  假设深度为d的能够被访问，则深度为d+1的也能被访问
+
+- 根先：
+
+  任意子树都最先访问根节点
+
+- 左先右后：
+
+  由栈的特点，左子树先于右子树被访问
+
+#### 效率：
+
+**O(n)**
+
+- 每步迭代一个出栈并被访问
+- 每个节点 出/入栈 有且只有一次
+- 每步迭代只需O(1)
+
 ```c++
 template <typename VST>
 void travPre_I1(VST& visit){
@@ -325,8 +347,8 @@ void travPre_I1(VST& visit){
 
 先序遍历可以分解成两个过程：
 
-- 沿左走到头
-- 自底向上遍历右子树
+- 自顶向下  沿左走到头
+- 自底向上  遍历右子树
 
 分解成两个函数
 
@@ -584,13 +606,56 @@ static void visitTravPost(Ptr node, VST& visit) {
 **具体实现**
 
 ```c++
-template <typename VST>
-void travPost_I(VST& visit){
-	// go to the highest leaf visiable from left 
-	static auto goToHLVFL = [](Stack<Ptr>& stack){
-		while(auto node = stack.top()){
-		
+// 迭代实现后续遍历
+	// 利用一个辅助函数： go to highest leaf visible from left
+	template<typename VST>
+	void travPost_I(VST& visit) {
+		// 辅助函数
+		// go to highest leaf visible from left
+		// 压入栈的节点为主通路上节点的左右节点
+		static auto goToHLVFL = [](Stack<Ptr> & stack) {
+			// 从根节点开始按照顺序压栈，使得出栈的都是左节点
+			while (auto node = stack.top()) {
+				// 进入左节点
+				if (node->lChild_) {
+					if (node->rChild_) { stack.push(node->rChild_); }
+					stack.push(node->lChild_);
+				}
+				else {
+					stack.push(node->rChild_);
+				}
+			}
+			stack.pop();
 		}
+		
+		Stack<Ptr> s;
+		auto x = this;
+		s.push(x);
+		while (!s.empty()) {
+			if (s.top() != x->parent_) {
+				goToHLVFL(s);
+			}
+			x = s.pop();
+			visit(x->data_);
+		}
+	}
+
+```
+
+###  3.4 层次遍历:
+
+利用**队列**来实现迭代式层次遍历
+
+```c++
+template<typename VST>
+void travLevel(VST& visit){
+	Queue<Ptr> q;
+	q.enqueue(this);
+	while(!q.empty()){
+		auto x = q.dequeue();
+		visit(x->data_);
+		if(x->lChild_) {q.enqueue(x->lChild_);}
+		if(x->rChild_) {q.enqueue(x->rChild_);}
 	}
 }
 ```

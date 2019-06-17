@@ -3,6 +3,7 @@
 
 #ifndef _DSA_INCLUDE_SRC_BINTREE_H__
 #define _DSA_INCLUDE_SRC_BINTREE_H__
+
 #include"BinNode.h" 
 #include"release.h"
 
@@ -37,13 +38,16 @@ protected:
 		//     则A的高度自然不会会改变
 		// 2. 改进后复杂度不变，但减少了不必要的更新
 
-	// 原始版本
+	// 原始版本,常规规则
+	// O(1)
 	virtual int updateHeight(NodePtr node) {
 		auto lh = stature(node);
 		auto rh = stature(node);
 		return node->height_ = 1 + (lh < rh ? rh : lh);
 	}
 	// 优化版本
+	// O(n = depth(x))
+	// 最坏的情况-->都要更新
 	virtual int  updateHeightAbove(NodePtr node) {
 		while (node) {
 			int old_height = node->height_;
@@ -151,7 +155,7 @@ public:
 #if TEST_BUILD
 		}
 	}
-
+#endif	
 
 };// end of BinTree
 

@@ -50,6 +50,7 @@ struct BinNode {
 	{}
 // 操作接口
 	// 统计当前节点的后代总数
+	// 时间复杂度：O(n = |size|)
 	int size() const {
 		int s = 1;
 		if (lChild_) { s += lChild_->size(); }
