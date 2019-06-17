@@ -735,5 +735,53 @@ public:
 };
 ```
 
+#### 104.Maximum Depth of Binary Tree
+
+**思路一**：直接利用递归
+
+* runtime: 4ms   , faster than 99.15%
+* memory usage: 19.2MB ,  less than 84.66%
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if(!root) return 0;
+        int l = maxDepth(root->left);
+        int r = maxDepth(root->right);
+        return 1 + (l>r?l:r);
+    }
+};
+
+```
+
+#### 136.single number 
+
+**思路一：异或操作分配率**
+
+a xor b xor a  == a xor a xor b = b
+
+```c++
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int res = 0;
+        for(auto &i:nums){
+            res ^= i;
+        }
+        return res;
+    }
+};
+```
+
 
 

@@ -29,7 +29,7 @@ int main(){
     }
     std::cout<<"Default Allocator Time: ";
     std::cout<<(((double)clock() - start) / CLOCKS_PER_SEC)<<"\n\n";
-/* 
+
     // 使用内存池
     StackAlloc<int, MemoryPool<int>> stackPool;
     start = clock();
@@ -43,6 +43,6 @@ int main(){
     std::cout << "MemoryPool Allocator Time: ";
     std::cout << (((double)clock() - start) / CLOCKS_PER_SEC) << "\n\n";
 
-    */
+    
     return 1;
 }

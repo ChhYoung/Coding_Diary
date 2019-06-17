@@ -1,5 +1,9 @@
 # PAT
 
+[TOC]
+
+
+
 ##  乙级
 
 ###  1001害死人不偿命的(3n+1)猜想(15分)
@@ -86,3 +90,47 @@ int main(){
     return 0;
 }
 ```
+
+### 1006 换个格式输出整数(15 points)
+
+```c++
+#include<iostream>
+
+int main(){
+    int m ;
+    std::cin>>m;
+    int bai = m/100;
+    int ge = m%10;
+    int shi = (m-bai*100-ge)/10;
+    for(int i=0;i<bai;i++)
+        std::cout<<'B';
+    for(int i=0;i<shi;i++)
+        std::cout<<'S';
+    for(int i=1;i<=ge;i++)
+        std::cout<<i;
+    return 0;
+}
+```
+
+```c++
+
+#include <iostream>
+using namespace std;
+int main() {
+    int a, i = 0;
+    cin >> a;
+    int b[3] = {0};
+    while (a != 0) {
+        b[i++] = a % 10;
+        a = a / 10;
+    }
+    for (int k = 0; k < b[2]; k++)
+        cout << "B";
+    for (int k = 0; k < b[1]; k++)
+        cout << "S";
+    for (int k = 0; k < b[0]; k++)
+        cout << k + 1;
+    return 0;
+}
+```
+

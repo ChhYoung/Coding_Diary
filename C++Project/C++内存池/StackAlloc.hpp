@@ -8,7 +8,7 @@ template<typename T>
 struct StackNode_{
     // 数据
     T data;
-    // 前一个节点
+    // 指向前一个节点
     StackNode_* prev;
 };
 
@@ -17,6 +17,9 @@ class StackAlloc{
 public: 
     typedef StackNode_<T> Node;
     // 得到 std::allocator<StackNode_<T>>
+    // typedef typename std::allocator<T>::template rebind<Node>::other allocator;
+    // 该作用为 对一个给定类型T1的分配器，想根据相同策略得到类型T2的分配器
+    // 用 typename 来指明 other是一个类型
     typedef typename Alloc::template rebind<Node>::other allocator;
 
     StackAlloc(){head_ = 0;}
@@ -68,3 +71,17 @@ private:
 };
 
 #endif // STACK_ALLOC_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
