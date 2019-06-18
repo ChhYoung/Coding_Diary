@@ -785,3 +785,66 @@ public:
 
 
 
+#### 226. invert binary tree
+
+invert a binary tree top-down
+
+**思路一：利用递归自顶向下**
+
+**runtime:** 4ms  faster than 82.70%
+
+**memory usage:** 9.2MB , less than 22.16%
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+        if(!root) return nullptr;
+        auto temp = root->left;
+        root->left = root->right;
+        root->right = temp;
+        invertTree(root->left);
+        invertTree(root->right);
+        return root;
+    }
+};
+```
+
+**思路二：利用迭代**
+
+用辅助栈来保存节点,先处理一侧的节点
+
+**memory usage:** 9.1MB less than 65.49%
+
+```c++
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+        if(!root) return nullptr;
+        vector<TreeNode*> stack;
+        stack.push_back(root);
+        while(!stack.empty()){
+            auto temp = stack.back();
+            stack.pop_back();
+            swap(temp->left,temp->right);
+            if(temp->left) stack.psh_back(temp->left);
+            if(temp->right) stack.push_back(temp->right);
+        }
+        return root;
+    }
+};
+```
+
+
+
+
+
