@@ -846,5 +846,69 @@ public:
 
 
 
+#### 206.reverse linked list
 
+reverse a singly linked list
+
+**Example:**
+
+```
+Input: 1->2->3->4->5->NULL
+Output: 5->4->3->2->1->NULL
+```
+
+**思路一：迭代，利用两个指针**
+
+时间复杂度 O(n)
+
+空间复杂度  O(1)
+
+runtime : 8 ms   faster than 91.18%
+
+memory usage: 9.2 MB   less than 54.91%
+
+
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        while(curr){
+            auto next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next; 
+        }
+        return prev;
+    }
+};
+```
+
+**递归：**
+
+反向，假设原链为 $n_1->n_2->...n_{k-1}....->n_{m}$ 中间状态为  $n_1->n_2->...n_{k-1}->n_{k}->n_{k+1}<-....<-n_{m}$ 
+
+要n_{k+1} 指向 n_k则令 n_k->next->next = n_k;
+
+```c++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(!head || !head->next) return head;
+        ListNode* p = reverseList(head->next);
+        head->next->next = head;
+        head->next = nullptr;
+        return p;
+};
+```
 
