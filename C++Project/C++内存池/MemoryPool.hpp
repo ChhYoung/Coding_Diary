@@ -35,7 +35,7 @@ public:
 
     // 同一时间只能分配一个对象，n 和 hint 会被忽略
     pointer allocate(size_t n=1,const T* hint=0){
-        // 如果右空闲对象槽，直接将空闲区域交出去
+        // 如果有空闲对象槽，直接将空闲区域交出去
         if(freeSlots_ != nullptr){
             pointer result = reinterpret_cast<pointer>(freeSlots_);
             freeSlots_ = freeSlots_->next;

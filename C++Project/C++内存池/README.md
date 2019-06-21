@@ -10,7 +10,27 @@
 - 每次申请都要经过复杂的系统调用，n次则需要时间为nT
 - 可以最初接分配好内存区域，当需要内存时，直接在分配好的内存中使用
 
-### 1.1: 左值与右值，右值引用，std::move  std::forward
+### 1.1 内存池设计的算法与原理
+
+**原理：**在真正使用内存之前，预先申请一点数量大小的内存块留作备用，当右新的内存需求时，就从内存池中分出一部分的内存块，内存块不够就再继续申请新的内存， 当内存释放时就归还到内存池中
+
+**算法：**
+
+- 预申请一个内存区chunk，将内存区的对象按照对象大小划分成多个内存块block
+- 维持一个空闲块链表，通过指针相连，标记头指针为第一个空闲块
+- 每次新申请一个对象的空间，则将该内存块从空闲链表中去除，更新空闲链表头指针
+- 每次释放一个对象空间时，则重新将该内存块加到空闲链表头
+- 若内存区占满，则新开辟一个内存区，维持一个内存区的链表，头指针指向最新的内存区
+
+**如图**
+
+![](./1.png)
+
+![](./2.png)
+
+![](./3.png)
+
+### 1.2: 左值与右值，右值引用，std::move  std::forward
 
 [详情](https://www.ibm.com/developerworks/cn/aix/library/1307_lisl_c11/)
 
@@ -158,17 +178,17 @@ MyString& operator=(MyString&& str) {
 
 ```c++
 void ProcessValue(int& i) { 
- std::cout << "LValue processed: " << i << std::endl; 
+     std::cout << "LValue processed: " << i << std::endl; 
 } 
  
 void ProcessValue(int&& i) { 
- std::cout << "RValue processed: " << i << std::endl; 
+     std::cout << "RValue processed: " << i << std::endl; 
 } 
  
 int main() { 
- int a = 0; 
- ProcessValue(a); 
- ProcessValue(std::move(a)); 
+     int a = 0; 
+     ProcessValue(a); 
+     ProcessValue(std::move(a)); 
 }
 ```
 
@@ -251,6 +271,7 @@ struct StackNode_{
 
 template <typename T, typename Alloc = std::allocator<T>>
 class StackAlloc{
+// 都调用内存分配器来管理内存
 public: 
     typedef StackNode_<T> Node;
     // 得到 std::allocator<StackNode_<T>>
@@ -270,13 +291,14 @@ public:
         // 依次出栈
         while(curr != 0){
             Node* tmp = curr->prev;
-            // 先析构再回收内存
+            // 先析构再回收内存,归还到空闲区
             allocator_.destroy(curr);
             allocator_.deallocate(curr,1);
             curr = tmp;
         }
         head_ = 0;
     }
+    
     // 压栈
     void push(T element){
         // 为一个节点分配内存
@@ -333,7 +355,7 @@ private:
 * 默认构造函数，初始化所有槽指针
 * 析构函数，销毁现有的内存槽
 * `allocate` 每次分配一个对象
-* `deallocate` 销毁p指向的内存块
+* `deallocate` 销毁p指向的内存块, 即将当前内存块放入空闲块链上
 * `construct` 
 * `destroy`销毁内存中的对象，即调用对象的析构函数
 
@@ -341,3 +363,64 @@ private:
 
 ##### MemoryPool::construct()的实现
 
+```c++
+// 以右值拷贝
+template <typename U,typename...Args>
+void construct(U* p, Args&&... args){
+	new (p) U(std::forward<Args>(args)...);
+}
+```
+##### MemoryPool::destroy()的实现
+
+```c++
+// 销毁内存池中的对象，调用对象的析构函数
+template<typename U>
+void destroy(U* p){
+    p->~U();
+}
+```
+
+##### MemoryPool::deallocate()的实现
+
+```c++
+// 销毁p指向的内存块
+void deallocate(pointer p, size_t n = 1){
+    if(p != nullptr){
+        // 用reinterpret_cast 强制类型转换
+        // 访问next必须将p转换为 slot_pointer_
+        reinterpret_cast<solt_pointer_>(p)->next = freeSlots_;
+        freeSlots_ = reinterpret_cast<slot_pointer_>(p);
+    }
+}
+```
+
+**MemoryPool::allocate()的实现**
+
+```c++
+pointer allocate(size_t n=1,const T* hint=0){
+        // 如果有空闲对象槽，直接将空闲区域交出去
+        if(freeSlots_ != nullptr){
+            pointer result = reinterpret_cast<pointer>(freeSlots_);
+            freeSlots_ = freeSlots_->next;
+            return result;
+        }
+        // 对象槽不够用，则分配一个新的内存区块
+        else{
+            if(currentSlot_ >= lastSlot_){
+                data_pointer_ newBlock = reinterpret_cast<data_pointer_>(operator new(BlockSize));
+                reinterpret_cast<slot_pointer_>(newBlock)->next = currentBlock_;
+                currentBlock_ = reinterpret_cast<slot_pointer_>(newBlock);
+                // 填充整个区域来满足元素内存区域的对齐要求
+                // 分配的内存区+指向内存区域的指针 并计算其（指针）大小
+                data_pointer_ body = newBlock + sizeof(slot_pointer_);
+                uintptr_t result = reinterpret_cast<uintptr_t>(body);
+                size_t bodyPadding = (alignof(slot_type_) - result)%alignof(slot_type_);
+                currentSlot_ = reinterpret_cast<slot_pointer_>(body+bodyPadding);
+                lastSlot_ = reinterpret_cast<slot_pointer_>(newBlock+BlockSize-sizeof(slot_type_));
+            }
+            return reinterpret_cast<pointer>(currentSlot_++);
+        }
+    }
+```
+
+![](./4.png-wm)
