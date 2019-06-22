@@ -134,6 +134,164 @@ int main() {
 }
 ```
 
+### 1007 素数对猜想
+
+```c++
+#include<iostream>
+using namespace std;
+bool isprime(int a){
+    for(int i=2;i*i<=a;++i){
+        if(a%i==0) return false;
+    }
+    return true;
+}
+
+int main(){
+    int N,cnt=0;
+    cin>>N;
+    for(int i=5;i<=N;i++)
+        if(isprime(i-2) && isprime(i)) cnt++;
+    cout<<cnt;
+    return 0;
+}
+```
+
+### 1008 数组右移
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    m %= n;
+    if (m != 0) {
+        reverse(begin(a), begin(a) + n);
+        reverse(begin(a), begin(a) + m);
+        reverse(begin(a) + m, begin(a) + n);
+    }
+    for (int i = 0; i < n - 1; i++)
+        cout << a[i] << " ";
+    cout << a[n - 1];
+    return 0;
+}
+```
+
+### 1009 说反话
+
+```c++
+#include <iostream>
+#include<stack>
+#include<string>
+
+int main(){
+    std::stack<std::string> v;
+    std::string s;
+    while(std::cin>>s) v.push(s);
+    std::cout<<v.top();
+    v.pop();
+    while(!v.empty()){
+        std::cout<<" "<<v.top();
+        v.pop();
+    }
+    return 0;
+}
+```
+
+### 1010 多项式求导
+
+```c++
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int main(){
+    vector<int> k;
+    int i;
+    while(cin>>i)
+        k.push_back(i);
+    for(int i=0;i<k.size();i++){
+        if(i%2==0)
+            k[i] *= k[i+1];
+    }
+    for(int i=0;i<k.size();i++){
+        if(i%2==1)
+            k[i] -= 1;
+    }
+    for(int i=0;i<=k.size()-2;i+=2){
+        if(k[0]==0 && k[1]==-1){
+            cout<<0;
+            break;
+        }
+        if(i != 0 && k[i+1]!=-1)
+            cout<<" ";
+        if(i%2 == 0 && k[i+1]!=-1){
+            cout<<k[i]<<" "<<k[i+1];
+        }
+    }
+    return 0;
+}
+```
+
+```c++
+#include<iostream>
+using namespace std;
+int main(){
+    int a,b,flag=0;
+    while(cin>>a>>b){
+        if(b!=0){
+            if(flag == 1) cout<<" ";
+            cout<<a*b<<" "<<b-1;
+            flag = 1;
+        }
+    }
+    if(flag == 0) cout<<"0 0";
+    return 0;
+}
+```
+
+### 1013 数素数
+
+```c++
+#include<iostream>
+#include<vector>
+using namespace std;
+bool isPrime(int a){
+    for(int i=2;i*i<=a;i++){
+        if(a%i == 0)
+            return false;
+    }
+    return true;
+}
+
+int main(){
+    int M,N,cnt=0;
+    vector<int> res={2};
+    cin>>M>>N;
+    for(int j=3;res.size()<=N;j++){
+        if(isPrime(j))
+            res.push_back(j);
+    }
+    for(int k=M-1;k<N;k++){
+        cnt++;
+        cout<<res[k];
+        //if(cnt==1) cout<<" ";
+        if(cnt%10 == 0 && k != N-1) cout<<"\n";
+        else if(k != N-1) cout<<" ";
+        else if(k == N-1) cout<<"\n";
+    }
+    return 0;
+}
+```
+
+
+
 ## 甲级
 
 ### 1001 A+B format (20 points)
