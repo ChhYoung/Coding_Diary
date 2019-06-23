@@ -912,3 +912,139 @@ public:
 };
 ```
 
+#### 448.find all numbers disappeared in an array
+
+**思路一：用一个数组存储**
+
+时间复杂度： O(2*N)
+
+空间复杂度 :   O(len)
+
+```c++
+class Solution {
+public:
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int len = nums.size();
+        for(int i=0; i<len; i++) {
+            int m = abs(nums[i])-1; // index start from 0
+            nums[m] = nums[m]>0 ? -nums[m] : nums[m];
+        }
+        vector<int> res;
+        for(int i = 0; i<len; i++) {
+            if(nums[i] > 0) res.push_back(i+1);
+        }
+        return res;
+    }
+};
+```
+
+#### 169. Majority Element
+
+**思路一： 排序，找到中间元素即为 出现次数最大的**
+
+runtime :  O(nlogn)    28 ms, faster than 35.52%
+
+memory usage:    O(1)         11 MB , less than 65.51%
+
+```c++
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        return nums[nums.size()/2];
+    }
+};
+```
+
+**思路二：利用哈希表**
+
+runtime: O(n)  20ms faster than 88.07%
+
+memory usage:  O(n)  11.2MB less than 32.33%
+
+```c++
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        unordered_map<int,int> res;
+        for(int &num:nums)
+            res[num]++;
+        for(pair<int,int> i:res){
+            if(i.second>nums.size()/2)
+                return i.first;
+        }
+        throw invalid_argument("No Solution!");
+    }
+};
+```
+
+**思路三：随机抽取**
+
+时间复杂度 : 平均O(n), 最坏 O(infinity)
+
+空间复杂度: O(1)
+
+```c++
+class Solution{
+public:
+    int majorityElement(vector<int>& nums){
+        srand(time(NULL));
+        while(true){
+            int randIndex = rand()%nums.size();
+            if(occurance(nums,nums[randIndex])>nums.size()/2)
+                return nums[randIndex];
+        }
+    }
+private:
+    int occurance(const vector<int>& nums,int target){
+        int cnt=0;
+        for(int num:nums){
+            if(num == target)
+                cnt++;
+        }
+        return cnt;
+    }
+};
+```
+
+**思路四： divide and conquer**
+
+将数组分成左右两半，在每个子半中找出现最多的元素
+
+时间复杂度 O(nlogn)
+
+空间复杂度 O(logn)  递归调用栈
+
+```c++
+class Solution{
+public:
+    int majorityElement(vector<int>& nums){
+        return majorityElement(nums,0,nums.size()-1);
+    }
+private:
+    int majorityElement(const vector<int>& nums,int left,int right){
+        int len = right - left + 1;
+        if(len<=2){
+            return nums[left];
+        }
+        int mid = (left+right)/2;
+        int leftMajor = majorityElement(nums,left,mid);
+        int rightMagor = majorityElement(nums,mid+1,right);
+        if(leftMajor == rightMagor)
+            return leftMajor;
+        int leftCnt = occurance(nums,left,mid,leftMajor);
+        int rightCnt = occurance(nums,mid+1,right,rightMajor);
+        return leftCnt>rightCnt?leftMajor:rightMajor;
+    }
+
+    int occurance(const vector<int>& nums,int l,int r,int target){
+        int cnt=0;
+        for(int i=l;i<=r;++i){
+            if(num[i] == target)
+                cnt++;
+        }
+        return cnt;
+    }
+};
+```
+
