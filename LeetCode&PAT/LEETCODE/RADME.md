@@ -1048,3 +1048,143 @@ private:
 };
 ```
 
+#### 538. convert BST to Greater Tree
+
+**思路一：类似中序遍历,利用递归加上所有后继的值**
+
+- 时间复杂度 O(n)
+
+runtime :   36ms   faster than 83.83%
+
+- 空间复杂度 O(n)
+
+memory usage :   23.3MB less than 97.61%
+
+由于是加右支的值，所以按照 右根左的顺序.
+
+```c++
+ struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class Solution{
+private: 
+    int sum=0;
+public:
+    TreeNode* convertBST(TreeNode* root){
+        if(root != nullptr){
+            convertBST(root->right);
+            sum += root->val;
+            root->val = sum;
+            convertBST(root->left);
+        }
+        else return nullptr;
+        return root;
+    }
+};
+```
+
+**思路二： 利用 栈通过迭代来实现**
+
+向右遍历，沿途的压栈，最后最右的节点在栈顶
+
+- 时间复杂度 O(n)
+
+runtime :  32ms ,  faster than 94.54%
+
+* 空间复杂度 O(n)
+
+memory usage:   23.6MB  ,  less than 40.48%
+
+```c++
+class SOlution(){
+public:
+    TreeNode* convertBST(TreeNode* root){
+        int sum = 0;
+        TreeNode* node = root;
+        stack<TreeNode*> Tstack;
+        while(!Tstack.empty() || node != nullptr){
+            while(node != nullptr){
+                Tstack.push(node);
+                node = node->right;
+            }
+            node = Tstack.top();
+            sum += node->val;
+            node->val = sum;
+            node = node->left;
+            Tstack.pop();
+        }
+        return root;
+    }
+};
+```
+
+**思路三： 找到直接后继,morris遍历，空间复杂度 O(1)**
+
+
+
+##### 21. merge two sorted lists
+
+**方法1： 常规方法：**两两比较,拆分链表节点,将两个链表合成一个新链表
+
+- 时间复杂度   O(len_1 + len_2)
+
+runtime :  8ms,    faster than 89.77%
+
+- 空间复杂度  O(1)
+
+memory usage:   8.7MB   less than 94.53%
+
+```c++
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if(l1 == nullptr) return l2;
+        if(l2 == nullptr) return l1;
+        ListNode dummy(-1);
+        ListNode* p = &dummy;
+        for(;l1 != nullptr && l2 != nullptr;p = p->next){
+            if(l1->val > l2->val){
+                p->next = l2;
+                l2 = l2->next;
+            }
+            else {
+                p->next = l1;
+                l1 = l1->next;
+            }
+        }
+        p->next = l1 != nullptr?l1:l2;
+        return dummy.next;
+    }
+};
+```
+
+**方法二：递归**
+
+####  121. Best Time to Buy and Sell Stock
+
+**one pass** 向后遍历，不断更新 min Price和 max Profit
+
+- runtime:  8ms  faster than 85%
+- memory usage:  9.4MB ,less than 76.23%
+
+```c++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if(prices.size()==0)
+            return 0;
+        int minPrice = prices[0];
+        int maxProfit = 0;
+        for(int i=1;i<prices.size();++i){
+            maxProfit = max(maxProfit,prices[i]-minPrice);
+            minPrice = min(minPrice,prices[i]);
+        }
+        return maxProfit;
+    }
+};
+```
+
