@@ -1,3 +1,5 @@
+
+
 # PAT
 
 [TOC]
@@ -65,7 +67,6 @@ int main(){
 ```c++
 #include<iostream>
 #include<string>
-
 using namespace std;
 int main(){
     int n,score;
@@ -77,12 +78,12 @@ int main(){
         if(score > max){
             max = score;
             max_name = name;
-            max_sno =sno;
+            max_sno = sno;
         }
         if(score < min){
             min = score;
             min_name = name;
-            min_sno =sno;
+            min_sno = sno;
         }
     }
     cout<<max_name<<" "<<max_sno<<"\n";
@@ -95,7 +96,6 @@ int main(){
 
 ```c++
 #include<iostream>
-
 int main(){
     int m ;
     std::cin>>m;
@@ -113,7 +113,6 @@ int main(){
 ```
 
 ```c++
-
 #include <iostream>
 using namespace std;
 int main() {
@@ -135,6 +134,8 @@ int main() {
 ```
 
 ### 1007 素数对猜想
+
+**求素数函数,素数的定义**
 
 ```c++
 #include<iostream>
@@ -184,6 +185,8 @@ int main() {
 
 ### 1009 说反话
 
+**可以将首位这种无规律的踢出循环**
+
 ```c++
 #include <iostream>
 #include<stack>
@@ -192,7 +195,8 @@ int main() {
 int main(){
     std::stack<std::string> v;
     std::string s;
-    while(std::cin>>s) v.push(s);
+    while(std::cin>>s) 
+        v.push(s);
     std::cout<<v.top();
     v.pop();
     while(!v.empty()){
@@ -239,6 +243,8 @@ int main(){
 }
 ```
 
+**设置标志位，来判断首尾**
+
 ```c++
 #include<iostream>
 using namespace std;
@@ -281,7 +287,6 @@ int main(){
     for(int k=M-1;k<N;k++){
         cnt++;
         cout<<res[k];
-        //if(cnt==1) cout<<" ";
         if(cnt%10 == 0 && k != N-1) cout<<"\n";
         else if(k != N-1) cout<<" ";
         else if(k == N-1) cout<<"\n";
@@ -290,9 +295,9 @@ int main(){
 }
 ```
 
-#### 1016. 部分A+B
+### 1016. 部分A+B
 
-**原始方法： 放到int中在to_string**
+**原始方法： 放到int中再to_string**
 
 ```C++
 #include<iostream>
@@ -333,6 +338,8 @@ int main(){
 
 **改进 : 将长的放到string中**
 
+cin 同时写入不同的类型中
+
 ```c++
 #include<iostream>
 #include<string>
@@ -356,9 +363,9 @@ int main(){
 }
 ```
 
-#### 1017 A除以B
+### 1017 A除以B
 
-利用手算除法的过程进行计算
+利用人工手算除法的过程进行计算
 
 ```c++
 #include<iostream>
@@ -383,6 +390,105 @@ int main(){
     return 0;
 }
 ```
+
+### 1019. 数字黑洞
+
+**技巧与总结：**
+
+- 插入0 ,利用 insert
+- 排序利用 sort ，逆序则加入一个 判别式 cmp
+- 利用 stoi 获得字符串开头的数字
+
+```c++
+#include <iostream>
+#include <algorithm>
+using namespace std;
+// 用于 sort 中获得逆序的比较器
+bool cmp(char a, char b) {return a > b;}
+int main() {
+    string s;
+    cin >> s;
+    // 前面插入 0
+    s.insert(0, 4 - s.length(), '0');
+    do{
+        string a=s,b=s;
+        sort(a.begin(),a.end(),cmp);
+        sort(b.begin(),b.end());
+        int result = stoi(a) - stoi(b);
+        s = to_string(result);
+        s.insert(0, 4 - s.length(), '0');
+        cout<<a<<" - "<<b<<" = "<<s<<endl;
+    }while(s != "6174" && s != "0000");
+    return 0;
+}
+```
+
+### 1020 月饼
+
+**利用数据结构**
+
+```c++
+#include<iostream>
+#include<algorithm>
+#include<vector>
+using namespace std;
+struct mooncake{
+    float mount,price,unit;
+};
+int cmp(mooncake a,mooncake b){
+    return a.unit>b.unit;
+}
+int main(){
+    int n,need;
+    cin>>n>>need;
+    vector<mooncake> a(n);
+    for(int i=0;i<n;i++) scanf("%f",&a[i].mount);
+    for(int i=0;i<n;i++) scanf("%f",&a[i].price);
+    for(int i=0;i<n;i++) a[i].unit = a[i].price/a[i].mount;
+    sort(a.begin(),a.end(),cmp);
+    float res = 0.0;
+    for(int i=0;i<n;++i){
+        if(a[i].mount<=need){
+            res = res + a[i].price;
+        }
+        else{
+            res = res + a[i].unit*need;
+            break;
+        }
+        need -= a[i].mount;
+    }
+    printf("%.2f",res);
+    return 0;
+}
+```
+
+### 1021.个位数统计
+
+```c++
+#include<iostream>
+#include<vector>
+#include<string>
+
+using namespace std;
+int main(){
+    string s;
+    cin>>s;
+    vector<int> a(10,0);
+    for(auto &i:s){
+        a[i-'0']++;
+    }
+    for(int i=0;i<a.size();++i){
+        if(a[i]>0){
+            cout<<i<<":"<<a[i]<<"\n";
+        }
+    }
+    return 0;
+}
+```
+
+
+
+
 
 
 

@@ -1029,8 +1029,8 @@ private:
         }
         int mid = (left+right)/2;
         int leftMajor = majorityElement(nums,left,mid);
-        int rightMagor = majorityElement(nums,mid+1,right);
-        if(leftMajor == rightMagor)
+        int rightMajor = majorityElement(nums,mid+1,right);
+        if(leftMajor == rightMajor)
             return leftMajor;
         int leftCnt = occurance(nums,left,mid,leftMajor);
         int rightCnt = occurance(nums,mid+1,right,rightMajor);
@@ -1056,7 +1056,7 @@ private:
 
 runtime :   36ms   faster than 83.83%
 
-- 空间复杂度 O(n)
+- 空间复杂度 O(n), 栈的调用
 
 memory usage :   23.3MB less than 97.61%
 
@@ -1126,7 +1126,7 @@ public:
 
 
 
-##### 21. merge two sorted lists
+#### 21. merge two sorted lists
 
 **方法1： 常规方法：**两两比较,拆分链表节点,将两个链表合成一个新链表
 
