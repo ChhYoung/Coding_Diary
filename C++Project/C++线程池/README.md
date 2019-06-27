@@ -327,7 +327,7 @@ inline ThreadPool::ThreadPool(size_t threads):stop(false){
                     std::function<void()> task;
                     // 临界区
                     {
-                        // 创建互斥量
+                        // 创建互斥量  P操作 
                         std::unique_lock<std::mutex> lock(this->queue_mutex);
                         // 阻塞当前线程，直到 condition_variable被唤醒
                         this->condition.wait(lock,
@@ -335,7 +335,7 @@ inline ThreadPool::ThreadPool(size_t threads):stop(false){
                         // 如果当前线程池已经结束且等待队列为空，则直接返回
                         if(this->stop && this->tasks.empty())
                             return ;
-                        // 否则运行任务队列队首
+                        // 否则运行任务队列队首,
                         task = std::move(this->tasks.front());
                         this->tasks.pop();
                     }
