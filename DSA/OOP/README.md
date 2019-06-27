@@ -1117,6 +1117,13 @@ int main(){
 **[]运算符**：以成员函数形式重载，可以用于下标检查
 
 **[]运算符**：创建传递参数的运算符函数
+**[]用于访问下标对应的元素**
+```c++
+template<typename T>
+T& Vector<T>::operator[](Rank r) const {
+    return elem_[r];
+}
+```
 
 ### 7.4应用实例
 
