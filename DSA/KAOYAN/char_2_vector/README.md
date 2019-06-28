@@ -49,7 +49,7 @@ protected:
     
     
 public:
-/**************************构造************************/
+/**************************构造 及 析构************************/
     // 默认初始化容量
     static constexpr int DEFAULT_CAPACITY = 3;
     // 规模n,容量c，所有初始元素为v
@@ -66,9 +66,21 @@ public:
     Vector<T>& operator=(Vector<T> const& V);
     // 析构函数
     ~Vector();
-/****************** 获取状态  *****************************/
+/****************** 只读接口  *****************************/
     Rank size() const { reutrn size_; }
     bool empty() const { return !size_; }
+    // 相邻逆序对的总数
+    int disorderd() const;
+    /******对于无序向量的查找*********/
+    // 区间搜索
+    Rank find(T const& e,Rank lo,Rank hi) const;
+    // 整体搜索
+    Rank find(T const& e) const;
+    /******对于有序向量的查找*********/
+    // 区间搜索
+    Rank search(T const& e,Rank lo,Rank hi) const;
+    // 整体搜索
+    Rank search(T const& e);
 }
 
 ```
@@ -225,3 +237,95 @@ Vector<T>&  Vector<T>::operator=(Vector<T> const& V){
 }
 ```
 
+#### 3.11   int disorderd() const
+
+返回向量中逆序相邻元素个数
+
+```c++
+template<typename T>
+int Vector<T>::disordered() const{
+	int cnt=0;
+	for(int i=1;i<size_;++i){
+		if(elem_[i-1] > elem_[i]) { ++cnt;}
+	}
+	return cnt;
+}
+```
+
+#### 3.12  Rank find(T const& e,Rank lo, Rank hi) const;
+
+在无序的向量中查找 e元素，并返回其最大位置的秩，失败时返回 `lo-1`
+
+为找到最大的秩，可以从后向前搜索
+
+```c++
+template<typename T>
+Rank Vector<T>::find(T const& e,Rank lo,Rank hi) const{
+    while((lo<hi--)&&(e != elem_[hi]));
+    return hi;
+}
+```
+
+####  3.13   Rank find(T const& e) const;
+
+```c++
+template<typename T>
+Rank Vector<T>::find(T const& e) const{
+    return find(e,0,size_);
+}
+```
+
+#### 3.14   Rank search(T const& e,Rank lo,Rank hi) const;
+
+```c++
+template<typename T>
+Rank Vector<T>::search(T const& e,Rank lo,Rank hi) const{
+    assert(0 <= lo && lo<=hi  && hi<=size_);
+#if TEST_BUILD
+    return (rand()%2)?
+        binary_search(elem_,lo,hi):fibnacci_search(elem_,lo,hi);
+#else
+    return fibnacci_search(elem_,lo,hi);
+#endif    
+}
+```
+
+
+
+对于有序向量的查找，可以采用多种方法实现
+
+- 二分查找，递归版
+- 二分查找，迭代版
+- 基于fibnacci数列版
+
+## 有序向量查找算法的分析
+
+### 1. 二分查找版本A，减而治之
+
+每次分成三个区间` [lo, mi)   [mi]    (mi,hi]`
+
+有多个元素命中时，不保证返回秩的最大者，
+
+查找失败时简单返回-1，
+
+平均查找长度：找左子树O(1)   右子树则在比较左边的基础上再来一次所以O(2) ,即平均查找长度为$O(1.5*log_2n)$
+
+```c++
+template<typename T>
+static Rank Vecotr<T>::binary_search_A(T* A,T const& e,Rank lo,Rank hi){
+    while(lo<hi){
+        Rank mi = (lo + hi)>>1;
+        if(e < A[mi]) { hi = mi;}
+        else if(e > A[mi]) { lo = mi+1;}
+   		else return mi;
+    }
+    // 查找失败
+    return -1;
+}
+```
+
+
+
+​				
+
+ 
