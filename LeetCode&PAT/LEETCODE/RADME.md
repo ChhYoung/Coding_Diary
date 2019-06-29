@@ -1188,3 +1188,102 @@ public:
 };
 ```
 
+#### 543.  diameter of binary tree
+
+**方法一： 通过深度遍历 找到左右子树深度和最大的节点**
+
+最长路径上的根节点拥有最大的 `路径长度 = 左子树深度+右子树深度+1`
+
+- 时间复杂度 O(N)  遍历每个节点
+
+  runtime :  16ms   faster than 65.21%
+
+- 空间复杂度 O(N)
+
+   memory uasge 19.3MB	 less than 95.65%
+
+```C++
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class Solution {
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        travDepth(root);
+        return res;
+    }
+private:
+    int res = 0;
+    int travDepth(TreeNode* root){
+        if(root == nullptr) return 0;
+        int leftDepth = travDepth(root->left);
+        int rightDepth = travDepth(root->right);
+        res = res > (leftDepth+rightDepth)?res:(leftDepth+rightDepth);
+        return 1 + (leftDepth>rightDepth?leftDepth:rightDepth);
+    }    
+};
+```
+
+实现二：用`max`来替代比较运算
+
+runtime 12ms,  faster than 82.78%
+
+memory usage 19.8MB, less than 44.89%
+
+```c++
+class Solution {
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        travDepth(root);
+        return res;
+    }
+private:
+    int res = 0;
+    int travDepth(TreeNode* root){
+        if(root == nullptr) return 0;
+        int leftDepth = travDepth(root->left);
+        int rightDepth = travDepth(root->right);
+        res = max(res,leftDepth+rightDepth);
+        return 1+max(leftDepth,rightDepth);
+    }    
+};
+```
+
+#### 101. Symmetric Tree
+
+**方法一:直接比较每个节点的左右子节点来判断是否是镜像**
+
+- 时间复杂度 O(n)  
+
+  runtime ： 4ms   faster than 91.51%
+
+- 空间复杂度  O(n)
+
+  memory usage: 14.7 MB    less than 80.97%
+
+```c++
+struct TreeNode {
+      int val;
+      TreeNode *left;
+      TreeNode *right;
+      TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+  };
+
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        return isMirror(root,root);
+    }
+private:
+    bool isMirror(TreeNode* t1,TreeNode* t2){
+        if(t1 == nullptr && t2 == nullptr) return true;
+        if(t1 == nullptr || t2 == nullptr) return false;
+        return (t1->val == t2->val) && isMirror(t1->right,t2->left) && isMirror(t1->left,t2->right);
+    }
+};
+```
+

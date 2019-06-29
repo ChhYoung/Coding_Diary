@@ -66,7 +66,7 @@ public:
     Vector<T>& operator=(Vector<T> const& V);
     // 析构函数
     ~Vector();
-/****************** 只读接口  *****************************/
+/**************************** 只读接口  *****************************/
     Rank size() const { reutrn size_; }
     bool empty() const { return !size_; }
     // 相邻逆序对的总数
@@ -80,7 +80,43 @@ public:
     // 区间搜索
     Rank search(T const& e,Rank lo,Rank hi) const;
     // 整体搜索
-    Rank search(T const& e);
+    Rank search(T const& e){ return (0>=size_)?-1:search(e,0,size_);}
+    
+    static Rank binary_search_A(T* A,T const& e,Rank lo,Rank hi);
+	static Rank binary_search_B(T* A,T const& e,Rank lo,Rank hi);
+	static Rank binary_search_C(T* A,T const& e,Rank lo,Rank hi);
+	static Rank binary_search(T* A,T const& e,Rank lo,Rank hi);
+	static Rank fibonacci_search_A(T* A,T const& e,Rank lo,Rank hi);
+	static Rank fibonacci_search_B(T* A,T const& e,Rank lo,Rank hi);
+	static Rank fibonacci_search(T* A,T const& e,Rank lo,Rank hi);
+/*************************** 可写访问接口    *****************************/	
+    // 清除数据
+    void clear();
+    // 下表重载操作符
+    T& operator[](Rank r) const{
+        assert(0<=r && r<size_);
+        return elem_[r];
+    };
+    // 插入元素
+    Rank insert(Rank r,T const& e);
+    // 作为末尾元素插入
+    Rank insert(T const& e);
+    // 删除[lo,hi)内的元素
+    int remove(Rank lo,Rank hi);
+    // 删除元素 O(n)
+    T remove(Rank r);
+    // 对[lo,hi)内元素排序
+    void sort(Rank lo,Rank hi);
+    // 整体排序
+    void sort(){ sort(0,size_); }
+    // 对[lo,hi)等概率随机置乱
+    void unsort(Rank lo,Rank hi);
+    // 整体置乱
+    void unsort(){unsort(0,size_);}
+    // 无序去重复
+    int deduplicate();
+    // 有序去重
+    int uniquify();
 }
 
 ```
@@ -121,7 +157,7 @@ void Vector<T>::expand(){
     for(int i=0; i<size_; ++i){
         elem_[i] = old_elem_[i];
     }
-    delete[] odl_elem_;
+    delete[] old_elem_;
 }
 ```
 
@@ -290,6 +326,88 @@ Rank Vector<T>::search(T const& e,Rank lo,Rank hi) const{
 }
 ```
 
+####  3.15 Rank insert(Rank r,T const& e)
+
+在秩r的位置插入元素，后面元素整体后移, 平均时间复杂度O(n)
+
+```c++
+template<typename T>
+Rank Vector<T>::insert(Rank r,T const& e){
+    assert(0<=r && r<=size_);
+    ++size_;
+    expand();
+    for(int i=size_-1;i>r;--i)
+        elem_[i] = elem[i-1];
+    elem_[r] = e;
+    return r;
+}
+
+// 书本实现
+//! 插入元素 
+Rank insert(Rank r, T const& e) { // input sensitive 输入敏感，平均O(n)
+	assert(0 <= r && r <= size_);
+	expand();
+	for (int i = size_; i > r; i--) { // r之后的元素整体右移
+		elem_[i] = elem_[i - 1];
+	}
+	elem_[r] = e;
+	size_++;
+	return r;
+}
+```
+
+#### 3.16  Rank insert(T const& e)
+
+在最后插入元素
+
+```c++
+template<typename T>
+Rank Vector<T>::insert(T const& e){
+    return insert(size_,e);
+}
+```
+
+#### 3.17  int remove(Rank lo,Rank hi）
+
+未减小操作的复杂度， 先实现区间上去除元素，再依据区间实现去除单个元素
+
+删除区间 [lo,hi) 上的元素 ,  返回被删除元素的个数
+
+```c++
+template<typename T>
+int Vector<T>::remove(Rank lo, Rank hi){
+    assert(0<=lo && lo<=hi && hi<=size_);
+    if(lo == hi) return 0;
+    while(hi < size_ ){
+        elem[lo++] = elem[hi++];
+    }
+    // 更新规模，直接丢弃[lo,size_ = hi)区间
+    size_ = lo;
+    // shrink();
+    return hi-lo;
+}
+```
+
+#### 3.18  T remove(Rank r)  
+
+返回去除的秩为r的元素的值
+
+```c++
+template<typename T>
+T Vector<T>::remove(Rank r){
+    assert(0<=r && r<size_);
+    T e = elem_[r];
+    remove(r,r+1);
+    return e;
+}
+```
+
+####  3.19   void sort(Rank lo,Rank hi)
+
+
+
+
+
 
 
 对于有序向量的查找，可以采用多种方法实现
@@ -300,15 +418,17 @@ Rank Vector<T>::search(T const& e,Rank lo,Rank hi) const{
 
 ## 有序向量查找算法的分析
 
+在**A [ lo， hi ) 上查找元素**
+
 ### 1. 二分查找版本A，减而治之
 
-每次分成三个区间` [lo, mi)   [mi]    (mi,hi]`
+每次分成三个区间` [lo, mi) [mi] [mi+1,hi)`
 
 有多个元素命中时，不保证返回秩的最大者，
 
 查找失败时简单返回-1，
 
-平均查找长度：找左子树O(1)   右子树则在比较左边的基础上再来一次所以O(2) ,即平均查找长度为$O(1.5*log_2n)$
+平均查找长度：找左子树O(1)   右子树则在比较左边的基础上再来一次所以O(2) ,即平均查找长度为$O(1.5*log_2n)$      为使查找失败的比较次数最小可以采用不是二分的查找，如`Fibonacci数列`
 
 ```c++
 template<typename T>
@@ -326,6 +446,201 @@ static Rank Vecotr<T>::binary_search_A(T* A,T const& e,Rank lo,Rank hi){
 
 
 
-​				
+### 2. 二分查找版本B，两分支，一次比较,A的改进版
 
- 
+改进版本变成两个分支`[lo,mi) [mi,hi)`, 只需比较一次就能进入下一个分支
+
+平均查找长度 $O(log(n))$
+
+```c++
+template<typename T>
+static Rank Vector<T>::binary_search_B(T* A,T const& e,Rank lo,Rank hi){
+	Rank mi = (hi + lo)>>1;
+	while(1 < hi - lo){
+		(e<A[mi])?hi = mi: lo=mi;
+	}
+    return (e==A[lo])?lo:-1;
+}
+```
+
+- 有时算法需要根据优先级返回其中最大优先级(秩最大的元素)。则若有重复元素则要找到其中秩最大的，无该元素则要找到最不大于e的最后一个元素，不小于e最前的元素。
+
+### 3. 二分查找版本C，查找失败时返回查找失败位置
+
+- 当命中多个元素时，总能保证返回最大秩
+
+- 失败时，能够返回失败位置
+-  查找成功后不能提前终止
+
+```c++
+template<typename T>
+static Rank Vector<T>::binary_search_C(T* A,T const& e,Rank lo, Rank hi){
+    while(lo<hi){
+        Rank mi = (lo+hi)>>1;
+        (e<A[mi])?hi = mi: lo = mi+1;
+    }
+    return lo--;
+}
+```
+
+- 算法的正确性： 由数学归纳法可得
+
+### 4.   基于fibonacci数列的查找
+
+ 二分查找划分时，左半部比较一次，右半部比较两次，所以可以基于黄金分割进行划分
+
+平均查找长度 $ O(1.44 log_2(n))$
+
+用`hi-lo`作为FIB数列的长度,   利用fib数列改进二分查找版本A
+
+```c++
+template<typename T>
+static Rank Vector<T>::fibonacci_search_A(T* A,T const& e,Rank lo,Rank hi){
+    Fibonacci<int> fib(hi-lo); // 用O(log_phi(hi-lo))的时间创建fib数列
+    while(lo < hi){
+        //  获取不小于hi-lo的最小fib数，以此数列作为接下来划分的长度
+        //  在分摊意义下O(1)时间复杂度
+        while(hi - lo < fib.get()){
+            fib.prev(); 
+        }
+        Rank mi = lo+fib.get()-1;
+        if(e<A[mi]) hi = mi;
+        else if(e>A[mi]) lo = mi+1;
+        else return mi;
+    }
+    return -1;
+}
+```
+
+**版本B,    改良版本**
+
+```c++
+template<typename T>
+static Rank Vector<T>::fibonacci_search_B(T* A,T const& e,Rank lo,Rank hi){
+    Fibonacci<itn> fib(hi-lo);
+    while(lo < hi){
+        while(hi - lo < fib.get()){fib.prev();}
+        Rank mi = lo + fib.get() - 1;
+        (e<A[mi])? hi=mi: lo=mi+1;    
+    }
+    return --lo;
+}
+```
+
+###   5.  插值搜索，类似于图像处理中插值法
+
+```c++
+template<typename T>
+static Rank Vector<T>::interploation_search(T* A ,T const& e,Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= A->size_);
+    while(A[lo] <= e && e <= A[hi]){
+        Rank mi = lo + (hi-lo)*(e-A[lo])/(A[hi]-A[lo]);
+        if(e < A[mi]) lo = mi+1;
+        else if(e > A[mi]) hi = mi-1;
+        else return mi;
+    }
+    if(A[lo] == e) return lo;
+    else return -1;
+}
+```
+
+**整合**
+
+```c++
+template<typename T>
+static Rank Vecotr<T>::fibonacci_search(T* A,T const& e,Rank lo,Rank hi){
+#if TEST_BUILD
+    switch(rand()%2){
+        case 0 :return fibonacci_search_A(A,e,lo,hi);
+        default:return fibonacci_search_B(A,e,lo,hi);
+    }
+#else
+    return fibonacci_search_B(A,e,lo,hi);
+#endif    
+}
+  
+
+template<typename T>
+static Rank Vector<T>::binary_search(T* A,T const& e,Rank lo,Rank hi){
+#if TEST_BUILD
+    switch(rand()%3){
+        case 0 : return binary_search_A(A,e,lo,hi);
+        case 1 : return binary_search_B(A,e,lo,hi);
+		default: return binary_search_C(A,e,lo,hi);            
+    }
+#else
+    return binary_search_C(A,e,lo,hi);   
+#endif    
+}
+
+
+template<typename T>
+Rank Vecotr<T>::search(T* A,T const& e,Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= A->size_);
+#if TEST_BUILD
+    return (rand()%2)?binary_search_C(A,e,lo,hi):fibonacci_search_B(A,e,lo,hi);
+#else
+    return fibonacci_search_B(A,e,lo,hi);
+#endif    
+}
+```
+
+
+
+##  排序算法的分析
+
+###  1. 冒泡排序
+
+每一趟检查相邻元素是否是顺序，不是则交换元素，经过多趟直到排好顺序位置
+
+- 稳定算法  ： 排序后重复元素的相对次序可能发生变化 , 在冒泡排序的过程中重复元素只是相互靠拢，但不会交换位置
+
+首先实现单趟交换,  利用一个标志位来判断排序是否完成
+
+```c++
+// 交换扫描
+template<typename T>
+bool Vector<T>::bubble(Rank lo,Rank hi){
+    bool sorted = true;
+    while(++lo < hi){
+        if(elem_[lo-1] > elem_[lo]){
+            swap(elem_[lo-1],elem_[lo]);
+            sorted = false;
+        }
+    }
+    return sorted;
+}
+```
+
+### 冒泡排序 版本a
+
+不断单趟扫描， 直到次序正确,  每次扫描至少将一个最大元素放到正确次序，复杂度位O(n^2)
+
+```c++
+template<typename T>
+void Vector<T>::bubble_sort(Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= size_);
+    while(!bubble(lo,hi--)){};
+}
+```
+
+###  冒泡排序加速版 A， 对[lo,hi）左侧乱序时
+
+返回最右侧的逆序对的位置，缩小区间,  仅`A[0,n^(1/2))`乱序时
+
+```c++
+template<typename T>
+Rank Vector<T>::bubble_fast(Rank lo, Rank hi){
+    Rank last = lo;
+    while(++lo < hi){
+        if(elem_[lo-1]>elem_[lo]){
+            last = lo;
+            swap(elem_[lo-1],elem_[lo]);
+        }
+    }
+    return last;
+}
+```
+
+
+
