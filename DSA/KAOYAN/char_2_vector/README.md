@@ -123,7 +123,7 @@ public:
 
 #### 3.1  copy_from(T const* A,Rank lo,Rank hi)
 
-复制A[lo,hi)的元素，并设置好向量的规模与容量
+复制A[lo,hi)的元素，并设置好向量的规模与容量,
 
 ```c++
 template<typename T>
@@ -144,6 +144,8 @@ void Vector<T>::copy_from(T const* A,Rank lo,Rank hi){
 分摊意义O(1)时间:  每次扩容花费O(n)的时间，但至少经过n次操作才再次扩容，所以分摊时间为O(1)
 
 实现： 检查当前容量与规模的大小关系, 保存当前元素，申请一个新的空间，拷贝过去，删除旧空间
+
+- 若是每次加固定的空间，则分摊复杂度为O(n)  *习题2-3*
 
 ```c++
 template<typename T>
@@ -612,9 +614,11 @@ bool Vector<T>::bubble(Rank lo,Rank hi){
 }
 ```
 
-### 冒泡排序 版本a
+### 2.冒泡排序 版本a
 
-不断单趟扫描， 直到次序正确,  每次扫描至少将一个最大元素放到正确次序，复杂度位O(n^2)
+不断单趟扫描， 直到次序正确,  每次扫描至少将一个最大元素放到正确次序，
+
+每次交换扫描后， 问题的规模 - 1   ，复杂度为O(n^2)
 
 ```c++
 template<typename T>
@@ -624,9 +628,11 @@ void Vector<T>::bubble_sort(Rank lo,Rank hi){
 }
 ```
 
-###  冒泡排序加速版 A， 对[lo,hi）左侧乱序时
+###  3.冒泡排序加速版 A， 对[lo,hi）左侧 部分乱序时
 
-返回最右侧的逆序对的位置，缩小区间,  仅`A[0,n^(1/2))`乱序时
+返回最右侧的逆序对的位置，先对原始版本在第一次时有更大的问题缩减空间,  仅`A[0,n^(1/2))`乱序时
+
+- 时间复杂度  $O( n + (\sqrt n)^2 ) = O(n)$
 
 ```c++
 template<typename T>
@@ -642,5 +648,114 @@ Rank Vector<T>::bubble_fast(Rank lo, Rank hi){
 }
 ```
 
+```c++
+template<typename T>
+void Vector<T>::bubble_sort_fast(Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= size_);
+    while(lo < (hi = bubble_fast(lo,hi)) ){}
+}
+```
+
+### 4.冒泡排序加速版 B， 对[lo,hi）右侧 部分乱序时
+
+对于区间$[n-\sqrt n,n)$ , 
+
+- 记录最左侧乱序对的位置
+
+```c++
+template<typename T>
+Rank Vector<T>::bubble_fast_2(Rank lo, Rank hi){
+    Rank first = hi;
+    while(lo < --hi){
+        if(elem_[hi]>elem_[hi+1]){
+            first = hi;
+            swap(elem_[hi],elem_[hi+1]);
+        }
+    }
+    return first;
+}
+```
+
+- 左右同时加速
+
+```c++
+template<typename T>
+void Vector<T>::bubble_sort_fast_2(Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= size_);
+    while( (lo=bubble_fast_2(lo,hi)) < (hi = bubble_fast(lo,hi)) ){}
+}
+```
+
+### 5. 归并排序
+
+**思想： **将两路元素逐一比较， 合并成一个新的有序向量
+
+该算法始终严格的按顺序处理，适用于磁带等顺序存储器
+
+**实现:** 采用分治策略将 
+
+自顶向下：一个向量不断划分为小的向量，
+
+自底向上：对每个小向量归并的到一个稍大的向量，稍大的向量继续归并成大向量
+
+**时间复杂度：** O(nlogn)    划分深度log层，每次比较n次，最坏情况nlogn
+
+将区间`[lo,hi)`划分成`[lo,mi)`和`[mi,hi)`
+
+```c++
+template<typename T>
+void Vector<T>::merge_sort(Rank lo,Rank hi){
+    assert(0 <= lo && lo <= hi && hi <= size_);
+    // 递归基
+    if(hi - lo < 2)
+        return;
+    Rank mi = (hi + lo)>>1;
+    merge_sort(lo,mi);
+    merge_sort(mi,hi);
+    // 在较好情况即不需要合并时，提高速度
+    if(elem_[mi-1] > elem_[mi]){
+        merge(lo,mi,hi);
+    }
+}
+```
+
+**二路归并实现**
+
+由于归并的元素在原向量中都是相邻的，所以采用三个位置`lo`,`mi`,`hi`
+
+```c++
+// 归并各自有序的子向量[lo,mi)和[mi,hi)
+template<typename T>
+void Vector<T>::merge(Rank lo,Rank mi,Rank hi){
+    // 合并后的向量A=elem_[lo,hi)
+    T* A = elem_ + lo;
+    // 记录向量的长度
+    int lengthB = mi - lo;
+    // 用于存储中间结果 [lo,mi)
+    T* B = new T[lengthB];
+    // 将A[lo,mi)整体复制到B中
+    for(int i=0;i<lengthB;++i){
+        B[i] = A[i];
+    }
+    T* C = elem_ + mi; // [mi,hi)
+    int lengthC = hi - mi;
+    // B[j] 和 C[k]中的最小者加到A的后面
+    for(int i=0,j=0,k=0;(j<lengthB)||(k<lengthC);){
+        // 当B较小  或者 C元素用完时
+        if( (j<lengthB) && (!(k<lengthC) || B[j]<=C[k]) ){
+            A[i++] = B[j++];
+        }
+        // 当C较小  或者 B元素用完时
+        if( (k<lengthC) && (!(j<lengthB) || C[k]<=B[k]) ){
+            A[i++] = C[k++];
+        }
+    }
+    delete[] B;   
+}
+```
 
 
+
+
+
+ 
