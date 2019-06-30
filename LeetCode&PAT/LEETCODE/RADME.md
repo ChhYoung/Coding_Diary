@@ -1287,3 +1287,78 @@ private:
 };
 ```
 
+####  437. Path Sum  III
+
+You are given a binary tree in which each node contains an integer value.
+
+Find the number of paths that sum to a given value.
+
+The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes).
+
+The tree has no more than 1,000 nodes and the values are in the range -1,000,000 to 1,000,000.
+
+**Example:**
+
+```
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
+3  -2   1
+
+Return 3. The paths that sum to 8 are:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3. -3 -> 11
+```
+
+**解法：两次利用递归, 遍历每一个节点， 每一个节点在当前路径上寻找当前 sum_curr -  bode->val的值，**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int pathSum(TreeNode* root, int sum) {
+        if(root == nullptr)
+            return 0;
+        // 利用递归遍历所有节点
+        return findPath(root,sum) 
+            + pathSum(root->left,sum)
+            + pathSum(root->right,sum);
+    }
+private:
+    // 利用递归来获取值
+    int findPath(TreeNode* node,int sum){
+        if(node == nullptr)
+            return 0;
+        int res = 0;
+        if(node->val == sum)
+            res += 1;
+        res += findPath(node->left,sum-node->val);
+        res += findPath(node->right,sum-node->val);
+        return res;
+    }
+};
+```
+
+时间复杂度O(n)  
+
+runtime:  32ms  faster than 21.87%
+
+空间复杂度O(h)
+
+memory usage: 14.5MB  less than 83.43%
+

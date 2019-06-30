@@ -662,6 +662,99 @@ int main() {
 }
 ```
 
-### 1003. Emergency 25 points
+### 1005 Spell it Right(20 points)
 
-N,M,C_1,
+Given a non-negative integer N, your task is to compute the sum of all the digits of N,and output every digit of the sum in English.
+
+- input specification:  each input file contains one test case, each case occupies one line which contains an N(<= 10^100)
+- output specification: for each case output in one line the digits of the sum in English words.There must be one spcae between two consecutive words , but no extra space at the end of a line
+
+- sample input:  12345
+- sample output:  one five
+
+```C++
+#include<string>
+#include<iostream>
+using namespace std;
+
+void res_print(char s) {
+	switch (s){
+	case '0':cout << "zero"; break;
+	case '1':cout << "one"; break;
+	case '2':cout << "two"; break;
+	case '3':cout << "three"; break;
+	case '4':cout << "four"; break;
+	case '5':cout << "five"; break;
+	case '6':cout << "six"; break;
+	case '7':cout << "seven"; break;
+	case '8':cout << "eight"; break;
+	case '9':cout << "nine"; break;
+	}
+}
+
+int main() {
+	string str;
+	cin >> str;
+	int sum = 0;
+	for (auto& i : str) {
+		sum += (i - '0');
+	}
+	auto res = to_string(sum);
+	for (int i = 0; i < res.length() - 1; ++i) {
+		res_print(res[i]);
+		cout << " ";
+	}
+	res_print(res[res.length() - 1]);
+	return 0;
+}
+```
+
+### 1008  Elevator(20 points)
+
+The highest building in our city has only one elevator. A request list is made up with *N* positive numbers. The numbers denote at which floors the elevator will stop, in specified order. It costs 6 seconds to move the elevator up one floor, and 4 seconds to move down one floor. The elevator will stay for 5 seconds at each stop.
+
+For a given request list, you are to compute the total time spent to fulfill the requests on the list. The elevator is on the 0th floor at the beginning and does not have to return to the ground floor when the requests are fulfilled.
+
+**Input Specification:**
+
+Each input file contains one test case. Each case contains a positive integer *N*, followed by *N* positive numbers. All the numbers in the input are less than 100.
+
+**Output Specification:**
+
+For each test case, print the total time on a single line.
+
+**Sample Input:**
+
+```in
+3 2 3 1
+```
+
+**Sample Output:**
+
+```out
+41
+```
+
+```c++
+#include<vector>
+#include<iostream>
+using namespace std;
+
+int main() {
+	int input;
+	vector<int> vec(0);
+	while (cin >> input)
+		vec.push_back(input);
+	int res = vec[0] * 5;
+	int N = vec[0];
+	vec[0] = 0;
+	for (int i = 0; i <= N-1; ++i) {
+		int a = vec[i + 1] - vec[i];
+		if (a > 0) { res += a * 6; }
+		else if (a < 0) { res += -4 * a; }
+	}
+	cout << res;
+	return 0;
+}
+```
+
