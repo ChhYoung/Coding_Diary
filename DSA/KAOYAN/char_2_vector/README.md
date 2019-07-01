@@ -406,6 +406,50 @@ T Vector<T>::remove(Rank r){
 
 ####  3.19   void sort(Rank lo,Rank hi)
 
+####  3.20 int deduplicate()
+
+无序去重，不断在前缀中查找雷同元素
+
+时间复杂度$O(n^2)$的实现
+
+返回删除元素的规模
+
+```c++
+template<typename T>
+int Vector<T>::deduplicate(){
+    int old_size = size_;
+    while(i<size_){
+    	find(elem_[i],0,i)<0?++i:remove(i);
+    }
+    return old_size - size_;
+}
+```
+
+#### 3.21 int uniquify()
+
+有序向量的去重
+
+对于重复的元素，找到最后一个重复元素的位置进行移动
+
+返回删除元素大的规模
+
+```c++
+template<typename T>
+int Vector<T>::uniquify(){
+    // i来记录独立元素的位置，j来遍历整个向量
+    Rank i=0,j=0;
+    while(++j < size_){
+        // 当元素重复是i不变，++j，加到元素不相同时，再继续覆盖
+        if(elem_[i] != elem_[j]){
+            elem_[++i] = elem_[j];
+        }
+    }
+    size_ = ++i;
+    shrink();
+    return j-i;
+}
+```
+
 
 
 

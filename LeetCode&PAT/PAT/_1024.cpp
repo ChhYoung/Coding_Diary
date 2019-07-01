@@ -8,7 +8,6 @@ int main(){
     cin>>s;
     int i=0;
     while(s[i] != 'E') ++i;
-    
     string t =s.substr(1,i-1);
     // 指数
     int n = stoi(s.substr(i+1));
