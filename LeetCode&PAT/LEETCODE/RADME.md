@@ -1362,3 +1362,76 @@ runtime:  32ms  faster than 21.87%
 
 memory usage: 14.5MB  less than 83.43%
 
+#### 198. House Robber 
+
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and **it will automatically contact the police if two adjacent houses were broken into on the same night**.
+
+Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight **without alerting the police**.
+
+**Example 1:**
+
+```
+Input: [1,2,3,1]
+Output: 4
+Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
+             Total amount you can rob = 1 + 3 = 4.
+```
+
+**Example 2:**
+
+```
+Input: [2,7,9,3,1]
+Output: 12
+Explanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
+             Total amount you can rob = 2 + 9 + 1 = 12.
+```
+
+**解法一：动态规划**
+
+`2,1,1,2,3`可以看到当前位置最值取决于当前前两个位置的最值，以此类推，利用动态规划的思想，保存当前前两个位置的最大值。
+
+- 时间复杂度 O(n)
+- 空间复杂度 O(1)
+
+```c++
+class Solution{
+public:
+    int rob(vector<int>& nums){
+        int n = nums.size();
+        if(n == 0)
+            return 0;
+        // 记录前两个位置的最大值
+        int preMax = 0, curMax = 0;
+        for(int i = n-1 ; i>=0; --i){
+            int temp = curMax;
+            curMax = max(curMax,nums[i] + preMax);
+            preMax = temp;
+        }
+        return curMax;
+    }
+};
+```
+
+**解法二：递归**
+
+由题可知递归关系$rob(i) = max( rob(i-2)+currentHouseValue , rob(i-1))$
+
+则构造递归关系
+
+**超时**
+
+```c++
+class Solution{
+public:
+    int rob(vector<int>& nums){
+		return myRob(nums,nums.size()-1);
+    }
+private:
+    int myRob(vector<int>& nums,int i){
+        if(i<0)
+            return 0;
+        return max( myRob(nums,i-2)+nums[i], myRob(nums, i-1) );
+    }
+};
+```
+

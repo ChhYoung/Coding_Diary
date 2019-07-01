@@ -758,3 +758,172 @@ int main() {
 }
 ```
 
+### 1011 world cup betting  20 points
+
+With the 2010 FIFA World Cup running, football fans the world over were becoming increasingly excited as the best players from the best teams doing battles for the World Cup trophy in South Africa. Similarly, football betting fans were putting their money where their mouths were, by laying all manner of World Cup bets.
+
+Chinese Football Lottery provided a "Triple Winning" game. The rule of winning was simple: first select any three of the games. Then for each selected game, bet on one of the three possible results -- namely `W` for win, `T` for tie, and `L` for lose. There was an odd assigned to each result. The winner's odd would be the product of the three odds times 65%.
+
+For example, 3 games' odds are given as the following:
+
+```
+ W    T    L
+1.1  2.5  1.7
+1.2  3.1  1.6
+4.1  1.2  1.1
+```
+
+To obtain the maximum profit, one must buy `W` for the 3rd game, `T` for the 2nd game, and `T` for the 1st game. If each bet takes 2 yuans, then the maximum profit would be (4.1×3.1×2.5×65%−1)×2=39.31 yuans (accurate up to 2 decimal places).
+
+**Input Specification:**
+
+Each input file contains one test case. Each case contains the betting information of 3 games. Each game occupies a line with three distinct odds corresponding to `W`, `T` and `L`.
+
+**Output Specification:**
+
+For each test case, print in one line the best bet of each game, and the maximum profit accurate up to 2 decimal places. The characters and the number must be separated by one space.
+
+**Sample Input:**
+
+```in
+1.1 2.5 1.7
+1.2 3.1 1.6
+4.1 1.2 1.1
+```
+
+**Sample Output:**
+
+```out
+T T W 39.31
+```
+
+```c++
+#include<iostream>
+using namespace std;
+
+int main() {
+	float W, T, L;
+	float product = 1.0;
+	for (int j = 0; j < 3; ++j) {
+		while (cin >> W >> T >> L) {
+			if (W >= T && W >= L) {
+				cout << 'W';
+				product *= W;
+			}
+			else if (T >= W && T >= L) {
+				cout << 'T';
+				product *= T;
+			}
+			else if (L >= W && L >= T) {
+				cout << 'L';
+				product *= L;
+			}
+			cout << " ";
+		}
+	}
+	float res = 2 * (product * 0.65 - 1);
+	printf("%.2f", res);
+	return 0;
+}
+```
+
+###  1015  Reversible Primes  20 points
+
+A **reversible prime** in any number system is a prime whose "reverse" in that number system is also a prime. For example in the decimal system 73 is a reversible prime because its reverse 37 is also a prime.
+
+Now given any two positive integers *N* (<105) and *D* (1<*D*≤10), you are supposed to tell if *N* is a reversible prime with radix *D*.
+
+**Input Specification:**
+
+The input file consists of several test cases. Each case occupies a line which contains two integers *N* and *D*. The input is finished by a negative *N*.
+
+**Output Specification:**
+
+For each test case, print in one line `Yes` if *N* is a reversible prime with radix *D*, or `No` if not.
+
+**Sample Input:**
+
+```in
+73 10
+23 2
+23 10
+-2
+```
+
+**Sample Output:**
+
+```out
+Yes
+Yes
+No
+```
+
+**解法：  对于这种输出形式 ，采用\<cstdio>中的函数.利用c语言中的scanf来逐个获取**
+
+```c++
+#include<cstdio>
+#include<cmath>
+using namespace std;
+
+bool isprime(int n) {
+	if (n <= 1) return false;
+	int sqr = int(sqrt(n * 1.0));
+	for (int i = 2; i <= sqr; ++i) {
+		if (n % i == 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
+/*
+// 常用函数
+bool isPrime(int n){
+	if(n <= 1) return false;
+	for(int i=2; i*i<=n; ++i){
+		if(n%i == 0){
+            return false;
+        }
+	}
+    return true;
+}
+
+//  在d进制下，
+int reverse(int a,int d=10) {
+	int res = 0;
+	while (a) {
+		res = res * d + a % d;
+		a /= d;
+	}
+	return res;
+}
+
+*/
+
+
+int main() {
+	int n, d;
+	while (scanf("%d", &n) != EOF) {
+		if (n < 0) break;
+		scanf("%d", &d);
+		if (isprime(n) == false) {
+			printf("No\n");
+			continue;
+		}
+		int len = 0, arr[100];
+		do {
+			arr[len++] = n % d;
+			n = n / d;
+		} while (n != 0);
+		for (int i = 0; i < len; ++i) {
+			n = n * d + arr[i];
+		}
+		printf("%s", isprime(n) ? "Yes\n" : "No\n");
+	}
+	return 0;
+}
+```
+
+
+
