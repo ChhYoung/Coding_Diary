@@ -4,6 +4,31 @@
 
 [TOC]
 
+## 常用函数实现
+
+```c++
+// 判断是否时质数
+bool isPrime(int n){
+	if(n <= 1) return false;
+	for(int i=2; i*i<=n; ++i){
+		if(n%i == 0){
+            return false;
+        }
+	}
+    return true;
+}
+
+//  在d进制下，置逆  123(10) --->   321(10)
+int reverse(int a,int d=10) {
+	int res = 0;
+	while (a) {
+		res = res * d + a % d;
+		a /= d;
+	}
+	return res;
+}
+```
+
 
 
 ##  乙级
@@ -876,30 +901,6 @@ bool isprime(int n) {
 	return true;
 }
 
-
-/*
-// 常用函数
-bool isPrime(int n){
-	if(n <= 1) return false;
-	for(int i=2; i*i<=n; ++i){
-		if(n%i == 0){
-            return false;
-        }
-	}
-    return true;
-}
-
-//  在d进制下，
-int reverse(int a,int d=10) {
-	int res = 0;
-	while (a) {
-		res = res * d + a % d;
-		a /= d;
-	}
-	return res;
-}
-
-*/
 
 
 int main() {
