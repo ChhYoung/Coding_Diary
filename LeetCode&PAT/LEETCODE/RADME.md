@@ -1435,3 +1435,74 @@ private:
 };
 ```
 
+#### 771. Jewels and Stones
+
+You're given strings `J` representing the types of stones that are jewels, and `S` representing the stones you have.  Each character in `S` is a type of stone you have.  You want to know how many of the stones you have are also jewels.
+
+The letters in `J` are guaranteed distinct, and all characters in `J` and `S` are letters. Letters are case sensitive, so `"a"` is considered a different type of stone from `"A"`.
+
+**Example 1:**
+
+```
+Input: J = "aA", S = "aAAbbbb"
+Output: 3
+```
+
+**Example 2:**
+
+```
+Input: J = "z", S = "ZZ"
+Output: 0
+```
+
+**Note:**
+
+- `S` and `J` will consist of letters and have length at most 50.
+- The characters in `J` are distinct.
+
+**解法一：暴力方法**
+
+直接搜索
+
+- 时间复杂度 $O(n_1*n_2)$
+
+```c++
+/// Brute Force
+/// Time Complexity: O(len(J) * len(S))
+/// Space Complxity: O(1)
+class Solution {
+public:
+    int numJewelsInStones(string J, string S) {
+
+        int res = 0;
+        for(char c: S)
+            if(J.find(c) != string::npos)
+                res ++;
+        return res;
+    }
+};
+```
+
+**方法二： hash set**
+
+- 时间复杂度 ：$O(len(J) + len(S))$  // $O(len(J))  构建散列的时间 O(len(S))在散列中查找每次只需常数时间$ 
+- 空间复杂度 $O(len(J)) $
+
+```c++
+#include<unordered_set>
+using namespace std;
+class SOlution{
+public:
+    int numJewelsInStones(string J,string S){
+        unordered_set<char> jewels;
+		for(char c:J)
+            jewels.insert(c);
+        int res = 0;
+        for(char c:S)
+            if(jewels.find(c) != jewels.end());
+        		++res;
+        return res;
+    }
+};
+```
+

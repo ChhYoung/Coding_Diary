@@ -4,31 +4,6 @@
 
 [TOC]
 
-## 常用函数实现
-
-```c++
-// 判断是否时质数
-bool isPrime(int n){
-	if(n <= 1) return false;
-	for(int i=2; i*i<=n; ++i){
-		if(n%i == 0){
-            return false;
-        }
-	}
-    return true;
-}
-
-//  在d进制下，置逆  123(10) --->   321(10)
-int reverse(int a,int d=10) {
-	int res = 0;
-	while (a) {
-		res = res * d + a % d;
-		a /= d;
-	}
-	return res;
-}
-```
-
 
 
 ##  乙级
@@ -902,6 +877,31 @@ bool isprime(int n) {
 }
 
 
+/*
+// 常用函数
+bool isPrime(int n){
+	if(n <= 1) return false;
+	for(int i=2; i*i<=n; ++i){
+		if(n%i == 0){
+            return false;
+        }
+	}
+    return true;
+}
+
+//  在d进制下，置逆
+// 4在二进制为 100 ，二进制下置逆为 001输出为1
+int reverse(int a,int d=10) {
+	int res = 0;
+	while (a) {
+		res = res * d + a % d;
+		a /= d;
+	}
+	return res;
+}
+
+*/
+
 
 int main() {
 	int n, d;
@@ -926,5 +926,272 @@ int main() {
 }
 ```
 
+### 1019  General Palindromic Number(20 point(s))
 
+A number that will be the same when it is written forwards or backwards is known as a **Palindromic Number**. For example, 1234321 is a palindromic number. All single digit numbers are palindromic numbers.
+
+Although palindromic numbers are most often considered in the decimal system, the concept of palindromicity can be applied to the natural numbers in any numeral system. Consider a number *N*>0 in base *b*≥2, where it is written in standard notation with *k*+1 digits *a**i* as ∑*i*=0*k*(*a**i**b**i*). Here, as usual, 0≤*a**i*<*b* for all *i* and *a**k* is non-zero. Then *N* is palindromic if and only if *a**i*=*a**k*−*i* for all *i*. Zero is written 0 in any base and is also palindromic by definition.
+
+Given any positive decimal integer *N* and a base *b*, you are supposed to tell if *N* is a palindromic number in base *b*.
+
+**Input Specification:**
+
+Each input file contains one test case. Each case consists of two positive numbers *N* and *b*, where 0<*N*≤109 is the decimal number and 2≤*b*≤109 is the base. The numbers are separated by a space.
+
+**Output Specification:**
+
+For each test case, first print in one line `Yes` if *N* is a palindromic number in base *b*, or `No` if not. Then in the next line, print *N* as the number in base *b* in the form "*a**k* *a**k*−1 ... *a*0". Notice that there must be no extra space at the end of output.
+
+**Sample Input 1:**
+
+```in
+27 2
+```
+
+**Sample Output 1:**
+
+```out
+Yes
+1 1 0 1 1
+```
+
+**Sample Input 2:**
+
+```in
+121 5
+```
+
+**Sample Output 2:**
+
+```out
+No
+4 4 1
+```
+
+```c++
+#include <cstdio>
+#include<iostream>
+using namespace std;
+int main() {
+    
+	int a, b;
+	scanf("%d %d", &a, &b);
+	int arr[40], index = 0;
+	while(a != 0) {
+		arr[index++] = a % b;
+		a = a / b;
+	}
+	int flag = 0;
+	for(int i = 0; i < index / 2; i++) {
+		if(arr[i] != arr[index-i-1]) {
+			printf("No\n");
+			flag = 1;
+			break;
+		}
+	}
+	if(!flag) printf("Yes\n");
+	for(int i = index - 1; i >= 0; i--) {
+		printf("%d", arr[i]);
+		if(i != 0) printf(" ");
+	}
+	if(index == 0)
+		printf("0");
+
+	return 0;
+}
+```
+
+```c++
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int reverse(int a,int d=10) {
+	int res = 0;
+	while (a) {
+		res = res * d + a % d;
+		a /= d;
+	}
+	return res;
+}
+
+int main(){
+    int a,b;
+    cin>>a>>b;
+    int rev = reverse(a,b);
+
+    if(a == rev){
+        cout<<"Yes\n";
+    }
+    else {
+        cout<<"No\n";
+    }
+
+    if(a == 0)
+        cout<<0;
+    else{
+        vector<int> res;
+        while(a){
+            res.push_back(a%b);
+            a /= b;
+        }
+        for(int i=res.size()-1;i>=1;--i){
+            cout<<res[i]<<" ";
+        }
+        cout<<res[0];
+    }
+    
+    return 0;
+}
+```
+
+
+
+### 1023 Have Fun with Numbers (20 point(s))
+
+Notice that the number 123456789 is a 9-digit number consisting exactly the numbers from 1 to 9, with no duplication. Double it we will obtain 246913578, which happens to be another 9-digit number consisting exactly the numbers from 1 to 9, only in a different permutation. Check to see the result if we double it again!
+
+Now you are suppose to check if there are more numbers with this property. That is, double a given number with k digits, you are to tell if the resulting number consists of only a permutation of the digits in the original number.
+
+Input Specification:
+Each input contains one test case. Each case contains one positive integer with no more than 20 digits.
+
+Output Specification:
+For each test case, first print in a line "Yes" if doubling the input number gives a number that consists of only a permutation of the digits in the original number, or "No" if not. Then in the next line, print the doubled number.
+
+Sample Input:
+1234567899
+Sample Output:
+Yes
+2469135798
+
+
+
+- 利用手算乘法
+- 用数组记录每个数字出现的次数
+- 对比出现的次数是否相同
+
+```c++
+#include<cstdio>
+#include<cstring>
+using namespace std;
+// 用来记录每个数出现的次数
+int book[10]={0,0,0,0,0,0,0,0,0,0};
+int main(){
+    char num[22];
+    scanf("%s",num);
+    int flag = 0;
+    int len = strlen(num);
+    for(int i=len-1; i>=0; --i){
+        int temp = num[i]-'0';
+        // 在原数中出现  则 +1
+        book[temp]++;
+        temp = temp*2 + flag;
+        flag = 0;
+        if(temp>=10){
+            temp =temp - 10;
+            flag = 1;
+        }
+        // 在新数中出现  则 -1
+        num[i] = (temp+'0');
+        book[temp]--;
+    }
+    int flag1 = 0;
+    // 出现次数相同则 book全是0
+    for(int i=0;i<10;++i){
+        if(book[i] != 0)
+            flag1 = 1;
+    }
+	// flag == 1 即加后位数不同
+    printf("%s",(flag==1||flag1==1)?"No\n":"Yes\n");
+    // 打印最大的一个溢出位
+    if(flag==1) printf("1");
+    printf("%s",num);
+    return 0;
+}
+```
+
+### 1027 Colors in (Mars 20 points)
+
+People in Mars represent the colors in their computers in a similar way as the Earth people. That is, a color is represented by a 6-digit number, where the first 2 digits are for `Red`, the middle 2 digits for `Green`, and the last 2 digits for `Blue`. The only difference is that they use radix 13 (0-9 and A-C) instead of 16. Now given a color in three decimal numbers (each between 0 and 168), you are supposed to output their Mars RGB values.
+
+** Input Specification:**
+
+Each input file contains one test case which occupies a line containing the three decimal color values.
+
+**Output Specification:**
+
+For each test case you should output the Mars RGB value in the following format: first output `#`, then followed by a 6-digit number where all the English characters must be upper-cased. If a single color is only 1-digit long, you must print a `0` to its left.
+
+**Sample Input:**
+
+```in
+15 43 71
+```
+
+**Sample Output:**
+
+```out
+#123456
+```
+
+```c++
+#include<iostream>
+using namespace std;
+void my_func(int a,int b){
+    switch(a){
+        case 0: cout<<0;break;
+        case 1: cout<<1;break;
+        case 2: cout<<2;break;
+        case 3: cout<<3;break;
+        case 4: cout<<4;break;
+        case 5: cout<<5;break;
+        case 6: cout<<6;break;
+        case 7: cout<<7;break;
+        case 8: cout<<8;break;
+        case 9: cout<<9;break;
+        case 10: cout<<'A';break;
+        case 11: cout<<'B';break;
+        case 12: cout<<'C';break;
+    }
+    switch(b){
+        case 0: cout<<0;break;
+        case 1: cout<<1;break;
+        case 2: cout<<2;break;
+        case 3: cout<<3;break;
+        case 4: cout<<4;break;
+        case 5: cout<<5;break;
+        case 6: cout<<6;break;
+        case 7: cout<<7;break;
+        case 8: cout<<8;break;
+        case 9: cout<<9;break;
+        case 10: cout<<'A';break;
+        case 11: cout<<'B';break;
+        case 12: cout<<'C';break;
+    }
+}
+
+int main(){
+    int a,b,c;
+    cin>>a>>b>>c;
+    cout<<'#';
+    my_func(a/13,a%13);my_func(b/13,b%13);my_func(c/13,c%13);
+    return 0;
+}
+```
+
+```c++
+#include <cstdio>
+using namespace std;
+int main() {
+    char c[14] = {"0123456789ABC"};
+    printf("#");
+    for(int i = 0; i < 3; i++) {
+        int num;
+        scanf("%d", &num);
+        printf("%c%c", c[num/13], c[num%13]);
+    }
+    return 0;
+}
+```
 
