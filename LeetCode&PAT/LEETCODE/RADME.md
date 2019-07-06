@@ -1466,6 +1466,10 @@ Output: 0
 
 - 时间复杂度 $O(n_1*n_2)$
 
+runtime : 4ms ,  faster than 78.31%
+
+memory usage : 8.3MB ,  less than 69.16%
+
 ```c++
 /// Brute Force
 /// Time Complexity: O(len(J) * len(S))
@@ -1488,6 +1492,10 @@ public:
 - 时间复杂度 ：$O(len(J) + len(S))$  // $O(len(J))  构建散列的时间 O(len(S))在散列中查找每次只需常数时间$ 
 - 空间复杂度 $O(len(J)) $
 
+runtime : 8ms  faster than 12.57%
+
+memory usage: 8.5MB, 41.28%
+
 ```c++
 #include<unordered_set>
 using namespace std;
@@ -1502,6 +1510,91 @@ public:
             if(jewels.find(c) != jewels.end());
         		++res;
         return res;
+    }
+};
+```
+
+####  438. Find All Anagrams in a String 
+
+Given a string **s** and a **non-empty** string **p**, find all the start indices of **p**'s anagrams in **s**.
+
+Strings consists of lowercase English letters only and the length of both strings **s** and **p** will not be larger than 20,100.
+
+The order of output does not matter.
+
+**Example 1:**
+
+```
+Input:
+s: "cbaebabacd" p: "abc"
+
+Output:
+[0, 6]
+
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+```
+
+
+
+**Example 2:**
+
+```
+Input:
+s: "abab" p: "ab"
+
+Output:
+[0, 1, 2]
+
+Explanation:
+The substring with start index = 0 is "ab", which is an anagram of "ab".
+The substring with start index = 1 is "ba", which is an anagram of "ab".
+The substring with start index = 2 is "ab", which is an anagram of "ab".
+```
+
+**解法：滑动窗口算法**
+
+[滑动窗口](https://www.zhihu.com/question/314669016)
+
+- 开始搜索：先扩大窗口当窗口包含所有字母时由于前段可能参数冗余，所以左端收缩
+- 边收缩边记录，当左端收缩到刚好不满足条件时，向右扩张
+
+```c++
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+        vector<int> res;
+        if(s.size() < p.size())
+            return res;
+        //  p的字符出现频率
+        vector<int> freq_p(26,0);
+        for(char c:p)
+            freq_p[c - 'a'] += 1;
+        // s字符的出现频率
+        vector<int> freq_s(26,0);
+        // 初始化滑动窗口 
+        int l = 0, r = -1; 
+        while(r+1 < s.size()){
+            // 向右扩展
+            ++r;
+            ++freq_s[s[r] - 'a'];
+            // 当窗口长度过长时, 左边收缩，同时改变表元素值
+            if(r-l+1 > p.size())
+                freq_s[s[l++]-'a']--;
+            // 窗口大小及hash相同时
+            if(r-l+1 == p.size() && same(freq_s,freq_p))
+                res.push_bacj(l);
+        }
+        return res;
+    }
+private:
+    bool same(const vector<int>& freq_s,const vector<int>& freq_p){
+        for(int i=0;i<26;++i){
+            if(freq_s[i] != freq_p[i])
+                return false;
+        }
+        return true;
     }
 };
 ```

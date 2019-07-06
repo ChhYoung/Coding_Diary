@@ -1,5 +1,3 @@
-
-
 # PAT
 
 [TOC]
@@ -1115,7 +1113,7 @@ int main(){
 
 People in Mars represent the colors in their computers in a similar way as the Earth people. That is, a color is represented by a 6-digit number, where the first 2 digits are for `Red`, the middle 2 digits for `Green`, and the last 2 digits for `Blue`. The only difference is that they use radix 13 (0-9 and A-C) instead of 16. Now given a color in three decimal numbers (each between 0 and 168), you are supposed to output their Mars RGB values.
 
-** Input Specification:**
+**Input Specification:**
 
 Each input file contains one test case which occupies a line containing the three decimal color values.
 
@@ -1194,4 +1192,120 @@ int main() {
     return 0;
 }
 ```
+
+###  1031 Hello world for U
+
+解法：利用类似bitmap的方法来存储位置信息
+
+先存一幅图，再将整个图打印
+
+
+
+```c++
+#include<iostream>
+#include<cstring>
+using namespace std;
+int main(){
+    char c[81],u[30][30];
+    memset(u,' ',sizeof(u));
+    scanf("%s",c);
+    int n = strlen(c)+2;
+    int n1 = n/3, n2=n/3+n%3, index=0;
+    for(int i=0;i<n1;++i) u[i][0]=c[index++];
+    for(int i=1;i<=n2-2;++i) u[n1-1][i] = c[index++];
+    for(int i=n1-1;i>=0;--i) u[i][n2-1] = c[index++];
+    for(int i=0;i<n1;++i){
+        for(int j=0;j<n2;++j){
+            printf("%c",u[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+```
+
+###  1035   Password 20 points
+
+```c++
+#include<string>
+#include<iostream>
+using namespace std;
+void is_correct(char& a,bool& m){
+    if(a=='1'){
+        a='@';
+        m = false;
+    }
+    else if(a=='l'){
+        a='L';
+        m = false;
+    }
+    else if(a=='0'){
+        a='%';
+        m = false;
+    }
+    else if(a=='O'){
+        a='o';
+        m = false;
+    }
+}
+
+int main(){
+    int N;
+    cin>>N;
+    int cnt=0;
+    string ID[N],PWD[N];
+    for(int i=0;i<N;++i){
+        bool m=true;
+        string id,pwd;
+        cin>>id>>pwd;
+        for(auto &c:pwd){
+            is_correct(c,m);
+        }
+        if(!m){
+            ID[cnt] = id;
+            PWD[cnt++] = pwd;
+        }
+    }
+    if(cnt == 0){
+        if(N==1)
+            printf("There is %d account and no account is modified",N);
+        else 
+            printf("There are %d accounts and no account is modified",N);
+    }
+    else {
+        cout<<cnt<<"\n";
+        for(int i=0;i<cnt;++i){
+            cout<<ID[i]<<' '<<PWD[i];
+            if(i!=cnt-1) cout<<'\n';
+        }
+    }
+    return 0;
+}
+```
+
+### 1041 Be Unique
+
+```c++
+#include<cstdio>
+using namespace std;
+int a[100001],m[100000];
+int main(){
+    int n;
+    scanf("%d",&n);
+    for(int i=0;i<n;++i){
+        scanf("%d",&a[i]);
+        m[a[i]]++;
+    }
+    for(int i=0;i<n;++i){
+        if(m[a[i]] == 1){
+            printf("%d",a[i]);
+            return 0;
+        }
+    }
+    printf("None");
+    return 0;
+}
+```
+
+
 
