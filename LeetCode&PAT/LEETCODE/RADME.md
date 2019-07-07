@@ -1555,6 +1555,10 @@ The substring with start index = 2 is "ab", which is an anagram of "ab".
 
 **解法：滑动窗口算法**
 
+**runtime**: 36ms  faster than 58.71%
+
+**memory usage :**10.4MB   less than 33.60%
+
 [滑动窗口](https://www.zhihu.com/question/314669016)
 
 - 开始搜索：先扩大窗口当窗口包含所有字母时由于前段可能参数冗余，所以左端收缩
@@ -1584,7 +1588,7 @@ public:
                 freq_s[s[l++]-'a']--;
             // 窗口大小及hash相同时
             if(r-l+1 == p.size() && same(freq_s,freq_p))
-                res.push_bacj(l);
+                res.push_back(l);
         }
         return res;
     }
@@ -1595,6 +1599,249 @@ private:
                 return false;
         }
         return true;
+    }
+};
+```
+
+####  155  min stack 
+
+**retrieving the minimum element in constant time.**
+
+####  141  Linked list cycle
+
+Given a linked list, determine if it has a cycle in it.
+
+To represent a cycle in the given linked list, we use an integer `pos` which represents the position (0-indexed) in the linked list where tail connects to. If `pos` is `-1`, then there is no cycle in the linked list.
+
+ 
+
+**Example 1:**
+
+```
+Input: head = [3,2,0,-4], pos = 1
+Output: true
+Explanation: There is a cycle in the linked list, where tail connects to the second node.
+```
+
+![img](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist.png)
+
+**Example 2:**
+
+```
+Input: head = [1,2], pos = 0
+Output: true
+Explanation: There is a cycle in the linked list, where tail connects to the first node.
+```
+
+![img](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test2.png)
+
+**Example 3:**
+
+```
+Input: head = [1], pos = -1
+Output: false
+Explanation: There is no cycle in the linked list.
+```
+
+**解法一： 快慢指针，难点主要在于下一个节点是否是`nullptr`**
+
+- 时间复杂度 :  最坏情况下$ O(len) = O(N)$
+  - runtime:  12ms   faster than 82.98%
+- 空间复杂度 ：O(1)
+  - memory usage: 9.9MB less than 24.12%
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        auto fast = head;
+        auto slow  = head;
+        while(true){
+            if(!fast || !(fast->next) || !(fast->next->next)){
+                return false;
+            }
+            else{
+                fast = fast->next->next;
+                slow = slow->next;
+                if(fast == slow){
+                    return true;
+                }
+            }
+        }
+    }
+};
+
+//  fast version
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+
+        if(head == NULL)
+            return false;
+
+        if(head->next == NULL)
+            return false;
+
+        ListNode* slow = head;
+        ListNode* fast = head->next;
+        while(fast != slow){
+            if(fast->next == NULL)
+                return false;
+            if(fast->next->next == NULL)
+                return false;
+
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+
+        return true;
+    }
+};
+```
+
+**解法二： Hash Table: 遍历节点并记录，若右节点的next为nullptr则false, 若节点已经在表中则有环**
+
+- 时间复杂度 O(N)  
+  - runtime:  20ms   faster than 24.11%
+- 空间复杂度 O(N)
+  - emmeory usage : 12.1MB less than 5.02%
+
+```C++
+#include<set>
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        std::set<ListNode*> res;
+        auto ptr = head;
+        while(true){
+            if(!ptr ) return false;
+            else if(res.find(ptr) == res.end()){
+                res.insert(ptr);
+                ptr = ptr->next;
+            }
+            else if(res.find(ptr) != res.end()){
+                return true;
+            }       
+        }
+    }
+};
+```
+
+#### 20. Valid parenthese
+
+Given a string containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+
+An input string is valid if:
+
+1. Open brackets must be closed by the same type of brackets.
+2. Open brackets must be closed in the correct order.
+
+Note that an empty string is also considered valid.
+
+**Example 1:**
+
+```
+Input: "()"
+Output: true
+```
+
+**Example 2:**
+
+```
+Input: "()[]{}"
+Output: true
+```
+
+**Example 3:**
+
+```
+Input: "(]"
+Output: false
+```
+
+**Example 4:**
+
+```
+Input: "([)]"
+Output: false
+```
+
+**Example 5:**
+
+```
+Input: "{[]}"
+Output: true
+```
+
+**解法一： 将元素一次压入栈中，遇到一个右括号，检查栈顶元素是否与其相匹配,匹配则弹出**
+
+- 时间复杂度 O(N)
+  - runtime: 4ms,  faster than 75.48%
+- 空间复杂度 O(N)
+  - memory usage: 8.6MB , less than 19.69%
+
+```c++
+#include<stack>
+#include<string>
+
+class Solution {
+public:
+    bool isValid(std::string s) {
+        std::stack<char> res;
+        for(int i=0;i<s.length();++i){
+            if(s[i]=='{' || s[i]=='[' || s[i]=='('){
+                res.push(s[i]);
+            }
+            else {
+                if(res.empty())
+                    return false;
+                
+                else if(s[i]=='}'){
+                    if(res.top()!='{')
+                        return false;
+                }
+                else if(s[i]==')'){
+                    if(res.top()!='(')
+                        return false;
+                }
+                else if(s[i]==']'){
+                    if(res.top()!='[')
+                        return false;
+                }
+                res.pop();
+            }
+        }
+        if(res.empty())
+            return true;
+        else return false;
+    }
+};
+
+// 简化合并逻辑
+class Solution {
+public:
+    bool isValid(std::string s) {
+        std::stack<char> res;
+        for(int i=0;i<s.length();++i){
+            if(s[i]=='{' || s[i]=='[' || s[i]=='(')
+                res.push(s[i]);
+            else {
+                if(res.empty()) return false;
+                if(s[i]=='}' && res.top()!='{') return false;
+                if(s[i]==')' && res.top()!='(') return false;
+                if(s[i]==']' && res.top()!='[') return false;
+                res.pop();
+            }
+        }
+        return res.empty();
     }
 };
 ```
