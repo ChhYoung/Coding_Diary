@@ -34,6 +34,7 @@
         "cmath": "cpp",
         "new": "cpp",
         "optional": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "stack": "cpp"
     }
 }

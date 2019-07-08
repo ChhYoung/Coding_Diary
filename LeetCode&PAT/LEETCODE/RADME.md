@@ -1846,3 +1846,373 @@ public:
 };
 ```
 
+#### 234. palindrome linked list
+
+Given a singly linked list, determine if it is a palindrome.
+
+**Example 1:**
+
+```
+Input: 1->2
+Output: false
+```
+
+**Example 2:**
+
+```
+Input: 1->2->2->1
+Output: true
+```
+
+**Follow up:**
+Could you do it in O(n) time and O(1) space?
+
+**解决方法：置逆+快慢指针遍历**
+
+two pointers to reverse and traverse 
+
+- 时间复杂度 O(n): 24ms , faster than 78.38%
+- 空间复杂度 O(1): 12.8MB  less than 53.98%
+
+**利用步长为2，1的指针，当快指针到头时，慢指针刚好到中间:**
+
+> 都从头节点开始
+>
+> - 长度为奇数时： 快指针停止时，慢指针刚好在中间位置
+> - 长度为偶数时： 快指针停止时，慢指针刚好在中轴，左边的节点位置
+
+遍历到中间时，将后一半元素置逆序，一个在头，一个在中间逐个比较
+
+```c++
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+class Solution {
+private:
+    ListNode* reverse(ListNode* head){
+        if(head==nullptr || head->next==nullptr)
+            return head;
+        // 三个指针分别指向 前 ，当前，后
+        ListNode* pre  = head;
+        ListNode* cur  = head->next;
+        ListNode* next = cur->next;
+        // 将头节点置为尾节点
+        head->next = nullptr;
+        while(true){
+            cur->next = pre;
+            pre = cur;
+            cur = next;
+            if(cur == nullptr)
+                break;
+            next = cur->next;
+        }
+        return pre;
+    }    
+
+public:
+    bool isPalindrome(ListNode* head) {
+        if(head == nullptr || head->next == nullptr)
+            return true;
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(fast->next!=nullptr && fast->next->next!=nullptr){
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        // 将slow后的元素置逆
+        slow->next = reverse(slow->next);
+        slow = slow->next;
+        ListNode* cur = head;
+        while(slow != nullptr){
+            if(cur->val != slow->val)
+                return false;
+            else{
+                slow = slow->next;
+                cur = cur->next;
+            }
+        }
+        return true;
+    }
+};
+```
+
+#### 160 . intersection of two linked list
+
+Write a program to find the node at which the intersection of two singly linked lists begins.
+
+For example, the following two linked lists:
+
+[![img](https://assets.leetcode.com/uploads/2018/12/13/160_statement.png)](https://assets.leetcode.com/uploads/2018/12/13/160_statement.png)
+
+ 
+
+**Example 1:**
+
+[![img](https://assets.leetcode.com/uploads/2018/12/13/160_example_1.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_1.png)
+
+ 
+
+**Example 2:**
+
+[![img](https://assets.leetcode.com/uploads/2018/12/13/160_example_2.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_2.png)
+
+ 
+
+**Example 3:**
+
+[![img](https://assets.leetcode.com/uploads/2018/12/13/160_example_3.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_3.png)
+
+ 
+
+**Notes:**
+
+- If the two linked lists have no intersection at all, return `null`.
+- The linked lists must retain their original structure after the function returns.
+- You may assume there are no cycles anywhere in the entire linked structure.
+- Your code should preferably run in O(n) time and use only O(1) memory.
+
+**解法一：暴力方法**
+
+- 时间复杂度 O(m*n)
+
+- 空间复杂度 O(1)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        for(auto pA=headA; pA; pA=pA->next ){
+            for(auto pB=headB; pB; pB=pB->next)
+                if(pA == pB)
+                    return pA;
+        }
+        return nullptr;
+    }
+};
+```
+
+**解法二：hash set**
+
+- 时间复杂度： O(m+n)
+- 空间复杂度:    O(m)
+
+```C++
+#include<unordered_set>
+class Solution{
+public:
+    ListNode* getIntersectionNode(ListNode *headA, ListNode *headB){
+        unordered_set<ListNode*> set;
+        for(auto pA=headA; pA; pA=pA->next)
+            set.insert(pA);
+        for(auto pB=headB; pB; pB=pB->next)
+            if(set.count(pB))
+                return pB;
+        return nullptr;
+    }
+};
+```
+
+**解法三：两个指针**
+
+两个相同步长的指针，若出发点到交点的距离一样则两个指针经过相同的时间到达交点，若长度不一样，则使短的离节点的距离多个`long-short` , 指针`l,s`，当`s`到达尾部时，`l`离尾部的距离刚好为`long-short`
+
+令s为`long's head`,  l走到尾部使跳到`short's head`, 相遇点为交点
+
+无交点的情况可以看成交点是`nullptr`
+
+```c++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        auto pA = headA;
+        auto pB = headB;
+        while(pA || pB){
+            if(pA == pB)
+                return pA;
+            if(pA)
+                pA = pA->next;
+            else 
+                pA = headB;
+            if(pB)
+                pB = pB->next;
+            else 
+                pB = headA;
+        }
+        return nullptr;
+    }
+};
+```
+
+####  581. Shortest Unsorted Continuous Subarray
+
+Given an integer array, you need to find one **continuous subarray** that if you only sort this subarray in ascending order, then the whole array will be sorted in ascending order, too.
+
+You need to find the **shortest** such subarray and output its length.
+
+**Example 1:**
+
+```
+Input: [2, 6, 4, 8, 10, 9, 15]
+Output: 5
+Explanation: You need to sort [6, 4, 8, 10, 9] in ascending order to make the whole array sorted in ascending order.
+```
+
+
+
+**Note:**
+
+1. Then length of the input array is in range [1, 10,000].
+2. The input array may contain duplicates, so ascending order here means **<=**.
+
+**解法一：brute froce：**
+
+左边的有序元素要满足：
+
+> 1. 有序
+> 2. 小于所有右边的元素
+
+右边的有序元素要满足：
+
+> 1. 有序
+> 2. 大于所有左边的元素
+
+利用循环来检查每个元素
+
+- 时间复杂度 O(n^3)
+- 空间复杂度 O(1)
+
+**解法二：better brute force**
+
+类似于选择排序，记录下逆序发生的最大长度
+
+- 时间复杂度 O(n^2), 超时
+
+- 空间复杂度 O(1)
+
+```c++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        int l=nums.size(),r=0;
+        for(int i=0;i<nums.size()-1;++i){
+            for(int j=i+1;j<nums.size();++j){
+                if(nums[j]<nums[i]){
+                    r = max(r,j);
+                    l = min(l,i);
+                }
+            }
+        }
+        return r-l<0?0:r-l+1;
+    }
+};
+```
+
+**解法三：排序后再比较元素位置**
+
+- 时间复杂度 ：$O(nlogn)$
+  - runtime: 48ms, faster than 39.28%
+- 空间复杂度：$O(n)$
+  - memory usage : 11.3MB, less than 37.82%
+
+```c++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        vector<int> num_sort(nums);
+        sort(num_sort.begin(),num_sort.end());
+        int start = nums.size(),end = 0;
+        for(int i=0;i<nums.size();++i){
+            if(nums[i]!=num_sort[i]){
+                start = min(start,i);
+                end = max(end,i);
+            }
+        }
+        return end-start>=0 ? end-start+1:0;
+    }
+};
+```
+
+**解法四：利用栈**
+
+第一次遍历：如果是升序则压入栈中，遇到一个逆序元素就出栈，直到出栈元素刚好小于该逆序元素，记录其秩`L`,最小的`L`即为左边界， 
+
+第二次遍历，从后往前压栈，遇到升序元素就出栈，直到出栈的元素刚好大于该元素，记录最大的秩即为右边界
+
+- 时间复杂度 O(n)
+  - runtime: 40ms, faster than 59.29%
+- 空间复杂度 O(n)
+  - memory  usage: 11.4MB  less than 24.81%
+
+```c++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        vector<int> stack;
+        int l=nums.size(),r=0;
+        for(int i=0;i<nums.size();++i){
+            while(!stack.empty() && nums[stack.back()]>nums[i]){
+                l = min(l,stack.back());
+                stack.pop_back();
+            }
+            stack.push_back(i);   
+        }
+        stack.clear();
+        for(int i=nums.size()-1;i>=0;--i){
+            while(!stack.empty() && nums[stack.back()]<nums[i]){
+                r = max(r,stack.back());
+                stack.pop_back();
+            }
+            stack.push_back(i);
+        }
+        return r-l>0?r-l+1:0;
+    }
+};
+```
+
+**解法五**
+
+找到中间的最值，对应到两边的秩
+
+- runtime:  36ms ,  faster than 82.74%
+- memory usage : 10.5MB , less than 66.52%
+
+```c++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums)
+    {
+        int n = nums.size();
+        if (n <= 1) return 0;
+
+        int left = 0, right = n - 1;
+        while (left < n - 1 && nums[left] <= nums[left + 1]) ++left;
+        if (left == n - 1) return 0; // return 0 if already sorted.
+        // Or we know the array is unsorted
+        // So, it's no need to judge right > 0
+        while (/*right > 0 && */nums[right] >= nums[right - 1]) --right;
+
+        int rmin = INT_MAX, lmax = INT_MIN;
+        for (int i = left; i <= right; ++i) {
+            // lmax = max( lmax , nums[i])
+            if (nums[i] > lmax) lmax = nums[i];
+            // rmin = min( rmin , nums[i])
+            if (nums[i] < rmin) rmin = nums[i];
+        }
+        while (left >= 0 && nums[left] > rmin) --left;
+        while (right < n && nums[right] < lmax) ++right;
+        return right - left - 1;
+    }
+};
+```
+
