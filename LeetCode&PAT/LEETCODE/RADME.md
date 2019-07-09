@@ -2203,12 +2203,14 @@ public:
         while (/*right > 0 && */nums[right] >= nums[right - 1]) --right;
 
         int rmin = INT_MAX, lmax = INT_MIN;
+        // 找到转折区间内的最值
         for (int i = left; i <= right; ++i) {
             // lmax = max( lmax , nums[i])
             if (nums[i] > lmax) lmax = nums[i];
             // rmin = min( rmin , nums[i])
             if (nums[i] < rmin) rmin = nums[i];
         }
+        //  扩大区间，left左移，right右移，直到与最值匹配
         while (left >= 0 && nums[left] > rmin) --left;
         while (right < n && nums[right] < lmax) ++right;
         return right - left - 1;
