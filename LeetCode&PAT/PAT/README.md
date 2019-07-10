@@ -1309,3 +1309,273 @@ int main(){
 
 
 
+### 1046   Shortest Distance(  20point(s) )
+
+The task is really simple: given *N* exits on a highway which forms a simple cycle, you are supposed to tell the shortest distance between any pair of exits.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line contains an integer *N* (in [3,105]), followed by *N* integer distances *D*1 *D*2 ⋯ *D**N*, where *D**i* is the distance between the *i*-th and the (*i*+1)-st exits, and *D**N* is between the *N*-th and the 1st exits. All the numbers in a line are separated by a space. The second line gives a positive integer *M* (≤104), with *M* lines follow, each contains a pair of exit numbers, provided that the exits are numbered from 1 to *N*. It is guaranteed that the total round trip distance is no more than 107.
+
+**Output Specification:**
+
+For each test case, print your results in *M* lines, each contains the shortest distance between the corresponding given pair of exits.
+
+**Sample Input:**
+
+```in
+5 1 2 4 14 9
+3
+1 3
+2 5
+4 1
+```
+
+**Sample Output:**
+
+```out
+3
+10
+7
+```
+
+```c++
+
+
+#include<iostream>
+#include<algorithm>
+#include<vector>
+
+using namespace std;
+
+//  解法： 时间复杂度O(N)
+int main(){
+    int N;
+    cin>>N;
+    vector<int> D;
+    int num;
+    cin>>num;
+    D.push_back(num);
+    for(int i=1;i<N;++i){
+        cin>>num;
+        D.push_back(num+D[i-1]);
+    }
+
+    int M;
+    cin>>M;
+
+    for(int i=0;i<M;++i){
+        int a,b;
+        cin>>a>>b;
+        int max_num = max(a,b);
+        int min_num = min(a,b);
+        int dis_A = D[max_num-2]-D[min_num-2];
+        cout<<min(dis_A, D[N-1]-dis_A);
+        if(i!=M-1) cout<<'\n';
+    }
+
+
+    return 0;
+}
+
+// 下面解法时间复杂度O(n^2)   超时
+
+/* 
+int main(){
+    int N;
+    cin>>N;
+    vector<int> D;
+    for(int i=0;i<N;++i){
+        int n;
+        cin>>n;
+        D.push_back(n);
+    }
+       
+    int M;
+    cin>>M;
+    int sum=0;
+    for(auto &i:D){
+        sum += i;
+    }
+
+    for(int i=0;i<M;++i){
+        int a,b;
+        cin>>a>>b;
+        if(a == b) cout<<0;
+        else{
+        int ma = max(a,b);
+        int mi = min(a,b);
+        int sum_1 = 0;
+        for(int i=mi-1;i<=ma-2;++i)
+            sum_1 += D[i];
+        cout<<min(sum_1,sum-sum_1);
+        }
+        if(i!=M-1) cout<<'\n';
+    }
+    return 0;
+}
+*/
+```
+
+###  1050  String Subtraction (20 point(s))
+
+Given two strings *S*1 and *S*2, *S*=*S*1−*S*2 is defined to be the remaining string after taking all the characters in *S*2 from *S*1. Your task is simply to calculate *S*1−*S*2 for any given strings. However, it might not be that simple to do it **fast**.
+
+**Input Specification:**
+
+Each input file contains one test case. Each case consists of two lines which gives *S*1 and *S*2, respectively. The string lengths of both strings are no more than 104. It is guaranteed that all the characters are visible ASCII codes and white space, and a new line character signals the end of a string.
+
+**Output Specification:**
+
+For each test case, print *S*1−*S*2 in one line.
+
+**Sample Input:**
+
+```in
+They are students.
+aeiou
+```
+
+**Sample Output:**
+
+```out
+Thy r stdnts.
+```
+
+
+
+**解法一：暴力**
+
+时间复杂度 O(N*M)
+
+空间复杂度 O(1)
+
+```c++
+#include<string>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+int main(){
+    string s1,s2;
+    getline(cin,s1);
+    getline(cin,s2);
+
+    for(auto &i:s1){
+        if(s2.end() == find(s2.begin(),s2.end(),i)){
+            cout<<i;
+        }
+    }
+    return 0;
+}
+```
+
+**解法二：hash set**
+
+时间复杂度 O(n)
+
+空间复杂度 O(n)
+
+```c++
+#include<unordered_set>
+#include<string>
+#include<iostream>
+
+using namespace std;
+
+int main(){
+    string s1,s2;
+    getline(cin,s1);
+    getline(cin,s2);
+    unordered_set<char> set;
+    for(auto &i:s2){
+        set.insert(i);
+    }
+    for(auto &i:s1){
+        if(set.count(i) == 0){
+            cout<<i;
+        }
+    }
+    return 0;
+}
+```
+
+### 1054 The Dominant Color (20 point(s))
+
+Behind the scenes in the computer's memory, color is always talked about as a series of 24 bits of information for each pixel. In an image, the color with the largest proportional area is called the dominant color. A **strictly** dominant color takes more than half of the total area. Now given an image of resolution *M* by *N* (for example, 800×600), you are supposed to point out the strictly dominant color.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line contains 2 positive numbers: *M* (≤800) and *N* (≤600) which are the resolutions of the image. Then *N* lines follow, each contains *M* digital colors in the range [0,224). It is guaranteed that the strictly dominant color exists for each input image. All the numbers in a line are separated by a space.
+
+**Output Specification:**
+
+For each test case, simply print the dominant color in a line.
+
+**Sample Input:**
+
+```in
+5 3
+0 0 255 16777215 24
+24 24 0 0 24
+24 0 24 24 24
+```
+
+**Sample Output:**
+
+```out
+24
+```
+
+**解法一：排序利用sort**
+
+```c++
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace  std;
+int main(){
+    int M,N;
+    cin>>M>>N;
+    vector<int> res;
+    for(int i=0;i<M;++i){
+        for(int j=0;j<N;++j){
+            int num;
+            cin>>num;
+            res.push_back(num);
+        }
+    }
+    sort(res.begin(),res.end());
+    cout<<res[res.size()/2];
+    return 0;
+}
+```
+
+**解法二利用 map记录每个元素出现的次数**
+
+空间换时间
+
+```c++
+#include <iostream>
+#include <map>
+using namespace std;
+int main() {
+    int m, n;
+    scanf("%d %d", &m, &n);
+    map<int, int> arr;
+    int half = m * n / 2;
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            int temp;
+            scanf("%d", &temp);
+            arr[temp]++;
+            if(arr[temp] > half) {
+                printf("%d", temp);
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+```
+
