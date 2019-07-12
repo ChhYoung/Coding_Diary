@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef _DSA_INCLUDE_SRC_LIST_NODE_H__
 #define _DSA_INCLUDE_SRC_LIST_NODE_H__
@@ -11,8 +11,12 @@ using Rank = int;
 template<typename T>
 struct ListNode{
     // 定义节点及节点指针的简洁命名
+    
     using Node = ListNode<T>;
     using Ptr = Node*;
+    /*
+    typedef ListNode<T> Node ;
+    typedef Node* Ptr;*/
 // members
     // 数据
     T data;

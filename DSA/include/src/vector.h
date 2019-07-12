@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #include<assert.h>
 #include"fibnacci.h"
@@ -6,20 +6,20 @@
 
 namespace DSA {
 
-// ÖÈ
+// ï¿½ï¿½
 using Rank = int;
 
 template<typename T>
 class Vector {
 
 protected:
-	// ¹æÄ£
+	// ï¿½ï¿½Ä£
 	Rank size_;
-	// ÈÝÁ¿
+	// ï¿½ï¿½ï¿½ï¿½
 	int capacity_;
-	// Êý¾ÝÇø
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	T* elem_;
-	// ¸¨Öú¹¹Ôìº¯Êý,ÒÔA[lo,hi)ÎªÀ¶±¾¸´ÖÆÏòÁ¿
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½,ï¿½ï¿½A[lo,hi)Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void copy_from(T const* A, Rank lo, Rank hi) {
 		elem_ = new T[capacity_ = 2 * (lo - hi)];
 		size_ = 0;
@@ -28,24 +28,24 @@ protected:
 		}
 	}
 
-	//  À©ÈÝ
-	//  ÈÝÁ¿ÂúÊ±±¶Ôö£¬·ÖÌ¯ÒâÒåO(1)Ê±¼ä
-	//  Ê¼ÖÕÓÐ size_ <= capacity_ <= 2*size_
+	//  ï¿½ï¿½ï¿½ï¿½
+	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¯ï¿½ï¿½ï¿½ï¿½O(1)Ê±ï¿½ï¿½
+	//  Ê¼ï¿½ï¿½ï¿½ï¿½ size_ <= capacity_ <= 2*size_
 	void expand() {
 		if (size_ < capacity_) return;
 		if (capacity_ < DEFAULT_CAPACITY) { capacity_ = DEFAULT_CAPACITY; }
 		T* old_elem = elem_;
-		// ÔÙÉêÇëÒ»¸ö2±¶´óÐ¡µÄ¿Õ¼ä
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Ä¿Õ¼ï¿½
 		elem_ = new T[capacity_ <<= 1];
-		// ¿½±´
+		// ï¿½ï¿½ï¿½ï¿½
 		for (int i = 0; i < size_; ++i) { elem_[i] = old_elem[i]; }
-		// ÊÍ·ÅÔ­À´¿Õ¼ä
+		// ï¿½Í·ï¿½Ô­ï¿½ï¿½ï¿½Õ¼ï¿½
 		delete[] old_elem;
 	}
 
-	// ËõÈÝ
-	// 25% capacity_ Îª½ç,ÈÝÁ¿¼õ°ë£¬·ÖÌ¯¸´ÔÓ¶ÈO(1)
-	// ²»ÊÊÓÃÓÚ¶Ôµ¥´Î²Ù×÷µÄÖ´ÐÐËÙ¶ÈÃô¸ÐµÄÒýÓÃ³¡ºÏ
+	// ï¿½ï¿½ï¿½ï¿½
+	// 25% capacity_ Îªï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½Ì¯ï¿½ï¿½ï¿½Ó¶ï¿½O(1)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶Ôµï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ï¿½
 	void shrink() {
 		if (capacity_ < DEFAULT_CAPACITY << 1) { return; }
 		if (size_ << 2 > capacity_) { return; }
@@ -59,9 +59,9 @@ protected:
 
 
 public:
-	// Ä¬ÈÏ³õÊ¼ÈÝÁ¿
+	// Ä¬ï¿½Ï³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	static constexpr int DEFAULT_CAPACITY = 3;
-	// ÈÝÁ¿Îªc,¹æÄ£Îªn,ËùÓÐÔªËØ³õÊ¼»¯Îªv
+	// ï¿½ï¿½ï¿½ï¿½Îªc,ï¿½ï¿½Ä£Îªn,ï¿½ï¿½ï¿½ï¿½Ôªï¿½Ø³ï¿½Ê¼ï¿½ï¿½Îªv
 	Vector(int c = DEFAULT_CAPACITY, int s = 0, T v = {}) {
 		assert(s <= c);
 		elem_ = new T[capacity_ = c];

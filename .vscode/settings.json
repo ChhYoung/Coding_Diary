@@ -41,6 +41,10 @@
         "mutex": "cpp",
         "ratio": "cpp",
         "thread": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "cmath": "cpp",
+        "cstdarg": "cpp",
+        "unordered_set": "cpp",
+        "string_view": "cpp"
     }
 }

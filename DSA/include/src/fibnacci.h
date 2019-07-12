@@ -1,14 +1,14 @@
-#pragma once
+//#pragma once
 namespace DSA {
 
-	// ¶þ·ÖµÝ¹é°æ  O(2^N)
+	// ï¿½ï¿½ï¿½ÖµÝ¹ï¿½ï¿½  O(2^N)
 	static __int64 fibR(int n) {
 		return n < 2 ? n : fibR(n - 1) + fibR(n - 2);
 	}
 
-	// ÏßÐÔµÝ¹é°æ±¾£¬ O(n)
-	// ¼ÆËãµÚnÏî Èë¿ÚÐÎÊ½ÎªfibL(n,prev)
-	// ÇÉÃîµØÀûÓÃÒýÓÃÀ´´«Öµ
+	// ï¿½ï¿½ï¿½ÔµÝ¹ï¿½æ±¾ï¿½ï¿½ O(n)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½nï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ÎªfibL(n,prev)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	static __int64 fibL(int n, __int64& prev) {
 		if (n == 0) {
 			// fin(-1) = 1
@@ -23,7 +23,7 @@ namespace DSA {
 		}
 	}
 
-	//  µü´ú°æ  O(n)
+	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  O(n)
 	static __int64 fibI(int n) {
 		// fib(-1) = 1, fib(0) = 0
 		__int64 f = 1, g = 0;
@@ -36,13 +36,13 @@ namespace DSA {
 		return g;
 	}
 
-	// Fibonacci ÊýÁÐÀà
+	// Fibonacci ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	template<typename T = int>
 	class Fibonacci {
 	private:
 		T f, g;
 	public:
-		// ³õÊ¼»¯Îª²»Ð¡ÓÚnµØ×îÐ¡FibÏî£¬O(log(n))Ê±¼ä
+		// ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Ð¡ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½Ð¡Fibï¿½î£¬O(log(n))Ê±ï¿½ï¿½
 		explicit Fibonacci(T n = 0) {
 			// f(-1)
 			f = 1;
@@ -53,7 +53,7 @@ namespace DSA {
 			}
 		}
 
-		// »ñÈ¡µ±Ç°FibnonacciÏî£¬O(1)Ê±¼ä
+		// ï¿½ï¿½È¡ï¿½ï¿½Ç°Fibnonacciï¿½î£¬O(1)Ê±ï¿½ï¿½
 		T next() {
 			// f(n) = f(n-1)+f(n-2)
 			g += f;
@@ -62,7 +62,7 @@ namespace DSA {
 			return g;
 		}
 
-		// ×ªÖÁÉÏÒ»¸öFibonacciÏî,O(1)Ê±¼ä
+		// ×ªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Fibonacciï¿½ï¿½,O(1)Ê±ï¿½ï¿½
 		T prev() {
 			// f(n-2) = f(n) - f(n-1)
 			f = g - f;

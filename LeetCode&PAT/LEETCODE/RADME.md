@@ -1499,7 +1499,7 @@ memory usage: 8.5MB, 41.28%
 ```c++
 #include<unordered_set>
 using namespace std;
-class SOlution{
+class Solution{
 public:
     int numJewelsInStones(string J,string S){
         unordered_set<char> jewels;
@@ -1603,7 +1603,8 @@ private:
 };
 ```
 
-####  155  min stack 
+
+155  min stack 
 
 **retrieving the minimum element in constant time.**
 
@@ -1662,12 +1663,19 @@ Explanation: There is no cycle in the linked list.
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
+        // 去除平凡情况
+        if(head == nullptr)
+            return false;
+        if(head->next == nullptr)
+            return false;
+        
         auto fast = head;
-        auto slow  = head;
+        auto slow = head;
         while(true){
             if(!fast || !(fast->next) || !(fast->next->next)){
                 return false;
             }
+
             else{
                 fast = fast->next->next;
                 slow = slow->next;
@@ -2034,7 +2042,7 @@ public:
 ```c++
 class Solution {
 public:
-    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+    ListNode *getIntersectionNode(ListNode *headA, ListNode* headB) {
         auto pA = headA;
         auto pB = headB;
         while(pA || pB){

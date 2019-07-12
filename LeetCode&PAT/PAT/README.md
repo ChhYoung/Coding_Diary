@@ -1551,7 +1551,7 @@ int main(){
 }
 ```
 
-**解法二利用 map记录每个元素出现的次数**
+**解法二: 利用 map记录每个元素出现的次数**
 
 空间换时间
 
@@ -1575,6 +1575,50 @@ int main() {
             }
         }
     }
+    return 0;
+}
+```
+
+### 1058. A+B in Hogwarts (20 point(s))
+
+If you are a fan of Harry Potter, you would know the world of magic has its own currency system -- as Hagrid explained it to Harry, "Seventeen silver Sickles to a Galleon and twenty-nine Knuts to a Sickle, it's easy enough." Your job is to write a program to compute *A*+*B* where *A* and *B* are given in the standard form of `Galleon.Sickle.Knut` (`Galleon` is an integer in [0,107], `Sickle` is an integer in [0, 17), and `Knut` is an integer in [0, 29)).
+
+**Input Specification:**
+
+Each input file contains one test case which occupies a line with *A* and *B* in the standard form, separated by one space.
+
+**Output Specification:**
+
+For each test case you should output the sum of *A* and *B* in one line, with the same format as the input.
+
+**Sample Input:**
+
+```in
+3.2.1 10.16.27
+```
+
+**Sample Output:**
+
+```out
+14.1.28
+```
+
+```c++
+#include<iostream>
+#include<cstdio>
+using namespace std;
+int main(){
+    long long  a,b,c,d,e,f;
+    scanf("%lld.%lld.%lld %lld.%lld.%lld",&a,&b,&c,&d,&e,&f);
+    long long flag = 0,cnt1=0,cnt2=0,cnt3=0;
+    cnt1 = (c+f)%29;
+    flag = (c+f)/29;
+
+    cnt2 = (b+e+flag)%17;
+    flag = (b+e+flag)/17;
+    
+    cnt3 = flag + a + d;
+    cout<<cnt3<<"."<<cnt2<<"."<<cnt1;
     return 0;
 }
 ```

@@ -6,7 +6,7 @@
  * Copyright (c) 2006-2013. All rights reserved.
  ******************************************************************************************/
 
-#pragma once
+//#pragma once
 
 #ifdef _DEBUG
 #include <stdio.h>
