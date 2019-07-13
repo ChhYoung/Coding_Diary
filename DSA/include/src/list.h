@@ -54,8 +54,9 @@ protected:
 
 public: 
 // 构造函数
-    List(){ init();}  
-    // 用vector的元素来构造
+    List(){ init();} 
+    /****************************************************/ 
+    // test function ,用vector的元素来构造
     List(std::vector<T> vec){
         init();
         for(auto& i:vec)
@@ -120,6 +121,8 @@ public:
     int uniquify();
     // 前后倒置
     void reverse(); // 改变值
+    void reverse_2_1(); // 改变指针
+    void reverse_2_2();
 
 // 只读访问接口
     // 返回规模
@@ -299,7 +302,8 @@ int List<T>::uniquify(){
     return old_size - size_;
 }
 
-// 实现 : 交换元素
+// 实现1 : 交换元素
+//  在数据类型较为简单时，使用
 template<typename T>
 void List<T>::reverse(){
     auto p = header;
@@ -308,6 +312,46 @@ void List<T>::reverse(){
         swap((p=p->succ)->data, (q=q->pred)->data);
     }
 }   
+
+// 实现2 ： 改变指针
+// 2.1 
+// 两趟遍历
+// 第一趟 将每个节点的pred设置为其下一个节点
+// 第二趟 将每个节点的succ设为其前一个节点
+template<typename T> 
+void List<T>::reverse_2_1(){
+    if(size_ < 2) return ;
+    NodePtr p,q;
+    // 将前驱指针倒置
+    for( p = header, q = p->succ; p!=trailer; p=q, q=p->succ){
+        p->pred = q;
+    }
+    // 单独设置 尾节点的前驱
+    trailer->pred = nullptr;
+    // 将所有后继指针倒置
+    for(p=header,q=p->pred; p!=trailer; p=q,q=p->pred)
+        q->succ = p;
+    // 单独设置 头节点
+    header->succ = nullptr;
+    // 交换头尾指针
+    swap(header,trailer);
+}
+
+// 实现3
+// 一次遍历 每次交换一个节点的pred 和 succ
+template<typename T> 
+void List<T>::reverse_2_2(){
+    if(size_ < 2) return ;
+    NodePtr p;
+    // 交换单一结点的pred succ
+    for(p=header; p != nullptr; p = p->pred){
+        swap(p->pred,p->succ);
+    }
+    // 交换后header->succ == nullptr ,trailer->pred == nullptr
+    // 所以 改变 header 和 trailer 
+    swap(header,trailer);
+}
+
 
 // 有序list的合并
 // 时间复杂度 O(M+N)
@@ -336,6 +380,7 @@ void List<T>::merge(NodePtr& p, int n, List<T>& L, NodePtr q, int m){
 template<typename T> 
 void List<T>::merge_sort(NodePtr& p,int n){
     if(n<2) return;
+    // 
     int m=n>>1;
     NodePtr q = p;
     for(int i=0;i<m;++i){

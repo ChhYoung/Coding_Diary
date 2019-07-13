@@ -1623,3 +1623,161 @@ int main(){
 }
 ```
 
+### 1065 A+B and C (64bit)  20 points
+
+Given three integers *A*, *B* and *C* in [−263,263], you are supposed to tell whether *A*+*B*>*C*.
+
+**Input Specification:**
+
+The first line of the input gives the positive number of test cases, *T* (≤10). Then *T* test cases follow, each consists of a single line containing three integers *A*, *B* and *C*, separated by single spaces.
+
+**Output Specification:**
+
+For each test case, output in one line `Case #X: true` if *A*+*B*>*C*, or `Case #X: false` otherwise, where *X* is the case number (starting from 1).
+
+**Sample Input:**
+
+```in
+3
+1 2 3
+2 3 4
+9223372036854775807 -9223372036854775808 0
+```
+
+**Sample Output:**
+
+```out
+Case #1: false
+Case #2: true
+Case #3: false
+```
+
+**解法：** 由两个数之和来判断溢出情况
+
+```c++
+#include<cstdio>
+using namespace std;
+int main(){
+    int n;
+    scanf("%d",&n);
+    for(int i=0;i<n;++i){
+        long long a,b,c;
+        scanf("%lld %lld %lld",&a,&b,&c);
+        long long sum = a+b;
+        // 溢出
+        if(a>0 && b>0 && sum< 0){
+            printf("Case #%d: true\n",i+1);
+        }
+        else if(a<0 && b<0 && sum>= 0){
+            printf("Case #%d: fasle\n",i+1);
+        }
+        else if(sum > c){
+            printf("Case #%d: true\n",i+1);
+        }
+        else {
+            printf("Case #%d: false\n",i+1);
+        }
+    }
+    return 0;
+}
+```
+
+
+
+###   1073 Scientific Notation(20point(s))
+
+
+Scientific notation is the way that scientists easily handle very large numbers or very small numbers. The notation matches the regular expression [+-][1-9]`.`[0-9]+E[+-][0-9]+ which means that the integer portion has exactly one digit, there is at least one digit in the fractional portion, and the number and its exponent's signs are always provided even when they are positive.
+
+Now given a real number *A* in scientific notation, you are supposed to print *A* in the conventional notation while keeping all the significant figures.
+
+**Input Specification:**
+
+Each input contains one test case. For each case, there is one line containing the real number *A* in scientific notation. The number is no more than 9999 bytes in length and the exponent's absolute value is no more than 9999.
+
+**Output Specification:**
+
+For each test case, print in one line the input number *A* in the conventional notation, with all the significant figures kept, including trailing zeros.
+
+**Sample Input 1:**
+
+```in
++1.23400E-03
+```
+
+**Sample Output 1:**
+
+```out
+0.00123400
+```
+
+**Sample Input 2:**
+
+```in
+-1.2E+10
+```
+
+**Sample Output 2:**
+
+```out
+-12000000000
+```
+
+- `std::string`的范围  `[begin,end)`
+
+
+```c++
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+int main(){
+    string str;
+    cin>>str;
+    if(str[0]=='-') cout<<'-';
+    // 找到小数点位置
+    auto ptr_1 = find(str.begin(),str.end(),'.');
+    // 找到E的位置
+    auto ptr_E = find(str.begin(),str.end(),'E');
+    // 判断是否是小数
+    bool exp = *(ptr_E+1)=='+'?true:false;
+    // 获取每部分数值
+    // 指数
+    int exp_num = stoi(string(ptr_E+2,str.end()));
+    auto exp_num_str = to_string(exp_num);
+    // 头部
+    int head = str[1]-'0';
+    auto head_str = to_string(head);
+	// 中间   
+    auto body = string(ptr_1+1,ptr_E);
+    int len = body.length();
+	// 是小数
+    if(!exp){
+        cout<<"0.";
+        for(int i=1;i<=exp_num-1;++i)
+            cout<<'0';
+        cout<<str[1]<<body;
+    }
+    else{
+        cout<<str[1];
+        // 指数较大
+        if(exp_num>len){
+            cout<<body;
+            for(int i=1;i<=exp_num-len;++i)
+                cout<<'0';
+        }
+        else if(exp_num == len){
+            cout<<body;
+        }
+        else{
+            for(int i=0;i<len;++i){
+                cout<<body[i];
+                if(i+1 ==exp_num)
+                    cout<<'.';
+            }
+        }
+    }
+    return 0;
+}
+```
+
