@@ -138,6 +138,7 @@ int main() {
 ```c++
 #include<iostream>
 using namespace std;
+// 判断是否是质数
 bool isprime(int a){
     for(int i=2;i*i<=a;++i){
         if(a%i==0) return false;
@@ -1777,6 +1778,194 @@ int main(){
             }
         }
     }
+    return 0;
+}
+```
+
+### 1077 Kuchiguse 20 points
+
+The Japanese language is notorious for its sentence ending particles. Personal preference of such particles can be considered as a reflection of the speaker's personality. Such a preference is called "Kuchiguse" and is often exaggerated artistically in Anime and Manga. For example, the artificial sentence ending particle "nyan~" is often used as a stereotype for characters with a cat-like personality:
+
+- Itai nyan~ (It hurts, nyan~)
+- Ninjin wa iyada nyan~ (I hate carrots, nyan~)
+
+Now given a few lines spoken by the same character, can you find her Kuchiguse?
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line is an integer *N* (2≤*N*≤100). Following are *N* file lines of 0~256 (inclusive) characters in length, each representing a character's spoken line. The spoken lines are case sensitive.
+
+**Output Specification:**
+
+For each test case, print in one line the kuchiguse of the character, i.e., the longest common suffix of all *N* lines. If there is no such suffix, write `nai`.
+
+**Sample Input 1:**
+
+```in
+3
+Itai nyan~
+Ninjin wa iyadanyan~
+uhhh nyan~
+```
+
+**Sample Output 1:**
+
+```out
+nyan~
+```
+
+**Sample Input 2:**
+
+```in
+3
+Itai!
+Ninjinnwaiyada T_T
+T_T
+```
+
+**Sample Output 2:**
+
+```out
+nai
+```
+
+
+
+```c++
+#include<string>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+int main(){
+    int n;
+    scanf("%d\n",&n);
+    string ans;
+    for(int i=0;i<n;++i){
+        string str;
+        getline(cin,str);
+        // 倒置，变成寻找最长公共前缀
+        reverse(str.begin(),str.end());
+        int len = str.length();
+        if(i == 0){
+            ans = str;
+            continue;
+        }
+        else{
+            int len_ans = ans.length();
+            // 看当前前缀  与 当前匹配字符串大大小关系
+            // 总是保持将前缀替换为最短的字符串
+            if(len < len_ans) swap(ans,str);
+            int min_len = min(len,len_ans);
+            // 进行匹配
+            for(int j=0;j<min_len;++j){
+                if(str[j] != ans[j]){
+                    ans = ans.substr(0,j);
+                    break;
+                }
+            }
+        }
+    }
+    // 倒置输出
+    reverse(ans.begin(),ans.end());
+    if(ans.length() == 0){
+        cout<<"nai";
+    }
+    cout<<ans;
+    return 0;
+}
+```
+
+###  1081  Rational Sum(20point(s))
+
+Given *N* rational numbers in the form `numerator/denominator`, you are supposed to calculate their sum.
+
+**Input Specification:**
+
+Each input file contains one test case. Each case starts with a positive integer *N* (≤100), followed in the next line *N* rational numbers `a1/b1 a2/b2 ...` where all the numerators and denominators are in the range of **long int**. If there is a negative number, then the sign must appear in front of the numerator.
+
+**Output Specification:**
+
+For each test case, output the sum in the simplest form `integer numerator/denominator` where `integer` is the integer part of the sum, `numerator` < `denominator`, and the numerator and the denominator have no common factor. You must output only the fractional part if the integer part is 0.
+
+**Sample Input 1:**
+
+```in
+5
+2/5 4/15 1/30 -2/60 8/3
+```
+
+**Sample Output 1:**
+
+```out
+3 1/3
+```
+
+**Sample Input 2:**
+
+```in
+2
+4/3 2/3
+```
+
+**Sample Output 2:**
+
+```out
+2
+```
+
+**Sample Input 3:**
+
+```in
+3
+1/3 -1/6 1/8
+```
+
+**Sample Output 3:**
+
+```out
+7/24
+```
+
+```c++
+#include<iostream>
+#include<cstdlib>
+using namespcae std;
+// 利用辗转相除法
+// 计算最大公因数
+long long gcd(long long a,long long b){
+    return b==0 ? abs(a):gcb(b,a%b);
+}
+
+int main(){
+    long long n,a,b, suma = 0,sumb = 1, gcd_val;
+    scanf("%lld",&n);
+    for(int i=0;i<n;++i){
+        scanf("%lld/%lld",&a,&b);
+        // 通分求分子分母的累积和
+        gcd_val = gcd(a,b);
+        // 化简
+        a /= gcd_val;
+        b /= gcd_val;
+        // 通分,求分子分母与前一项的和
+        suma = a*suma + suma*b;
+        sumb = b*sumb;
+        // 保留之前和的最大公因数
+        gcd_val = gcd(suma,sumb);
+        // 化简
+        sumb /= gcd_val;
+        suma /= gcd_val;
+    }
+    long long integer = suma / sumb;
+    suma = suma - (sumb*integer);
+    if(integer != 0){
+        printf("%lld",integer);
+        if(suma != 0) printf(" ");
+    }
+    if(suma != 0)
+        printf("%lld/%lld",suma,sumb);
+    if(integer == 0 && suma == 0)
+        printf("0");
     return 0;
 }
 ```

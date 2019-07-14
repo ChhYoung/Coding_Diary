@@ -420,7 +420,7 @@ class Circle: private Point{
             setxy(myx,myy);
         }
     	void movexy(int x,int y){
-            Point::movxy(x,y);//增加新的外部窗口
+            Point::movexy(x,y);//增加新的外部窗口
         }
     	void display();
     private:
@@ -1063,7 +1063,7 @@ int main(){
 
 class Namelist{
 private: 
-    std::string *  name;
+    std::string*  name;
 public: 
     Namelist(std::string p){
         name = new std::string(p);
@@ -1088,7 +1088,7 @@ Namelist& Namelist::operator=(Namelist& a){
     if(this!=&a){
         delete name;
         // the same as above
-        //name->clear();
+        // name->clear();
         name = new std::string(*a.name);
     }
     return *this;

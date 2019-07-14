@@ -104,6 +104,16 @@ target_link_libraries(leptjson_test leptjson)
 
 a与b，a%b=c ， b与c，b%c = d，c与d  ......
 
+```c++
+// 实现
+#include<camth>
+long long gcd(long long a, long long b) {
+    return b == 0 ? abs(a) : gcd(b, a % b);
+}
+```
+
+
+
 - 问题：a b 都较大时 a%b 运算性能低
 
 - 改进：

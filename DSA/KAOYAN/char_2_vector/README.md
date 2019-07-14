@@ -169,19 +169,20 @@ void Vector<T>::expand(){
 
 ```c++
 template<typename T>
-void Vector<int>::shrink(){
+void Vector<T>::shrink(){
     // 不缩减到小于最小容量
     if(capacity_ < DEFAULT_CAPACITY<<1) return ;
     // 以25%为界,容量大于25%
     if(size_<<2 > capacity_) return;
     // 容量小于25%
     T* old_elem_ = elem_;
-    elem_ = new T[capacity>>1];
+    elem_ = new T[capacity_>>1];
     for(int i=0;i<size_;++i){
         elem_[i] = old_elem_[i];
     }
     delete[] old_elem_;
 }
+
 ```
 
 #### 3.4  Vector(int c = DEFAULT_CAPACITY,int s=0,T v={});
@@ -275,7 +276,7 @@ Vector<T>&  Vector<T>::operator=(Vector<T> const& V){
 }
 ```
 
-#### 3.11   int disorderd() const
+#### 3.11   int disordered() const
 
 返回向量中逆序相邻元素个数
 
@@ -418,6 +419,7 @@ T Vector<T>::remove(Rank r){
 template<typename T>
 int Vector<T>::deduplicate(){
     int old_size = size_;
+    int i=0;
     while(i<size_){
     	find(elem_[i],0,i)<0?++i:remove(i);
     }
@@ -478,7 +480,7 @@ int Vector<T>::uniquify(){
 
 ```c++
 template<typename T>
-static Rank Vecotr<T>::binary_search_A(T* A,T const& e,Rank lo,Rank hi){
+static Rank binary_search_A(T* A,T const& e,Rank lo,Rank hi){
     while(lo<hi){
         Rank mi = (lo + hi)>>1;
         if(e < A[mi]) { hi = mi;}
