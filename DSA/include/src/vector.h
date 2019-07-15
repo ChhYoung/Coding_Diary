@@ -7,7 +7,7 @@
 #include"fibnacci.h"
 #include"swap.h"
 #include<initializer_list> // 列表初始化
-
+#include"rand.h"
 
 namespace DSA {
 

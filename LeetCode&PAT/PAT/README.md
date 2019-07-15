@@ -1934,7 +1934,7 @@ using namespcae std;
 // 利用辗转相除法
 // 计算最大公因数
 long long gcd(long long a,long long b){
-    return b==0 ? abs(a):gcb(b,a%b);
+    return b==0 ? abs(a):gcd(b,a%b);
 }
 
 int main(){
