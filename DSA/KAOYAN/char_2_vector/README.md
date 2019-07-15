@@ -53,24 +53,38 @@ public:
     // 默认初始化容量
     static constexpr int DEFAULT_CAPACITY = 3;
     // 规模n,容量c，所有初始元素为v
-    Vector(int c = DEFAULT_CAPACITY,int s=0,T v={});
+    Vector(int c = DEFAULT_CAPACITY,int s = 0,T v = {}){
+    	assert(s<=c);
+    	elem_ = new T[capacity_ = c];
+    	size_ = 0;
+    	while(size_ < s){
+        	elem_[size_++] = v;
+    	}
+	}
     // 从数组整体构造，n为A的规模
-    Vector(T const* A,Rank n);
+    Vector(T const* A,Rank n){copy_from(A,0,n);};
     // 从数组区间构造
-    Vector(T const* A,Rank lo,Rank hi);
+    Vector(T const* A,Rank lo,Rank hi){copy_from(A,lo,hi);};
     // 向量整体复制
-    Vector(Vector<T> const& V);
+    Vector(Vector<T> const& V){copy_from(V.elem_,0,V.size_);};
     // 向量区间复制
-    Vecotr(Vector<T> const& V,Rank lo,Rank hi);
+    Vector(Vector<T> const& V,Rank lo,Rank hi){copy_from(V.elem_,lo,hi);};
     // 基于重载操作符的向量整体复制
     Vector<T>& operator=(Vector<T> const& V);
+
+
+
     // 析构函数
-    ~Vector();
+    ~Vector(){
+		delete[] elem_;
+    	size_ = 0;
+    	capacity_ = 0;
+	};
 /**************************** 只读接口  *****************************/
-    Rank size() const { reutrn size_; }
+    Rank size() const { return size_; }
     bool empty() const { return !size_; }
     // 相邻逆序对的总数
-    int disorderd() const;
+    int disordered() const;
     /******对于无序向量的查找*********/
     // 区间搜索
     Rank find(T const& e,Rank lo,Rank hi) const;
@@ -82,13 +96,106 @@ public:
     // 整体搜索
     Rank search(T const& e){ return (0>=size_)?-1:search(e,0,size_);}
     
-    static Rank binary_search_A(T* A,T const& e,Rank lo,Rank hi);
-	static Rank binary_search_B(T* A,T const& e,Rank lo,Rank hi);
-	static Rank binary_search_C(T* A,T const& e,Rank lo,Rank hi);
-	static Rank binary_search(T* A,T const& e,Rank lo,Rank hi);
-	static Rank fibonacci_search_A(T* A,T const& e,Rank lo,Rank hi);
-	static Rank fibonacci_search_B(T* A,T const& e,Rank lo,Rank hi);
-	static Rank fibonacci_search(T* A,T const& e,Rank lo,Rank hi);
+    static Rank binary_search_A(T* A,T const& e,Rank lo,Rank hi){
+        while(lo<hi){
+            Rank mi = (lo + hi)>>1;
+            if(e < A[mi]) { hi = mi;}
+            else if(e > A[mi]) { lo = mi+1;}
+   		    else return mi;
+        }
+        // 查找失败
+        return -1;
+    }
+	static Rank binary_search_B(T* A,T const& e,Rank lo,Rank hi){
+        Rank mi = (hi + lo)>>1;
+	    while(1 < hi - lo){
+		    (e<A[mi])?hi = mi: lo=mi;
+	    }
+        return (e==A[lo])?lo:-1;
+    }
+	static Rank binary_search_C(T* A,T const& e,Rank lo,Rank hi){
+        while(lo<hi){
+            Rank mi = (lo+hi)>>1;
+            (e<A[mi])?hi = mi: lo = mi+1;
+        }
+        return lo--;
+    }
+    
+	static Rank fibonacci_search_A(T* A,T const& e,Rank lo,Rank hi){
+        Fibonacci<int> fib(hi-lo); // 用O(log_phi(hi-lo))的时间创建fib数列
+        while(lo < hi){
+        //  获取不小于hi-lo的最小fib数，以此数列作为接下来划分的长度
+        //  在分摊意义下O(1)时间复杂度
+            while(hi - lo < fib.get()){
+                fib.prev(); 
+            }
+            Rank mi = lo+fib.get()-1;
+            if(e<A[mi]) hi = mi;
+            else if(e>A[mi]) lo = mi+1;
+            else return mi;
+            }
+        return -1;
+    }
+
+	static Rank fibonacci_search_B(T* A,T const& e,Rank lo,Rank hi){
+        Fibonacci<int> fib(hi-lo);
+        while(lo < hi){
+            while(hi - lo < fib.get()){fib.prev();}
+            Rank mi = lo + fib.get() - 1;
+            (e<A[mi])? hi=mi: lo=mi+1;    
+        }
+    return --lo;
+    }
+
+    static Rank interploation_search(T* A ,T const& e,Rank lo,Rank hi){
+        assert(0 <= lo && lo <= hi && hi <= A->size_);
+        while(A[lo] <= e && e <= A[hi]){
+            Rank mi = lo + (hi-lo)*(e-A[lo])/(A[hi]-A[lo]);
+            if(e < A[mi]) lo = mi+1;
+            else if(e > A[mi]) hi = mi-1;
+            else return mi;
+        }
+        if(A[lo] == e) return lo;
+        else return -1;
+    }
+
+    static Rank fibonacci_search(T* A,T const& e,Rank lo,Rank hi){
+#if TEST_BUILD
+        switch(rand()%2){
+            case 0 :return fibonacci_search_A(A,e,lo,hi);
+            default:return fibonacci_search_B(A,e,lo,hi);
+        }
+#else
+        return fibonacci_search_B(A,e,lo,hi);
+#endif    
+    }
+
+    static Rank binary_search(T* A,T const& e,Rank lo,Rank hi){
+#if TEST_BUILD
+        switch(rand()%3){
+            case 0 : return binary_search_A(A,e,lo,hi);
+            case 1 : return binary_search_B(A,e,lo,hi);
+		    default: return binary_search_C(A,e,lo,hi);            
+        }
+#else
+        return binary_search_C(A,e,lo,hi);   
+#endif    
+    }
+
+
+    Rank search(T* A,T const& e,Rank lo,Rank hi){
+        assert(0 <= lo && lo <= hi && hi <= A->size_);
+#if TEST_BUILD
+        return (rand()%2)?binary_search_C(A,e,lo,hi):fibonacci_search_B(A,e,lo,hi);
+#else
+        return fibonacci_search_B(A,e,lo,hi);
+#endif    
+    }
+  
+
+
+
+	//static Rank fibonacci_search(T* A,T const& e,Rank lo,Rank hi);
 /*************************** 可写访问接口    *****************************/	
     // 清除数据
     void clear();
@@ -117,8 +224,20 @@ public:
     int deduplicate();
     // 有序去重
     int uniquify();
-}
-
+    // 冒泡
+    bool bubble(Rank lo,Rank hi);
+    // 冒泡排序
+    void bubble_sort(Rank lo,Rank hi);
+    // 加速版
+    Rank bubble_fast(Rank lo, Rank hi);
+    void bubble_sort_fast(Rank lo,Rank hi);
+    Rank bubble_fast_2(Rank lo, Rank hi);
+    void bubble_sort_fast_2(Rank lo,Rank hi);
+    // 二路并归
+    void merge(Rank lo,Rank mi,Rank hi);
+    // 归并排序
+    void merge_sort(Rank lo,Rank hi);
+};
 ```
 
 #### 3.1  copy_from(T const* A,Rank lo,Rank hi)

@@ -67,8 +67,12 @@ struct ListNode{
 ```c++
 template<typename T>
 class List{
+     
     using Node =  ListNode<T>; 
-    using NodePtr = Node*;
+    using NodePtr = Node*;/*
+    typedef ListNode<T> Node ;
+    typedef Node* NodePtr;*/
+
 private: 
 // 数据成员 
     // 规模
@@ -102,7 +106,14 @@ protected:
 
 public: 
 // 构造函数
-    List(){ init();}  
+    List(){ init();} 
+    /****************************************************/ 
+    // test function ,用vector的元素来构造
+    List(std::vector<T> vec){
+        init();
+        for(auto& i:vec)
+            insert_as_last(i);
+    }
     // 整体复制list  L
     List(List<T> const& L){
         copy_nodes(L.first(),L.size_);
@@ -125,9 +136,10 @@ public:
     // 作为第一个元素插入
 	NodePtr insert_as_first(T const& e){
         ++size_;
-		return head->insert_as_pred(e);
+		return header->insert_as_succ(e);
     }
     // 作为最后一个元素插入
+    // push_back
     NodePtr insert_as_last(T const& e){
         ++size_;
 		return trailer->insert_as_pred(e);
@@ -144,8 +156,6 @@ public:
     }
     // 删除指定节点，返回删除后节点的值
     T remove(NodePtr p);
-    // 清空list，返回list的规模
-    int clear();
     // 全列表归并排序
     void merge(List<T>);
     // 区间排序
@@ -156,12 +166,16 @@ public:
             default: merge_sort(p,n); break;
     	}        
     }
+    void sort(){ sort(first(),size_); }
     // 无序去重
     int deduplicate();
     // 有序去重
     int uniquify();
     // 前后倒置
-    void reverse();
+    void reverse(); // 改变值
+    void reverse_2_1(); // 改变指针
+    void reverse_2_2();
+
 // 只读访问接口
     // 返回规模
     Rank size() const {return size_;}
@@ -183,13 +197,18 @@ public:
     NodePtr find(T const& e,int n,NodePtr p) const;
     // 有序列表查找
     NodePtr search(T const& e) const;
-    // 有序列表区间查找 , 在当前节点的前n 个节点中查找，不包括 p
+    // 有序列表区间查找
     NodePtr search(T const& e,int n, NodePtr p) const;
     // 整体最大者
     NodePtr select_max();
     // 在p及其n-1个后继中选出最大者
     NodePtr select_max(NodePtr p, int n);
-};
+
+/************************* my test functions ************************** */    
+public:
+    void print();
+
+};// end of class List
 ```
 
 ### void init()
