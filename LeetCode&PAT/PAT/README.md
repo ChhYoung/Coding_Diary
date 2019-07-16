@@ -1970,3 +1970,319 @@ int main(){
 }
 ```
 
+### 1084 Broken Keyboard(20point(s))
+
+On a broken keyboard, some of the keys are worn out. So when you type some sentences, the characters corresponding to those keys will not appear on screen.
+
+Now given a string that you are supposed to type, and the string that you actually type out, please list those keys which are for sure worn out.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the 1st line contains the original string, and the 2nd line contains the typed-out string. Each string contains no more than 80 characters which are either English letters [A-Z] (case insensitive), digital numbers [0-9], or `_` (representing the space). It is guaranteed that both strings are non-empty.
+
+**Output Specification:**
+
+For each test case, print in one line the keys that are worn out, in the order of being detected. The English letters must be capitalized. Each worn out key must be printed once only. It is guaranteed that there is at least one worn out key.
+
+**Sample Input:**
+
+```in
+7_This_is_a_test
+_hs_s_a_es
+```
+
+**Sample Output:**
+
+```out
+7TI
+```
+
+```c++
+// 利用hash表来储存
+#include <iostream>
+#include <cctype>
+
+#include<unordered_map>
+
+using namespace std;
+int main() {
+   
+    string str1,str2;
+    cin>>str1>>str2;  /*
+    string str1 = "7_This_is_a_test";
+    string str2 = "_hs_s_a_es";
+*/
+
+    unordered_map<char,int> map;
+    for(char& i:str2){
+        map[tolower(i)]++;
+    }
+    
+    for(char& i:str1){
+        if(map.find(tolower(i)) == map.end()){
+            cout<<(char)toupper(i);
+            map[tolower(i)]++;
+        }
+    } 
+
+    /* 
+    for(auto& i:map){
+        cout<<i.first<<i.second<<endl;
+    }*/
+    return 0;
+}
+```
+
+
+
+```c++
+// 遍历，在两个string都再找一遍
+
+#include <iostream>
+#include <cctype>
+using namespace std;
+int main() {
+    string s1, s2, ans;
+    cin >> s1 >> s2;
+    for (int i = 0; i < s1.length(); i++)
+        if (s2.find(s1[i]) == string::npos && ans.find(toupper(s1[i])) == string::npos)
+            ans += toupper(s1[i]);
+    cout << ans;
+    return 0;
+}
+```
+
+###  1088    Rational Arithmetic(20point(s))
+
+For two rational numbers, your task is to implement the basic arithmetics, that is, to calculate their sum, difference, product and quotient.
+
+**Input Specification:**
+
+Each input file contains one test case, which gives in one line the two rational numbers in the format `a1/b1 a2/b2`. The numerators and the denominators are all in the range of long int. If there is a negative sign, it must appear only in front of the numerator. The denominators are guaranteed to be non-zero numbers.
+
+**Output Specification:**
+
+For each test case, print in 4 lines the sum, difference, product and quotient of the two rational numbers, respectively. The format of each line is `number1 operator number2 = result`. Notice that all the rational numbers must be in their simplest form `k a/b`, where `k` is the integer part, and `a/b` is the simplest fraction part. If the number is negative, it must be included in a pair of parentheses. If the denominator in the division is zero, output `Inf` as the result. It is guaranteed that all the output integers are in the range of **long int**.
+
+**Sample Input 1:**
+
+```in
+2/3 -4/2
+```
+
+**Sample Output 1:**
+
+```out
+2/3 + (-2) = (-1 1/3)
+2/3 - (-2) = 2 2/3
+2/3 * (-2) = (-1 1/3)
+2/3 / (-2) = (-1/3)
+```
+
+**Sample Input 2:**
+
+```in
+5/3 0/6
+```
+
+**Sample Output 2:**
+
+```out
+1 2/3 + 0 = 1 2/3
+1 2/3 - 0 = 1 2/3
+1 2/3 * 0 = 0
+1 2/3 / 0 = Inf
+```
+
+```c++
+#include <iostream>
+#include <cmath>
+using namespace std;
+long long a, b, c, d;
+long long gcd(long long t1, long long t2) {
+    return t2 == 0 ? t1 : gcd(t2, t1 % t2);
+}
+
+void func(long long a,long long b){
+    if(a*b == 0){
+        printf("%s",b == 0?"Inf":"0");
+        return;
+    }
+    // flag == true 则有符号
+    bool flag = ((a<0 && b>0) || (a>0 && b<0));
+    a = abs(a);
+    b = abs(b);
+    auto gcd_1 = gcd(a,b);
+    a /= gcd_1;
+    b /= gcd_1;
+    // 假分数头
+    auto head = a/b;
+    // 假分数分子
+    auto res = a%b;
+    printf("%s",flag ? "(-":"");
+    if(head != 0) cout<<head;
+    if(res==0){
+        if(flag) printf(")");;
+        return ;
+    }
+
+    if(head != 0) cout<<" ";
+    printf("%lld/%lld",res,b);
+    if(flag) printf(")");
+}
+
+int main(){
+    scanf("%lld/%lld %lld/%lld",&a, &b, &c, &d);
+    func(a,b);cout<<" + ";func(c,d);cout<<" = ";func(a*d+c*b,b*d);cout<<endl;
+    func(a,b);cout<<" - ";func(c,d);cout<<" = ";func(a*d-c*b,b*d);cout<<endl;
+    func(a,b);cout<<" * ";func(c,d);cout<<" = ";func(a*c,b*d);cout<<endl;
+    func(a,b);cout<<" / ";func(c,d);cout<<" = ";func(a*d,b*c);
+    return 0;
+}
+```
+
+### 1092 To Buy or Not to Buy (20 point(s))
+
+
+
+Eva would like to make a string of beads with her favorite colors so she went to a small shop to buy some beads. There were many colorful strings of beads. However the owner of the shop would only sell the strings in whole pieces. Hence Eva must check whether a string in the shop contains all the beads she needs. She now comes to you for help: if the answer is `Yes`, please tell her the number of extra beads she has to buy; or if the answer is `No`, please tell her the number of beads missing from the string.
+
+For the sake of simplicity, let's use the characters in the ranges [0-9], [a-z], and [A-Z] to represent the colors. For example, the 3rd string in Figure 1 is the one that Eva would like to make. Then the 1st string is okay since it contains all the necessary beads with 8 extra ones; yet the 2nd one is not since there is no black bead and one less red bead.
+
+![figbuy.jpg](https://images.ptausercontent.com/b7e2ffa6-8819-436d-ad79-a41263abe914.jpg)
+
+Figure 1
+
+**Input Specification:**
+
+Each input file contains one test case. Each case gives in two lines the strings of no more than 1000 beads which belong to the shop owner and Eva, respectively.
+
+**Output Specification:**
+
+For each test case, print your answer in one line. If the answer is `Yes`, then also output the number of extra beads Eva has to buy; or if the answer is `No`, then also output the number of beads missing from the string. There must be exactly 1 space between the answer and the number.
+
+**Sample Input 1:**
+
+```in
+ppRYYGrrYBR2258
+YrR8RrY
+```
+
+**Sample Output 1:**
+
+```out
+Yes 8
+```
+
+**Sample Input 2:**
+
+```in
+ppRYYGrrYB225
+YrR8RrY
+```
+
+**Sample Output 2:**
+
+```out
+No 2
+```
+
+**解法一：利用hash，找到个数不足的字符**
+
+```c++
+#include<string>
+#include<iostream>
+#include<unordered_map>
+
+using namespace std;
+
+int main(){
+    string str1,str2;
+    cin>>str1;
+    cin>>str2;
+    unordered_map<char,int> map_1,map_2;
+    for(auto& i:str1){
+        ++map_1[i];
+    }
+    for(auto& i:str2){
+        ++map_2[i];
+    }
+    for(auto& i:map_2){
+        if( i.second > map_1[i.first]){
+            int sum = 0;
+            for(auto& i:map_2){
+                if( i.second > map_1[i.first]){
+                    sum += i.second - map_1[i.first];
+                }
+            }
+            cout<<"No "<<sum;
+            return 0;
+        }
+    }
+    cout<<"Yes "<<str1.length()-str2.length();
+    return 0;
+}
+```
+
+**实现2：**
+
+```c++
+#include<string>
+#include<iostream>
+#include<unordered_map>
+
+using namespace std;
+
+int main(){
+    string str1,str2;
+    
+    cin>>str1;
+    cin>>str2;
+    unordered_map<char,int> map;
+    for(auto& i:str1){
+        ++map[i];
+    }
+    int res = 0;
+    for(auto& i:str2){
+        if(map[i] > 0){
+            --map[i];
+        }
+        else ++res;
+    }
+    if(res != 0)
+        cout<<"No "<<res;
+    else
+        cout<<"Yes "<<str1.length()-str2.length();
+    return 0;
+}
+```
+
+
+
+```c++
+#include<iostream>
+using namespace std;
+int book[256];
+int main(){
+    string a,b;
+    cin>>a>>b;
+    for(int i=0; i<a.length(); ++i){
+        ++book[a[i]];
+    }
+    int result = 0;
+    for(int i=0; i < b.length(); ++i){
+        if(book[b[i]] > 0)
+            --book[b[i]];
+        else
+            ++result;
+    }
+    if(result != 0)
+        printf("No %d",result);
+    else
+        printf("Yes %d",a.length()-b.length());
+    return 0;
+}
+```
+
+
+
