@@ -2284,5 +2284,203 @@ int main(){
 }
 ```
 
+### 1096 consecutive factors 20 points
 
+Among all the factors of a positive integer N, there may exist several consecutive numbers. For example, 630 can be factored as 3×5×6×7, where 5, 6, and 7 are the three consecutive numbers. Now given any positive N, you are supposed to find the maximum number of consecutive factors, and list the smallest sequence of the consecutive factors.
+
+**Input Specification:**
+
+Each input file contains one test case, which gives the integer N (1<N<231).
+
+**Output Specification:**
+
+For each test case, print in the first line the maximum number of consecutive factors. Then in the second line, print the smallest sequence of the consecutive factors in the format `factor[1]*factor[2]*...*factor[k]`, where the factors are listed in increasing order, and 1 is NOT included.
+
+**Sample Input:**
+
+```in
+630
+```
+
+**Sample Output:**
+
+```out
+3
+5*6*7
+```
+
+**解法：找到最短的被630整除的连续数， 不用找到几个相乘刚好是 630 的数**
+
+```c++
+#include<iostream>
+#include<cmath>
+
+using namespace std;
+
+long int num,temp;
+
+int main(){
+    cin>>num;
+    int first = 0, len = 0, maxn = sqrt(num)+1;
+    for(int i=2; i<=maxn; ++i){
+        int j;
+        temp = 1;
+        for(j = i; j<=maxn; ++j){
+            temp *= j;
+            if(num % temp != 0){
+                break;
+            }
+        }
+        // j为刚好不匹配时的值，所以长度不用-1
+        if(j-i>len){
+            len = j - i;
+            first = i;
+        }
+    }    
+
+    if(first == 0){
+        cout<<1<<endl<<num;
+    }
+    else {
+        cout<<len<<endl;
+        for(int i=0;i<len; ++i){
+            cout<<first + i;
+            if(i != len-1) cout<<"*";
+        }
+    }
+    
+
+    return 0;
+}
+```
+
+### 1104 sum of number segments 20 points
+
+Given a sequence of positive numbers, a segment is defined to be a consecutive subsequence. For example, given the sequence { 0.1, 0.2, 0.3, 0.4 }, we have 10 segments: (0.1) (0.1, 0.2) (0.1, 0.2, 0.3) (0.1, 0.2, 0.3, 0.4) (0.2) (0.2, 0.3) (0.2, 0.3, 0.4) (0.3) (0.3, 0.4) and (0.4).
+
+Now given a sequence, you are supposed to find the sum of all the numbers in all the segments. For the previous example, the sum of all the 10 segments is 0.1 + 0.3 + 0.6 + 1.0 + 0.2 + 0.5 + 0.9 + 0.3 + 0.7 + 0.4 = 5.0.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N*, the size of the sequence which is no more than 105. The next line contains *N* positive numbers in the sequence, each no more than 1.0, separated by a space.
+
+**Output Specification:**
+
+For each test case, print in one line the sum of all the numbers in all the segments, accurate up to 2 decimal places.
+
+**Sample Input:**
+
+```in
+4
+0.1 0.2 0.3 0.4
+```
+
+**Sample Output:**
+
+```out
+5.00
+```
+
+**归纳找出每个元素出现的次数**
+
+
+```c++
+#include <iostream>
+using namespace std;
+int main() {
+    int n;
+    cin >> n;
+    double sum = 0.0,temp;
+    for(int i=1;i<=n;++i){
+        cin>>temp;
+        sum += temp*i*(n-i+1);
+    }
+    printf("%.2f",sum);
+    return 0;
+}
+```
+
+### 1108 Finding Average (20 point(s))
+
+
+
+The basic task is simple: given *N* real numbers, you are supposed to calculate their average. But what makes it complicated is that some of the input numbers might not be legal. A **legal** input is a real number in [−1000,1000] and is accurate up to no more than 2 decimal places. When you calculate the average, those illegal numbers must not be counted in.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤100). Then *N* numbers are given in the next line, separated by one space.
+
+**Output Specification:**
+
+For each illegal input number, print in a line `ERROR: X is not a legal number` where `X` is the input. Then finally print in a line the result: `The average of K numbers is Y` where `K` is the number of legal inputs and `Y` is their average, accurate to 2 decimal places. In case the average cannot be calculated, output `Undefined` instead of `Y`. In case `K` is only 1, output `The average of 1 number is Y` instead.
+
+**Sample Input 1:**
+
+```in
+7
+5 -3.2 aaa 9999 2.3.4 7.123 2.35
+```
+
+**Sample Output 1:**
+
+```out
+ERROR: aaa is not a legal number
+ERROR: 9999 is not a legal number
+ERROR: 2.3.4 is not a legal number
+ERROR: 7.123 is not a legal number
+The average of 3 numbers is 1.38
+```
+**Sample Input 2:**
+
+```in
+2
+aaa -9999
+```
+
+**Sample Output 2:**
+
+```out
+ERROR: aaa is not a legal number
+ERROR: -9999 is not a legal number
+The average of 0 numbers is Undefined
+```
+
+**解法：**
+
+- 重点在于`sprintf sscanf scanf `函数的使用
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <string.h>
+using namespace std;
+int main() {
+    int n, cnt = 0;
+    char a[50], b[50];
+    double temp, sum = 0.0;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        scanf("%s", a);
+        sscanf(a, "%lf", &temp);
+        sprintf(b, "%.2f",temp);
+        int flag = 0;
+        for(int j = 0; j < strlen(a); j++)
+            if(a[j] != b[j]) flag = 1;
+        if(flag || temp < -1000 || temp > 1000) {
+            printf("ERROR: %s is not a legal number\n", a);
+            continue;
+        } else {
+            sum += temp;
+            cnt++;
+        }
+    }
+    if(cnt == 1)
+        printf("The average of 1 number is %.2f", sum);
+    else if(cnt > 1)
+        printf("The average of %d numbers is %.2f", cnt, sum / cnt);
+    else
+        printf("The average of 0 numbers is Undefined");
+    return 0;
+}
+```
 

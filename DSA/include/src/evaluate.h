@@ -68,7 +68,7 @@ enum class OperatorPriority : char {
 // 比较两个运算符的优先级
 static OperatorPriority compareOperator(Operator op1, Operator op2){
     if(op1 == Operator::EOO || op2 == Operator::EOO){
-        return Operator::EOP;
+        return OperatorPriority::EOP;
     }
     // 用于对常规形式的表达式求值，
     // 比较顺序为   ’栈顶 ？ 当前运算符‘
