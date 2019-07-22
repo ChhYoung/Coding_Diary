@@ -140,6 +140,7 @@ public:
 private: 
     // 所有顶点，边的辅助信息复位
     //  重置顶点，边的状态，时间，优先级, 父节点状态
+    //  时间复杂度 O(V+E)
     void reset(){
         for(int i=0; i<n; ++i){
             status(i) = VertexStatus::undiscovered;

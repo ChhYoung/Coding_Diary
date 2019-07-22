@@ -2458,28 +2458,138 @@ int main() {
     int n, cnt = 0;
     char a[50], b[50];
     double temp, sum = 0.0;
-    cin >> n;
-    for(int i = 0; i < n; i++) {
-        scanf("%s", a);
-        sscanf(a, "%lf", &temp);
-        sprintf(b, "%.2f",temp);
+    int N;
+    cin>>N;
+    for(int i=0;i<N;++i){
+        scanf("%s",a);
+        // 提取出浮点数
+        sscanf(a,"%lf",&temp);
+        // 转换成2位小数
+        sprintf(b,"%.2f",temp);
+        
         int flag = 0;
-        for(int j = 0; j < strlen(a); j++)
-            if(a[j] != b[j]) flag = 1;
-        if(flag || temp < -1000 || temp > 1000) {
-            printf("ERROR: %s is not a legal number\n", a);
+        for(int j=0; j<strlen(a); ++j){
+            if(a[j] != b[j])
+                flag = 1;
+        }
+        if(flag || temp < -1000 || temp > 1000){
+            printf("ERROR: %s is not a legal number\n",a);
             continue;
-        } else {
+        }
+        else{
             sum += temp;
             cnt++;
         }
     }
-    if(cnt == 1)
-        printf("The average of 1 number is %.2f", sum);
-    else if(cnt > 1)
-        printf("The average of %d numbers is %.2f", cnt, sum / cnt);
-    else
+    if(cnt == 1){
+        printf("The average of 1 number is %.2f",sum);
+    }
+    else if(cnt > 1){
+        printf("The average of %d numbers is %.2f",cnt,sum/cnt);
+    }
+    else {
         printf("The average of 0 numbers is Undefined");
+    }
+    return 0;
+}
+```
+
+### 1116 Come on! Let's C (20 point(s) )
+
+"Let's C" is a popular and fun programming contest hosted by the College of Computer Science and Technology, Zhejiang University. Since the idea of the contest is for fun, the award rules are funny as the following:
+
+- 0、 The Champion will receive a "Mystery Award" (such as a BIG collection of students' research papers...).
+- 1、 Those who ranked as a prime number will receive the best award -- the Minions (小黄人)!
+- 2、 Everyone else will receive chocolates.
+
+Given the final ranklist and a sequence of contestant ID's, you are supposed to tell the corresponding awards.
+
+**Input Specification:**
+
+Each input file contains one test case. For each case, the first line gives a positive integer N (≤104), the total number of contestants. Then N lines of the ranklist follow, each in order gives a contestant's ID (a 4-digit number). After the ranklist, there is a positive integer K followed by K query ID's.
+
+**Output Specification:**
+
+For each query, print in a line `ID: award` where the award is `Mystery Award`, or `Minion`, or `Chocolate`. If the ID is not in the ranklist, print `Are you kidding?` instead. If the ID has been checked before, print `ID: Checked`.
+
+**Sample Input:**
+
+```in
+6
+1111
+6666
+8888
+1234
+5555
+0001
+6
+8888
+0001
+1111
+2222
+8888
+2222
+```
+
+**Sample Output:**
+
+```out
+8888: Minion
+0001: Chocolate
+1111: Mystery Award
+2222: Are you kidding?
+8888: Checked
+2222: Are you kidding?
+```
+
+```c++
+#include<string>
+#include<iostream>
+#include<unordered_map>
+
+using namespace std;
+
+bool isPrime(int a){
+    for(int i=2;i*i<=a;i++){
+        if(a%i == 0)
+            return false;
+    }
+    return true;
+}
+
+int main(){
+    int n1,n2;
+    cin>>n1;
+    unordered_map<string,int> map1,map2;
+    string a[5] ={"Mystery Award","Minion","Chocolate","Are you kidding?","Checked"};
+    for(int i=0;i<n1;++i){
+        string temp;
+        cin>>temp;
+        map2[temp] = 1;
+        if(i == 0) 
+            map1[temp] = 0;
+        else if(isPrime(i+1)){
+            map1[temp] = 1;
+        }
+        else map1[temp] = 2;
+    }
+
+    cin>>n2;
+    for(int i=0;i<n2;++i){
+        string temp;
+        cin>>temp;
+        if(map2[temp] == 1){
+            cout<<temp<<": "<<a[map1[temp]];
+            map2[temp]++;
+        }
+        else if(map2[temp]>1){
+            cout<<temp<<": "<<a[4];
+        }
+        else {
+            cout<<temp<<": "<<a[3];
+        }
+        cout<<endl;
+    }
     return 0;
 }
 ```

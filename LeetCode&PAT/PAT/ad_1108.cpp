@@ -1,45 +1,42 @@
-#include<string>
-#include<iostream>
-#include<cstdlib>
-
+#include <iostream>
+#include <cstdio>
+#include <string.h>
 using namespace std;
-
-bool judge(string a){
-    int num = 0;
-    int num_point = 0;
-    for(int i=0;i<a.length();++i){
-        if(i==0 || a[0] == '-') {
+int main() {
+    int n, cnt = 0;
+    char a[50], b[50];
+    double temp, sum = 0.0;
+    int N;
+    cin>>N;
+    for(int i=0;i<N;++i){
+        scanf("%s",a);
+        // 提取出浮点数
+        sscanf(a,"%lf",&temp);
+        // 转换成2位小数
+        sprintf(b,"%.2f",temp);
+        
+        int flag = 0;
+        for(int j=0; j<strlen(a); ++j){
+            if(a[j] != b[j])
+                flag = 1;
+        }
+        if(flag || temp < -1000 || temp > 1000){
+            printf("ERROR: %s is not a legal number\n",a);
             continue;
         }
-
-        if(isdigit(a[i]) || (a[i]=='.' && i!=0)){
-            auto m = a.find('.');
-            if(m == string::npos) {
-                continue;
-            }
-            else{
-                ++ num_point;
-                auto len = a.length()-m-1;
-                if(len > 2 || num_point>1 || len<=0){
-                    return false;
-                }
-            }
-        }
         else{
-            return false;
+            sum += temp;
+            cnt++;
         }
     }
-    auto k = (a[0] == '-' ) ? stoi(a.substr(1)):stoi(a);
-    if(abs(k)>1000)
-        return false;
-    return true;
-}
-
-int main(){
-    string a[8] = {"5", "-3.2" ,"aaa","0..." ,"9999" ,"2.3.4" ,"7.123" ,"2.35"};
-    for(int i=0;i<8;++i){
-        if(!judge(a[i])) cout<<"false"<<endl;
-        else cout<<"true"<<endl;
+    if(cnt == 1){
+        printf("The average of 1 number is %.2f",sum);
     }
-    return 1;
+    else if(cnt > 1){
+        printf("The average of %d numbers is %.2f",cnt,sum/cnt);
+    }
+    else {
+        printf("The average of 0 numbers is Undefined");
+    }
+    return 0;
 }
