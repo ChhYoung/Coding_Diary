@@ -1,76 +1,54 @@
 //#pragma once
 namespace DSA {
 
-	// ï¿½ï¿½ï¿½ÖµÝ¹ï¿½ï¿?  O(2^N)
-	static long long fibR(int n) {
+	// ¶þ·ÖµÝ¹é°æ  O(2^N)
+
+	static __int64 fibR(int n) {
 		return n < 2 ? n : fibR(n - 1) + fibR(n - 2);
 	}
 
-	// ï¿½ï¿½ï¿½ÔµÝ¹ï¿½æ±¾ï¿½ï¿? O(n)
-	// ï¿½ï¿½ï¿½ï¿½ï¿½nï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ÎªfibL(n,prev)
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö?
-	static long long fibL(int n, long long& prev) {
+	// ÏßÐÔµÝ¹é°æ±¾£¬ O(n)
+	// ¼ÆËãµÚnÏî Èë¿ÚÐÎÊ½ÎªfibL(n,prev)
+	// ÇÉÃîµØÀûÓÃÒýÓÃÀ´´«Öµ
+
+	static __int64 fibL(int n, __int64& prev) {
 		if (n == 0) {
 			// fin(-1) = 1
-			prev = 1;
-			// fib(0) = 0
-			return 0;
-		}
-		else {
-			long long prev_prev;
-			prev = fibL(n - 1, prev_prev);
-			return prev_prev + prev;
 		}
 	}
 
-	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  O(n)
-	static long long fibI(int n) {
+	//  µü´ú°æ  O(n)
+
+	static __int64 fibI(int n) {
 		// fib(-1) = 1, fib(0) = 0
-		long long f = 1, g = 0;
-		while (n--) {
-			// f(n) = f(n-1) + f(n-2)
-			g += f;
-			// f(n-1) = f(n) - f(n-2)
-			f = g - f;
-		}
+		__int64 f = 1, g = 0;
 		return g;
 	}
 
-	// Fibonacci ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// Fibonacci ÊýÁÐÀà
+
 	template<typename T = int>
 	class Fibonacci {
 	private:
 		T f, g;
 	public:
-		// ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Ð¡ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½Ð¡Fibï¿½î£¬O(log(n))Ê±ï¿½ï¿½
+		// ³õÊ¼»¯Îª²»Ð¡ÓÚnµØ×îÐ¡FibÏî£¬O(log(n))Ê±¼ä
+
 		explicit Fibonacci(T n = 0) {
 			// f(-1)
 			f = 1;
-			// f(0)
-			g = 0;
-			while (g < n) {
-				next();
 			}
 		}
-		T get() const { return g;}
 
-		// ï¿½ï¿½È¡ï¿½ï¿½Ç°Fibnonacciï¿½î£¬O(1)Ê±ï¿½ï¿½
+		// »ñÈ¡µ±Ç°FibnonacciÏî£¬O(1)Ê±¼ä
+
 		T next() {
 			// f(n) = f(n-1)+f(n-2)
 			g += f;
-			// f(n-1) = f(n) - f(n-2)
-			f = g - f;
 			return g;
 		}
 
-		// ×ªï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Fibonacciï¿½ï¿½,O(1)Ê±ï¿½ï¿½
+		// ×ªÖÁÉÏÒ»¸öFibonacciÏî,O(1)Ê±¼ä
 		T prev() {
 			// f(n-2) = f(n) - f(n-1)
 			f = g - f;
-			// f(n-1) = f(n) - f(n-2)
-			g -= f;
-			return g;
-		}
-	}; // end of Fibonacci class
-
-} // end of namespace
