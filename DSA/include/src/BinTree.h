@@ -24,6 +24,7 @@ public:
 
 protected:
 	// 树的属性， 其他的如树的具体结构等为节点的属性在 BinNode 中
+
 	// 规模
 	int size_;
 	// 树根
@@ -40,13 +41,15 @@ protected:
 	// 原始版本,常规规则
 	// O(1)
 	virtual int updateHeight(NodePtr node) {
-		auto lh = stature(node);
-		auto rh = stature(node);
+		auto lh = stature(node->lChild_);
+		auto rh = stature(node->rChild_);
 		return node->height_ = 1 + (lh < rh ? rh : lh);
 	}
+
 	// 优化版本
 	// O(n = depth(x))
 	// 最坏的情况-->都要更新
+	//  更新node及其上的高度
 	virtual int  updateHeightAbove(NodePtr node) {
 		while (node) {
 			int old_height = node->height_;

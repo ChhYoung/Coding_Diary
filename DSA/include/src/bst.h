@@ -41,7 +41,7 @@ public:
     typedef BinNode<T> Node;
     typedef Node* NodePtr;
 
-    static NodePtr searchIn(NodePtr& v, const T& e, NodePtr& hot){
+    static NodePtr searchInRev(NodePtr& v, const T& e, NodePtr& hot){
         if(!v || (e == v->data_)) { return v;}
         // 利用hot来记录 ： 
         //   查找成功时的节点的祖先节点
@@ -49,12 +49,23 @@ public:
         hot = v;
         // 返回值指向命中的节点(或 假想的哨兵)
         //    hot指向其父亲，退化时初始值为  nullptr
-        return searchIn(((e < v->data_)?v->lChild_:v->rChild_),e,hot);
+        return searchInRev(((e < v->data_) ? v->lChild_ : v->rChild_ ), e, hot);
     }   
+    // 改写为迭代形式
+    static NodePtr searchInIt(NodePtr& v, const T& e, NodePtr& hot){
+        if(!v || (e == v->data_)) { return v;}
+        hot = v;
+        while(true){
+            auto& c = (e < hot->data) ? hot->lChild_ : hot->rChild_;
+            if(e == c->data_ ) return c;
+            hot = c;
+        }
+    }
 
     // 查找
     virtual NodePtr& search(const T& e){
-        return searchIn(this->root_,e,this->hot_ = nullptr);
+        //return searchInRev(this->root_,e,this->hot_ = nullptr);
+        return searchInIt(this->root_,e,this->hot_ = nullptr);
     }
 
     // 插入
@@ -93,7 +104,7 @@ public:
             swap(x->data_, w->data_);
             // u 实际删除节点的父亲节点
             auto u = w->parent_;
-            // 取等时为退化情况，即 直接后继刚好时要删除节点的右孩子
+            // 取等时为退化情况，即 直接后继刚好是要删除节点的右孩子
             (u == x? u->rChild_ : u->lChild_) = succ = w->rChild_;
         }
 
@@ -116,6 +127,7 @@ public:
         this->updateHeightAbove(x);
         return true;
     }
+
 
 protected: 
     // 命中节点的父亲
@@ -181,6 +193,121 @@ protected:
             }
         }
     }
+
+    // zig 顺时针旋转
+    NodePtr zig(){
+        NodePtr c = lChild_;
+        c->parent_ = this->parent_;
+        if ( c->parent_ )
+            ( ( this == c->parent_->rChild_ ) ? c->parent_->rChild_ : c->parent_->lChild_ ) = c;
+        lChild_ = c->rChild_;
+        if ( lChild_ ) lChild_->parent_ = this;
+        c->rChild_ = this; 
+        this->parent_ = c;
+        return c;
+    }
+
+    // zag 逆时针旋转
+    NodePtr zag(){
+        NodePtr c = rChild_;
+        c->parent = this->parent_;
+        if ( c->parent )
+            ( ( this == c->parent_->lChild_ ) ? c->parent_->lChild_ : c->parent_->rChild_ ) = c;
+        rChild_ = c->lChild_;
+        if ( rChild_ ) rChild_->parent_ = this;
+        c->lChild_ = this; 
+        this->parent_ = c;
+        return c;
+    }
+
+
+    /* 
+    // zig 操作
+    //  返回旋转后原位置节点的指针
+    NodePtr zig(NodePtr& v){
+        auto c = v->lChild_;
+        // c 为空则什么也不做
+        if(c == nullptr) { return v; }
+        c->parent_ = v->parent_;
+        if(v->parent_){
+            v->isLChild() ? v->parent_->lChild_ = c : v->parent_->rChild_ = c;
+        }
+        v->parent_ = c;
+        v->lChild_ = c->rChild_;
+        c->rChild_ = v;
+        // 更新高度
+        this->updateHeightAbove(v);
+        return c;
+    }
+    
+    void zig(){
+        auto c = this->lChild_;
+        // c 为空则什么也不做
+        if(c == nullptr) { return ; }
+        c->parent_ = this->parent_;
+        if(this->parent_){
+            this->isLChild() ? this->parent_->lChild_ = c : this->parent_->rChild_ = c;
+        }
+        this->parent_ = c;
+        this->lChild_ = c->rChild_;
+        c->rChild_ = this;
+        this->updateHeightAbove(v);
+    }
+
+    // zag 
+    //  返回旋转后原位置节点的指针
+    NodePtr zag(NodePtr& v){
+        auto c = v->rChild_;
+        // c 为空则什么也不做
+        if(c == nullptr) { return v; }
+        c->parent_ = v->parent_;
+        if(v->parent_){
+            v->isLChild() ? v->parent_->lChild_ = c : v->parent_->rChild_ = c;
+        }
+        v->parent_ = c;
+        v->rChild_ = c->lChild_;
+        c->lChild_ = v;
+        this->updateHeightAbove(v);
+
+        return c;
+    }
+
+    void zag(){
+        auto c = this->rChild_;
+        // c 为空则什么也不做
+        if(c == nullptr) { return ; }
+        c->parent_ = this->parent_;
+        if(this->parent_){
+            this->isLChild() ? this->parent_->lChild_ = c : this->parent_->rChild_ = c;
+        }
+        this->parent_ = c;
+        this->rChild_ = c->lChild_;
+        c->lChild_ = this;
+        this->updateHeightAbove(v);
+    }
+    */
+
+    //   通过zag旋转将，子树x拉伸为最左侧通路
+    void stretchByZag(NodePtr& x){
+        int h = 0;
+        NodePtr p=x;
+        // 最右节点，p为拉伸后的根节点
+        while(p->rChild_){
+            p = p->rChild;
+        }
+        // 转到最左侧通路的末端
+        while(x->lChild_){
+            x = x->lChild_;
+        }
+        x->height_ = h++;
+        // 若右子树为空，则上一层，否则反复地以x为轴旋转
+        // 直到到达p
+        for( ; x != p; x = x->parent_, x->height = h++){
+            while(x->rChild_)
+                x->zag();
+        }
+    }
+
 };
 
 }

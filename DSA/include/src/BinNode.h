@@ -1,6 +1,6 @@
 // ./DSA/include/src/BinNode.h
 //#pragma once
-
+//  GB18030
 #ifndef _DSA_INCLUDE_SRC_BINNODE_H__
 #define _DSA_INCLUDE_SRC_BINNODE_H__ 
 
@@ -380,8 +380,34 @@ int stature(BinNode<T>* node) {
 	return node ? node->height_ : -1;
 }
 
+// 理想平衡
+template<typename T>
+bool balanced(BinNode<T>* node){
+	return stature(node->lChild_) == stature(node->rChild_);
+}
 
+// 平衡因子
+template<typename T>
+int balanceFactor(BinNode<T>* node){
+	return stature(node->lChild_) - stature(node->rChild_);
+}
 
+// AVL 平衡
+template<typename T>
+bool avlBalanced(BinNode<T>* node){
+	auto factor = balanceFactor(node);
+	return (-2 < factor) && (factor < 2);
+}
+
+// 在左右孩子中取更高者
+// AVL 平衡调整前，借此确定重构方案
+template<typename T>
+BinNode<T>* tallerChild(BinNode<T>* node){
+	return 
+		stature(node->lChild_) > stature(node->rChild_) ? node->lChild_ : (
+		stature(node->lChild_) < stature(node->rChild_) ? node->rChild_ : (
+		node->isLChild() ? node->lChild_ : node->rChild_));
+}
 
 }
 #endif //  _DSA_INCLUDE_SRC_BINNODE_H__
