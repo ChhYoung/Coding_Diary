@@ -14,8 +14,10 @@ struct BTNode{
     // 父节点 
     Ptr parent_;
     // 关键码
-    Vector<Ptr> key_;
-    // 孩子(长度总比 key 多 1 )
+    Vector<T> key_;
+
+    // 孩子,分支(长度总比 key 多 1 )
+    Vector<Ptr> child_;
 
     BTNode(){ 
         parent_ = nullptr;
