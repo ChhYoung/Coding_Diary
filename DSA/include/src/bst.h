@@ -53,7 +53,7 @@ public:
     }   
     // 改写为迭代形式
     static NodePtr searchInIt(NodePtr& v, const T& e, NodePtr& hot){
-        if(!v || (e == v->data_)) { return v;}
+        if(!v || (e == v->data_)) { return v;} // return nullptr
         hot = v;
         while(true){
             auto& c = (e < hot->data) ? hot->lChild_ : hot->rChild_;

@@ -409,5 +409,25 @@ BinNode<T>* tallerChild(BinNode<T>* node){
 		node->isLChild() ? node->lChild_ : node->rChild_));
 }
 
+// 红黑树节点判黑
+template<typename T>
+bool isBlack(BinNode<T>* node){
+	return !node || (RBColor::RB_BLACK == node->color_);
+}
+
+// 红黑树节点判红
+template<typename T>
+bool isRed(BinNode<T>* node){
+	return !node || (RBColor::RB_RED == node->color_);
+}
+
+// 红黑树高度更新条件
+// 红黑树的高度1一般指黑高度
+template<typename T>
+bool balckHeightUpdated(BinNode<T>* node){
+	return (stature(node->lChild_) == stature(node->rChild_)) &&
+			(node->height_ == (isRed(node) ? stature(node->lChild_) : stature(node->lChild_)+1));w
+}
+
 }
 #endif //  _DSA_INCLUDE_SRC_BINNODE_H__
