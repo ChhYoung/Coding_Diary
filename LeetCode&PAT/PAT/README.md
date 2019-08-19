@@ -606,6 +606,21 @@ int main(){
 
 ## 甲级
 
+### coudeup 1928  日期处理   p91
+
+**重点**： 
+
+- 形如：  20130101 中年月日的提取
+- 不同年之间日期的计算要考虑平年及闰年
+
+**思路:**
+
+让小的日期不断加一，直到与大的日期相等为止，其中先加年份，直到年份之差为1，
+
+为方便使用月份的天数，直接 定个二位数组：`int month[13][2]`, 其中二维 0 表示平年，1表示闰年
+
+
+
 ### 1001 A+B format (20 points)
 
 ```c++
@@ -1947,8 +1962,9 @@ int main(){
         // 化简
         a /= gcd_val;
         b /= gcd_val;
+		// 和的分子，分母
         // 通分,求分子分母与前一项的和
-        suma = a*suma + suma*b;
+        suma = a*sumb + b*suma;
         sumb = b*sumb;
         // 保留之前和的最大公因数
         gcd_val = gcd(suma,sumb);
@@ -1958,6 +1974,7 @@ int main(){
     }
     long long integer = suma / sumb;
     suma = suma - (sumb*integer);
+    // 分是否是假分数，是否整除，是否就是0来处理
     if(integer != 0){
         printf("%lld",integer);
         if(suma != 0) printf(" ");
@@ -2593,4 +2610,6 @@ int main(){
     return 0;
 }
 ```
+
+### 1059  **Prime Factors (25)**
 

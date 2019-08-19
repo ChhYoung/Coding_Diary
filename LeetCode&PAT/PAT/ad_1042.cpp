@@ -22,10 +22,12 @@ int main(){
 
     while((k--)>=1){
         vector<string> copy_str(str);
-        for(int i=0;i<str.size();++i){
-           str[i] = copy_str[nums[i]];
+        for(int i=0;i<copy_str.size();++i){
+           //str[i] = copy_str[nums[i]];
+           str[nums[i]] = copy_str[i];
         }
     }
+
     for(int i=0;i<str.size()-1;++i)
         cout<<str[i]<<" ";
     cout<<str.back();
