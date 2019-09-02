@@ -1,30 +1,55 @@
 #include<iostream>
 #include<vector>
-
+#include<algorithm>
 using namespace std;
 
 struct node{
     int weight;
-    int index;
     vector<int> child;
-}NODE[100];
-
-int n,m,S;
-// 用来存储路径
+}TREE[100];
+// 存储路径
 int path[100];
-void dfs(int index,int numNode,int sum){
+int N,M,S;
+
+bool cmp(int a, int b){
+    return TREE[a].weight > TREE[b].weight;
+}
+
+void dfs(int index, int nodeNum, int sum){
     if(sum > S) return ;
-    if(sum == S){
-        if(NODE[index].child.size() != 0) return;
-        for(int i=0;i<NODE[index].child.size();++i){
-            cout<<NODE[path[i]].weight;
-            if(i < numNode -1) cout<<' ';
-            else cout<<"\n";
+    else if(sum == S){
+        if(TREE[index].child.size() != 0) return ;
+        for(int i=0; i<nodeNum; ++i){
+            printf("%d%c",TREE[path[i]].weight, i != nodeNum-1 ? ' ':'\n');
+        }
+        return;
+    }
+    else{
+        for(int i=0; i<TREE[index].child.size(); ++i){
+            int node = TREE[index].child[i];
+            path[nodeNum] = node;
+            dfs(node, nodeNum+1, sum+TREE[node].weight);
         }
     }
-    for(int i=0; i<NODE[index].child.size(); ++i){
-        int child = NODE[index].child[i];
-        path[numNode] = child;
-        dfs(child, numNode+1, sum+NODE[index].weight);
+}
+
+int main(){
+    scanf("%d %d %d", &N,&M,&S);
+    for(int i=0; i<N; ++i){
+        cin>>TREE[i].weight;
     }
+    for(int i=0; i<M; ++i){
+        int id,k,child;
+        cin>>id>>k;
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        TREE[id].child.resize(k);
+        for(int j=0; j<k; ++j){
+            cin>>TREE[id].child[j]; 
+        }
+        sort(TREE[id].child.begin(), TREE[id].child.end(), cmp);
+    }
+    path[0]=0;
+    dfs(0,1,TREE[0].weight);
+    return 0;
+
 }
