@@ -1,34 +1,30 @@
+// ad 1087 
+// diji
 #include<iostream>
-#include<string>
-#include<algorithm>
-#include<vector>
 #include<map>
+#include<algorithm>
+#include<string>
 using namespace std;
-
-const int  MAXV = 210;
-const int inf = 999999999;
 int n,k;
-int G[MAXV][MAXV], weight[MAXV];
-// d最短距离， w最大点权和，num[]最短路径条数,
-//  pt最短路径的顶点数，pre[]前驱
-int d[MAXV]={0}, w[MAXV]={0}, num[MAXV]={0}, pt[MAXV]={0},pre[MAXV];
-bool visit[MAXV]={false};
+const int MAXV = 210;
+const int inf = 99999999;
+int G[MAXV][MAXV], d[MAXV], weight[MAXV], w[MAXV];
+// 节点路径数量， 顶点数量， 前驱
+int num[MAXV]={0}, pt[MAXV]={0},pre[MAXV];
+bool visit[MAXV] = { false };
 map<string, int> cityToIndex;
 map<int, string> indexToCity;
 
-// 起点 s
 void diji(int s){
-    // 初始化最短距离
-    fill(d,d+MAXV,inf);
+    fill(d, d+MAXV, inf);
     for(int i=0; i<n; ++i) pre[i] = i;
     d[s] = 0;
-    w[s] = weight[s];
+    w[s] = weight[0];
     num[s] = 1;
     for(int i=0; i<n; ++i){
-        int u=-1, minn = inf;
-        // 找到当前最小的d[]
+        int u=-1, minn=inf;
         for(int j=0; j<n; ++j){
-            if(visit[j] == false && d[j] < minn ){
+            if(visit[j] == false && d[j] < minn){
                 u = j;
                 minn = d[j];
             }
@@ -36,27 +32,27 @@ void diji(int s){
         if(u == -1) return;
         visit[u] = true;
         for(int v=0; v<n; ++v){
-            if(visit[v] == false && G[v][u] != inf){
+            if(visit[v] == false && G[u][v] != inf){
                 if(d[v] > d[u]+G[u][v]){
-                    d[v] = d[u]+G[u][v];
-                    w[v] = w[u]+weight[v];
+                    d[v] = d[u] + G[u][v];
+                    w[v] = w[u] + weight[v];
                     num[v] = num[u];
                     pre[v] = u;
-                    pt[v] = pt[u]+1;
+                    pt[v] = pt[u] + 1;
                 }
-                else if(d[v] == d[u]+G[u][v]){
-                    num[v] += num[u];
-                    if(w[v] < w[u]+weight[v]){
-                        w[v] = w[u]+weight[v];
+                else if(d[v] == d[u] + G[u][v]){
+                    num[v] = num[v] + num[u];
+                    if(w[v] < w[u] + weight[v]){
+                        w[v] = w[u] + weight[v];
                         pre[v] = u;
-                        pt[v] = pt[u]+1;
+                        pt[v] = pt[u] + 1;
                     }
-                    else if(w[v] == w[u]+weight[v]){
+                    else if(w[v] == w[u] + weight[v]){
                         double vAvg = 1.0 * w[v] / pt[v];
-                        double uAvg = 1.0 * (w[u]+weight[v]) / (pt[u] + 1);
+                        double uAvg = 1.0 * (w[v] = w[u] + weight[v])/(pt[u] + 1);
                         if(uAvg > vAvg){
                             pre[v] = u;
-                            pt[v] = pt[u]+1;
+                            pt[v] = pt[u] + 1;
                         }
                     }
                 }
@@ -76,7 +72,7 @@ void printPath(int v){
 }
 
 int main(){
-    fill(G[0],G[0]+MAXV*MAXV, inf);
+    fill(G[0], G[0]+MAXV*MAXV, inf);
     string start, city1, city2;
     cin>>n>>k>>start;
 
@@ -92,7 +88,9 @@ int main(){
     for(int i=0; i<k; ++i){
         int cost;
         cin>>city1>>city2>>cost;
-        G[cityToIndex[city1]][cityToIndex[city2]] = G[cityToIndex[city2]][cityToIndex[city1]] = cost;
+        int a = cityToIndex[city1];
+        int b = cityToIndex[city2];
+        G[a][b] = G[b][a] = cost;
     }
 
     diji(0);
