@@ -8,7 +8,7 @@ int main(){
         scanf("%d",&a[i]);
         m[a[i]]++;
     }
-    for(int i=0;i<n;++i){
+    for(int i=0;i<n;9++i){
         if(m[a[i]] == 1){
             printf("%d",a[i]);
             return 0;
