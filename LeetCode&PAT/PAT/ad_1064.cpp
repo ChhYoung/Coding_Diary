@@ -6,9 +6,7 @@ const int maxn = 1010;
 int n, numbers[maxn], CBT[maxn], index=0;
 
 void inOrder(int root){
-    if(root > n
-    
-    ) return;
+    if(root > n) return;
     inOrder(root*2);
     CBT[root] = numbers[index++];
     inOrder(root*2+1);

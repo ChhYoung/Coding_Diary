@@ -43,7 +43,6 @@ int main() {
 					dis[v] = dis[u] + edge[u][v];
 					c[v] = c[u] + cost[u][v];
 					pre[v] = u;
-
 				}
 				else if (dis[v] == dis[u] + edge[u][v]) {
 					// 比较cost 再看是否应该加入到路径中
