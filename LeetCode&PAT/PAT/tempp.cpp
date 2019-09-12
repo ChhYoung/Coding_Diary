@@ -1,89 +1,47 @@
 #include<iostream>
-#include<vector>
-#include<string>
 #include<algorithm>
+#include<vector>
+
 using namespace std;
-const int N = 10010;
-int father[N];
 
-void init(int n){
-    for(int i=1; i<=n; ++i){
-        father[i] = i;
-    }
+struct student{
+	long long int reg_num;
+	int sco;
+	int loc_num;
+	int final_rank = 0;
+	int loc_rank = 0;
+	
+	student(string reg_num_,int scor_,int loc_num_) :
+		reg_num(reg_num_),
+		sco(sco_),
+		loc_num(loc_num_)
+		{}
+};
+
+bool cmp_1(student a, student b){
+	return a.sco != b.sco ? (a.sco > b.sco)  :  (a.reg_num < b.reg_num);
 }
 
 
-int findFather(int x){
-    int a = x;
-    while(x != father[x])
-        x = father[x];
-    while( a != father[a]){
-        int z = a;
-        father[z] = x;
-    }
-    return x;
+
+
+int main(){
+	// location
+	int N;
+	scanf("%d",&N);
+	vector<student> total;
+	for(int i=1; i<=N; ++i){
+		int num;
+		cin>>num;
+		for(int j=1; j<=num; ++j){
+			long long int a;
+			int sco;
+			cin>>a>>sco;
+			total.push_back({a,sco,j});
+		}
+		sort(total.begin(), total.end(),cmp_1);
+		for(int i=1; i<=total.size(); ++i){
+			total[i-1].loc_rank = i;
+		}
+	} 
 }
-
-void Union(int a, int b){
-    int faA = findFather(a);
-    int faB = findFather(b);
-    if(faA != faB){
-        father[faA] = faB;
-    }
-}\
-
-const int maxv = 10000;
-const int inf = 1000000;
-int n, G[maxv][maxv],d[maxv];
-bool visit[maxv];
-int prim(){
-    fill(d,d+maxv,inf);
-    d[0] = 0;
-    int ans = 0;
-    for(int i=0; i<n; ++i){
-        int u=-1, minn = inf;
-        for(int j=0; j<n; ++j){
-            if(visit[j] == false && d[j] < minn){
-                u = j;
-                minn = d[j];
-            }
-        }
-        if(u == -1) return -1;
-        visit[u] = true;
-        ans += d[u];
-        for(int v=0; v<n; ++v){
-            if(visit[v]==false && G[u][v] != inf && G[u][v] < d[v]) {
-                d[v] = G[u][v];
-            }
-        }
-    }
-    return ans;
-}
-
-const int maxn = 100;
-int heap[maxn], n=10;
-
-void down_adjust(int low, int high){
-    int i=low, j=2*i;
-    while(j <= high){
-        if(j+1 <= high && heap[j+1] > heap[j]){
-            j += 1;
-        }
-
-        if(heap[j] > heap[i]){
-            swap(heap[j], heap[i]);
-            i = j;
-            j = 2*i;
-        }
-        else{
-            break;
-        }
-    }
-}
-
-void createHeap(){
-    for(int i=n/2; i>=1; i--){
-        down_adjust(i,n);
-    }
-}
-
