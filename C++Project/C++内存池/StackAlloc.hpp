@@ -16,13 +16,24 @@ template <typename T, typename Alloc = std::allocator<T>>
 class StackAlloc{
 public: 
     typedef StackNode_<T> Node;
-    // 得到 std::allocator<StackNode_<T>>
+   
     // typedef typename std::allocator<T>::template rebind<Node>::other allocator;
     // 该作用为 对一个给定类型T1的分配器，想根据相同策略得到类型T2的分配器
     // 用 typename 来指明 other是一个类型
-    typedef typename Alloc::template rebind<Node>::other allocator;
 
-    StackAlloc(){head_ = 0;}
+    // typedef typename  std::allocator<T>::rebind<StackNode_<T>>::other   allocator
+     // 得到 std::allocator<StackNode_<T>>
+    // rebind 为 std::allocator 的一个成员
+    //typedef typename Alloc::template rebind<Node>::other allocator;
+
+    /*
+    rebind的本质应该这么说:给定了类型T的分配器Allocator=allocator<T>，
+    现在想根据相同的策略得到另外一个类型U的分配器allocator<U>，
+    那么allocator<U>=allocator<T>::Rebind<U>::other.
+    */
+    typedef typename Alloc::template rebind<Node>::other allocator;
+    //typedef typename std::allocator<StackNode_<T>> allocator;
+    StackAlloc(){ head_ = 0; }
     ~StackAlloc(){ clear();}
 
     // 当栈中元素为空时返回 true

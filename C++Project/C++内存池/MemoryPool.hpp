@@ -44,12 +44,14 @@ public:
         // 对象槽不够用，则分配一个新的内存区块
         else{
             if(currentSlot_ >= lastSlot_){
+                // 一个block含多个slot， block内存强行转换为slot，则指针只会解释一个slot大小的内存空间
+                // data_pointer_ 申请一块，而之后使用的是槽
                 data_pointer_ newBlock = reinterpret_cast<data_pointer_>(operator new(BlockSize));
                 reinterpret_cast<slot_pointer_>(newBlock)->next = currentBlock_;
                 currentBlock_ = reinterpret_cast<slot_pointer_>(newBlock);
                 // 填充整个区域来满足元素内存区域的对齐要求
                 // 分配的内存区+指向内存区域的指针 并计算其（指针）大小
-                data_pointer_ body = newBlock + sizeof(slot_pointer_);
+                data_pointer_ body = newBlock + sizeof(slot_pointer_); 
                 uintptr_t result = reinterpret_cast<uintptr_t>(body);
                 size_t bodyPadding = (alignof(slot_type_) - result)%alignof(slot_type_);
                 currentSlot_ = reinterpret_cast<slot_pointer_>(body+bodyPadding);
@@ -106,6 +108,7 @@ private:
     slot_pointer_ freeSlots_;
 
     // 检查内存大小是否过小
+    // 块大小要 >= 两倍的对象槽大小
     static_assert(BlockSize >= 2*sizeof(slot_type_),"BlockSize too small");
 
 };
