@@ -459,7 +459,7 @@ void Vector<T>::merge(Rank lo,Rank mi,Rank hi){
             A[i++] = B[j++];
         }
         // 当C较小  或者 B元素用完时
-        if( (k<lengthC) && (!(j<lengthB) || C[k]<=B[k]) ){
+        if( (k<lengthC) && (!(j<lengthB) || C[k]<=B[j]) ){
             A[i++] = C[k++];
         }
     }
