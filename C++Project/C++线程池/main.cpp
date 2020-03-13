@@ -4,7 +4,6 @@
 #include<future>    // std::future    
 #include<thread>    // std::this_thread::sleep_for     
 #include<chrono>    // std::chrono::seconds
-
 #include"ThreadPool.h"
 
 int main(){
@@ -28,10 +27,10 @@ int main(){
             })
         );
     }
-    /* 
+     
     // 输出线程任务的结果
     for(auto && result: results)
         std::cout<<result.get()<<'M';
-    std::cout<<std::endl;*/
+    std::cout<<std::endl;
     return 1;
 }

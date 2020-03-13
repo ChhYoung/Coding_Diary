@@ -7,6 +7,7 @@
 #define __NEW_OVERLOAD_IMPLEMENTATION__
 #include"LeakDetector.h"
 
+// 
 typedef struct _MemoryList{
 	struct _MemoryList* next, * prev;
 	// 申请内存的大小
@@ -60,10 +61,12 @@ void* AllocateMemory(size_t _size, bool _array, char* _file, unsigned _line) {
 	// 更新列表
 	_root.next->prev = newElem;
 	_root.next = newElem;
-	//记录到为释放的内存数中
+	//记录到未释放的内存数中
 	_memory_allocated += _size;
 
 	// 返回申请的内存，将newElem强制转换为char* 来严格控制指针每次+1之移动一个byte
+	// malloc以字节为单位
+	
 	return (char*)(newElem)+sizeof(_MemoryList);
 }
 

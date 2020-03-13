@@ -24,6 +24,7 @@ public:
 
 private:
     // 需要持续追踪线程来保证可以使用 join
+    // 线程
     std::vector<std::thread> workers;
 
     // 任务队列
@@ -53,7 +54,8 @@ inline ThreadPool::ThreadPool(size_t threads):stop(false){
                     {
                         // 创建互斥量
                         std::unique_lock<std::mutex> lock(this->queue_mutex);
-                        // 阻塞当前线程，直到 condition_variable被唤醒
+                        // 阻塞当前线程，直到 condition_variable被唤醒，当前结束或任务队列非空时
+                        // 唤醒
                         this->condition.wait(lock,
                             [this]{return this->stop || !this->tasks.empty();});
                         // 如果当前线程池已经结束且等待队列为空，则直接返回
