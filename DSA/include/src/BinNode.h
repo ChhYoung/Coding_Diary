@@ -199,7 +199,7 @@ public:
 	template<typename VST>
 	void travIn_I1(VST& visit) {
 		// 辅助函数，从当前节点出发，沿左分支不断深入，直至没有左分支的节点
-		static auto goAloneLetBranch = [](Ptr node, Stack<Ptyr> & stack) {
+		static auto goAloneLetBranch = [](Ptr node, Stack<Ptr> & stack) {
 			while (node) {
 				// 将左节点压入栈
 				stack.push(node);
@@ -338,7 +338,7 @@ public:
 			stack.pop();
 		}
 		
-		Stack<Ptr> 2s;
+		Stack<Ptr> s;
 		auto x = this;
 		s.push(x);
 		while (!s.empty()) {

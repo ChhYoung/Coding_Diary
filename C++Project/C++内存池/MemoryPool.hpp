@@ -52,7 +52,12 @@ public:
                 // 填充整个区域来满足元素内存区域的对齐要求
                 // 分配的内存区+指向内存区域的指针 并计算其（指针）大小
                 data_pointer_ body = newBlock + sizeof(slot_pointer_); 
+                //在64位的机器上，uintptr_t 是unsigned long int的别名；
+				//在32位的机器上，uintptr_t 是unsigned int的别名。
+				//为什么用这个，是为了指针转换的安全性考虑，提高程序的可移植性
                 uintptr_t result = reinterpret_cast<uintptr_t>(body);
+                //alignof 的作用是获取指定对象的字节对齐方式
+				//这一部分是给各个节点功能指针确定位置，计算内存地址的偏移量
                 size_t bodyPadding = (alignof(slot_type_) - result)%alignof(slot_type_);
                 currentSlot_ = reinterpret_cast<slot_pointer_>(body+bodyPadding);
                 lastSlot_ = reinterpret_cast<slot_pointer_>(newBlock+BlockSize-sizeof(slot_type_));
@@ -112,11 +117,5 @@ private:
     static_assert(BlockSize >= 2*sizeof(slot_type_),"BlockSize too small");
 
 };
-
-
-
-
-
-
 
 #endif // MEMORY_POOL_HPP

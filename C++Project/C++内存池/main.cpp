@@ -46,3 +46,36 @@ int main(){
     
     return 1;
 }
+
+
+#include "MemoryPool.h"
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+const int elems = 1000000;
+const int reps = 100;
+
+int main() {
+	std::vector<int, std::allocator<int>> v1;
+	std::vector<int, MemoryPool<int>> v2;
+
+	clock_t start;
+	start = clock();
+	for (int i = 0; i < reps; ++i) {
+		for (int j = 0; j < elems; ++j) v1.push_back(j);
+		for (int j = 0; j < elems; ++j) v1.pop_back();
+	}
+	std::cout << "default allocator time :";
+	std::cout << (((double)clock() - start) / CLOCKS_PER_SEC) << "\n\n";
+
+	start = clock();
+	for (int i = 0; i < reps; ++i) {
+		for (int j = 0; j < elems; ++j) v2.push_back(j);
+		for (int j = 0; j < elems; ++j) v2.pop_back();
+	}
+	std::cout << "memory pool allocator time :";
+	std::cout << (((double)clock() - start) / CLOCKS_PER_SEC) << "\n\n";
+
+	return 0;
+}
