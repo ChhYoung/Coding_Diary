@@ -65,7 +65,7 @@ int test_regex_replace() {
 
 int test_regex_replace2() {
 	string s{ "there is a subsequence in the string\n" };
-	regex e("\\b(sub)([^\s]*)");
+	regex e("\\b(sub)([^\\s]*)");
 	cout << regex_replace(s, e, "sub-$2");
 	string result;
 	regex_replace(back_inserter(result), s.begin(), s.end(), e, "$2");
