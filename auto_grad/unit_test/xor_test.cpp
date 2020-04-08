@@ -7,6 +7,7 @@
 #include "../include/VirtualGraph.h"
 #include "../include/VirtualNode.h"
 #include "../include/ComputeGraph.h"
+
 #include <iostream>
 using namespace std;
 using namespace AG;
