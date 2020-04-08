@@ -25,10 +25,11 @@
 > $$p(c|\vec{x})=\frac{p(c)p(\vec{x}|c)}{p(x)}=\frac{p(c)}{p(\vec{x})}\prod_{i=0}^dp(\vec{x}|c)
 $$
 则朴素贝叶斯分类器：
-$$
-h_{nb}(x)=arg\,\max_{c\in\gamma}p(c)\prod_{i=0}^dp(x_i|c)
-$$
+
+$$h_{nb}(x)=arg\,\max_{c\in\gamma}p(c)\prod_{i=0}^dp(x_i|c)$$
+
 朴素贝叶斯分类器的训练过程就是基于训练集 D 来估计类先验概率 P(c)，并为每个属性估计条件概率
+
 ### 三.实验过程：
 #### &emsp;&emsp;实验环境：
 >- ubuntu 18.04
