@@ -61,8 +61,8 @@ void OperatorNode::release_tensor() {
 
 OperatorNode::~OperatorNode() {
 	//std::cout << "free OperatorNode: " << get_name() << std::endl;
-	delete m_sum_grad;
+	/*delete m_sum_grad;
 	if (m_name[0] != "Parameter") {
 		delete m_output;
-	}
+	}*/
 }

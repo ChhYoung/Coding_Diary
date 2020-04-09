@@ -56,15 +56,18 @@ Node* VirtualNode::get_op_node(int idx) {
 		}
 	}
 	else if (m_name[0] == "Parameter") {
-		if (m_data == 0) {
+		if (m_data == nullptr) {
 			std::cout << "Parameter node is not initialize" << std::endl;
 		}
 		else {
-			op_node = new Parameter(m_name[0], m_name[1], oss.str(), m_data);
+			op_node = new Parameter(m_name[0], m_name[1], oss.str(), m_data,m_share_parameter);
 		}
 	}
 	else if (m_name[0] == "SquareSum") {
 		op_node = new SquareSum(m_name[0], m_name[1], oss.str());
+	}
+	else if (m_name[0] == "AbsSum") {
+		op_node = new AbsSum(m_name[0], m_name[1], oss.str());
 	}
 	else if (m_name[0] == "Mult") {
 		op_node = new Mult(m_name[0], m_name[1], oss.str());

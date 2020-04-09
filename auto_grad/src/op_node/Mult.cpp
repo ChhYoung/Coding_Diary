@@ -9,7 +9,7 @@ void Mult::op() {
 	Tensor* parent0_output = ((OperatorNode*)m_parents[0])->m_output;
 	Tensor* parent1_output = ((OperatorNode*)m_parents[1])->m_output;
 	m_output = parent0_output->matrix_mult(parent1_output);
-	if (m_output == 0) {
+	if (m_output == nullptr) {
 		std::cout << "shape is not match: " << get_name() << std::endl;
 	}
 }

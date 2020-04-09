@@ -23,5 +23,5 @@ Parameter::~Parameter() {
 	if (m_share_data == 0) {
 		delete m_output;
 	}
-	m_output = 0;
+	m_output = nullptr;
 }

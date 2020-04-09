@@ -7,7 +7,6 @@
 #include "../include/VirtualGraph.h"
 #include "../include/VirtualNode.h"
 #include "../include/ComputeGraph.h"
-
 #include <iostream>
 using namespace std;
 using namespace AG;
@@ -25,7 +24,6 @@ int main() {
 	data_x_list.push_back(new Tensor(shape_x, data_x2));
 	data_x_list.push_back(new Tensor(shape_x, data_x3));
 	data_x_list.push_back(new Tensor(shape_x, data_x4));
-
 	// y
 	vector<Tensor*> data_y_list;
 	vector<int> shape_y(2); shape_y[0] = 1; shape_y[1] = 1;

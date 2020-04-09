@@ -17,8 +17,8 @@ void RnnInputX::op() {
 		Tensor* a = m_data[m_data_ptr];
 		Tensor* b = m_data[m_data_ptr + 1];
 		int idx = std::atoi(m_name[2].c_str());
-		data[i * 2] = a->m_tensor[idx];
-		data[i * 2 + 1] = (m_data_ptr + 2) % m_data.size();
+		data[i * 2]     = a->m_tensor[idx];
+		data[i * 2 + 1] = b->m_tensor[idx];
 		m_data_ptr = (m_data_ptr + 2)%m_data.size();
 	}
 	m_output = new Tensor(shape, data);

@@ -16,7 +16,7 @@ Node* VirtualGraph::build_compute_graph(Graph* compute_graph, int idx ) {
 			loop_node->inner_loop(compute_graph); //执行循环
 			end_node = loop_node->m_end_compute_node;
 		}
-		else if (topo_result[i]->m_name[0] == "BranchNode") {
+		else if (topo_result[i]->m_name[0] == "Branch") {
 			// 分支节点
 		}
 		else { // 普通虚拟节点
