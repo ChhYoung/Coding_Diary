@@ -108,8 +108,8 @@ int main() {
 	// ¹¹½¨×ªÖÃÍ¼
 	train_cg->build_reverse_graph();
 	// ÑµÁ·
-	for (int i = 0; i < 100; ++i) {
-		if (i >= 90) {
+	for (int i = 0; i < 10000; ++i) {
+		if (i >= 9900) {
 			cout << "input: ";
 			int ptr = ((Input*)(train_cg->get_node("Input:1:0:")))->m_data_ptr;
 			((Input*)(train_cg->get_node("Input:1:0:")))->m_data[ptr]->display();
@@ -117,7 +117,7 @@ int main() {
 		vector<Node*> error;
 		train_cg->forward_propagation(error);
 		train_cg->back_propagation();
-		if (i >= 90) {
+		if (i >= 9900) {
 			cout << "xor: ";
 			((OperatorNode*)(sig2->m_op_node_list[0]))->m_output->display();
 			cout << endl;
