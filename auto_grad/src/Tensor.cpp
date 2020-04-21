@@ -109,7 +109,7 @@ Tensor* Tensor::add(Tensor* tensor) {
 	}
 
 	if (same_shape == 1) {
-		result = new Tensor(this->m_shape,0);
+		result = new Tensor(tensor->m_shape,0);
 		for (int i = 0; i < this->m_size; ++i) {
 			result->m_tensor[i] = this->m_tensor[i] + tensor->m_tensor[i];
 		}
@@ -118,9 +118,9 @@ Tensor* Tensor::add(Tensor* tensor) {
 }
 
 void Tensor::init() {
-	srand(time(0));
+	//srand(time(0));
 	for (int i = 0; i < this->m_size; ++i) {
-		m_tensor[i] = (rand() % 2000) / 1000.0 - 1.0;
+		m_tensor[i] = (rand() % 1000) / 1000.0 - 0.5;
 	}
 }
 
@@ -136,5 +136,5 @@ void Tensor::display() {
 }
 
 Tensor::~Tensor() {
-	//delete[]  m_tensor;
+	delete  m_tensor;
 }

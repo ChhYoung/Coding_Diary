@@ -9,11 +9,6 @@ void ComputeGraph::forward_propagation(std::vector<Node*>& result_list) {
 	for (int i = 0; i < topo_result.size(); ++i) {
 		((OperatorNode*)topo_result[i])->op();
 	}
-	//std::vector<Node*> endnode_list;
-	//get_endnode(endnode_list); // ×ªÖÃÍ¼ÖĞÈë¶ÈÎª0µÄ½Úµã¼´ÎªÊä³ö
-	//for (int i = 0; i < endnode_list.size(); ++i) {
-	//	result_list.push_back(((OperatorNode*)endnode_list[i])->m_output);
-	//}
 	get_endnode(result_list);
 }
 void ComputeGraph::back_propagation() {
@@ -22,29 +17,23 @@ void ComputeGraph::back_propagation() {
 	for (int i = 0; i < topo_result.size(); ++i) {
 		((OperatorNode*)topo_result[i])->grad_op();
 	}
-	// ¸üĞÂÈ¨Öµ
+	// æ›´æ–°æƒå€¼
 	for (int i = 0; i < topo_result.size(); ++i) {
 		((OperatorNode*)topo_result[i])->update();
 	}
 }
+
+
 void ComputeGraph::release_tensor() {
 	std::unordered_map<std::string, Node*>::iterator node_map_it = m_node_map.begin();
 	while (node_map_it != m_node_map.end()) {
-		//// ÊÍ·Åsum_grad
-		//if (((OperatorNode*)(node_map_it->second))->m_sum_grad != 0) {
-		//	delete ((OperatorNode*)(node_map_it->second))->m_sum_grad;
-		//	((OperatorNode*)(node_map_it->second))->m_sum_grad = 0;
-		//	//std::cout << "release grad " << node_map_it->first << std::endl;
-		//}
-		//if (node_map_it->second->m_name[0] != "Parameter" && node_map_it->second->m_name[0] != "Input") { // ÊÍ·Å·Ç²ÎÊı½ÚµãµÄoutput
-		//	delete ((OperatorNode*)(node_map_it->second))->m_output;
-		//	((OperatorNode*)(node_map_it->second))->m_output = 0;
-		//	//std::cout << "release output " << node_map_it->first << std::endl;
-		//}
 		((OperatorNode*)(node_map_it->second))->release_tensor();
 		++node_map_it;
 	}
 }
 ComputeGraph::~ComputeGraph() {
 	std::cout << "compute graph free " << std::endl;
+	m_node_map.clear();
+	m_adj_table.clear();
+	m_reverse_table.clear();
 }

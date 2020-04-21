@@ -7,20 +7,21 @@ LoopNode::LoopNode(std::string type, std::string id) : Node(type, id){
 	m_end_compute_node = nullptr;
 }
 
-//  ³õÊ¼»¯Ñ­»·£¬ÎªÑ­»·×ÓÍ¼ÖÐµÄÒ»Ð©½Úµã²¹ÉÏ½ÚµãÒÀÀµ
+//  åˆå§‹åŒ–å¾ªçŽ¯ï¼Œä¸ºå¾ªçŽ¯å­å›¾ä¸­çš„ä¸€äº›èŠ‚ç‚¹è¡¥ä¸ŠèŠ‚ç‚¹ä¾èµ–
 void LoopNode::init(Graph* compute_graph) {
 }
 
-//³ÉÁ¢·µ»Ø1£¬ ·ñÔò·µ»Ø0
+//æˆç«‹è¿”å›ž1ï¼Œ å¦åˆ™è¿”å›ž0
 int LoopNode::condition(Graph* compute_graph, int idx) {
 	return 1;
 }
 
-// ÄÚÑ­»·
+// å†…å¾ªçŽ¯
 void LoopNode::inner_loop(Graph* compute_graph) {
 	int idx = 0;
-	init(compute_graph); //³õÊ¼»¯Ñ­»·
+	init(compute_graph); //åˆå§‹åŒ–å¾ªçŽ¯
 	while (condition(compute_graph, idx) == 0) {
+		// æ¯æ¬¡å¾ªçŽ¯æ—¶åŠ¨æ€ç”Ÿæˆè®¡ç®—å›¾
 		m_end_compute_node = m_sub_vgraph->build_compute_graph(compute_graph, idx);
 		++idx;
 	}

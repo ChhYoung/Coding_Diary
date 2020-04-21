@@ -4,12 +4,12 @@
 using namespace AG;
 
 void Graph::add_node(std::string parent_name, Node* node) {
-	this->m_node_map[node->get_name()] = node; //½Úµã¼ÓÈë×Öµä
+	this->m_node_map[node->get_name()] = node; //èŠ‚ç‚¹åŠ å…¥å­—å…¸
 	if (parent_name != "") {
 		if (this->m_node_map.end() != this->m_node_map.find(parent_name)) {
 			Node* parent_node = this->m_node_map[parent_name];
 			node->m_parents.push_back(parent_node);
-			m_adj_table[parent_name].push_back(node);//½Úµã¼ÓÈëÁÚ½Ó±í
+			m_adj_table[parent_name].push_back(node);//èŠ‚ç‚¹åŠ å…¥é‚»æ¥è¡¨
 		}
 		else {
 			std::cout << "parent node is not in graph" << std::endl;
@@ -26,25 +26,29 @@ Node* Graph::get_node(std::string name) {
 	}
 }
 
-void Graph::build_subgraph(std::vector<Node*> endnode_list) {
+void Graph::build_subgraph(std::vector<Node*>& endnode_list) {
 	std::unordered_map<std::string, Node*>::iterator node_map_it = this->m_node_map.begin();
-	while (node_map_it != this->m_node_map.end()) { //ËùÓĞ½ÚµãÉèÖÃÎª²»¿É¼û
+	while (node_map_it != this->m_node_map.end()) { //æ‰€æœ‰èŠ‚ç‚¹è®¾ç½®ä¸ºä¸å¯è§
 		node_map_it->second->m_invisible = 1;
 		++node_map_it;
 	}
-	// ¹¹Ôì×ÓÍ¼
+	// æ„é€ å­å›¾
 	std::queue<Node*> q;
 	std::unordered_set<Node*> visit;
-	std::vector<Node*>::iterator endnode_list_it = endnode_list.begin();
+	/*std::vector<Node*>::iterator endnode_list_it = endnode_list.begin();
 	while (endnode_list_it != endnode_list.end()) {
 		q.push(*endnode_list_it);
 		visit.insert(*endnode_list_it);
 		++endnode_list_it;
+	}*/
+	for (int i = 0; i < endnode_list.size(); ++i) {
+		q.push(endnode_list[i]);
+		visit.insert(endnode_list[i]);
 	}
 	while (!q.empty()) {
 		Node* node = q.front();
 		q.pop();
-		node->m_invisible = 0; // ½«×ÓÍ¼µÄ½ÚµãÉèÎª¿É¼û
+		node->m_invisible = 0; // å°†å­å›¾çš„èŠ‚ç‚¹è®¾ä¸ºå¯è§
 		for (int i = 0; i < node->m_parents.size(); ++i) {
 			if (visit.find(node->m_parents[i]) == visit.end()) {
 				visit.insert(node->m_parents[i]);
@@ -55,14 +59,14 @@ void Graph::build_subgraph(std::vector<Node*> endnode_list) {
 }
 
 void Graph::topological_sort(std::unordered_map<std::string, std::vector<Node*>>& adj_table, std::vector<Node*>& result) {
-	std::unordered_map<std::string, int> indegree; // ´æ´¢Ã¿¸ö½ÚµãµÄÈë¶È
+	std::unordered_map<std::string, int> indegree; // å­˜å‚¨æ¯ä¸ªèŠ‚ç‚¹çš„å…¥åº¦
 	std::unordered_map<std::string, Node*>::iterator node_map_it = m_node_map.begin();
 	while (node_map_it != m_node_map.end()) { 
 		indegree[node_map_it->first] = 0;
 		++node_map_it;
 	}
 	std::unordered_map<std::string, std::vector<Node*>>::iterator adj_table_it = adj_table.begin();
-	while (adj_table_it != adj_table.end()) { // ÓÉÁÚ½Ó±í¼ÆËãÃ¿¸ö½ÚµãµÄÈë¶Á
+	while (adj_table_it != adj_table.end()) { // ç”±é‚»æ¥è¡¨è®¡ç®—æ¯ä¸ªèŠ‚ç‚¹çš„å…¥è¯»
 		for (int i = 0; i < adj_table_it->second.size(); ++i) {
 			++indegree[(adj_table_it->second)[i]->get_name()];
 		}
@@ -72,7 +76,7 @@ void Graph::topological_sort(std::unordered_map<std::string, std::vector<Node*>>
 	std::queue<Node*> q;
 	std::unordered_map<std::string, int>::iterator indegree_it = indegree.begin();
 	while (indegree_it != indegree.end()) {
-		if (indegree_it->second == 0) { // ½«Èë¶ÈÎªÁãµÄ·ÅÈë¶ÓÁĞÖĞ
+		if (indegree_it->second == 0) { // å°†å…¥åº¦ä¸ºé›¶çš„æ”¾å…¥é˜Ÿåˆ—ä¸­
 			q.push(m_node_map[indegree_it ->first]);
 		}
 		++indegree_it;
@@ -81,11 +85,11 @@ void Graph::topological_sort(std::unordered_map<std::string, std::vector<Node*>>
 	while (!q.empty()) {
 		Node* node = q.front();
 		q.pop();
-		if (node->m_invisible == 0) { //¿É¼û½Úµã¼ÓÈëresult
+		if (node->m_invisible == 0) { //å¯è§èŠ‚ç‚¹åŠ å…¥result
 			result.push_back(node);
 		}
 		std::vector<Node*> adj_nodes = adj_table[node->get_name()];
-		for (int i = 0; i < adj_nodes.size(); ++i) { // µ±Ç°½ÚµãµÄºó¼ÌµÄÈë¶È¼õ1£¬ÔÙ½«Èë¶È0µÄ¼ÓÈë¶ÓÁĞ
+		for (int i = 0; i < adj_nodes.size(); ++i) { // å½“å‰èŠ‚ç‚¹çš„åç»§çš„å…¥åº¦å‡1ï¼Œå†å°†å…¥åº¦0çš„åŠ å…¥é˜Ÿåˆ—
 			--indegree[(adj_nodes[i])->get_name()];
 			if (indegree[(adj_nodes[i])->get_name()] == 0) {
 				q.push(adj_nodes[i]);
@@ -107,16 +111,17 @@ void Graph::build_reverse_graph() {
 	}
 }
 
+// è·å–è½¬ç½®å›¾ä¸­æ²¡æœ‰å‰é©±çš„èŠ‚ç‚¹ã€‚å³å¾—åˆ°åŸå›¾çš„è¾“å‡ºèŠ‚ç‚¹ã€‚
 void Graph::get_endnode(std::vector<Node*>& endNode_list) {
 	std::unordered_map<std::string, std::vector<Node*>>::iterator reverse_table_it = this->m_reverse_table.begin();
 	std::unordered_map<std::string, Node*>::iterator node_map_it = m_node_map.begin();
-	std::unordered_map<std::string, int> indegree; // ×ªÖÃ±í½ÚµãÈë¶È
+	std::unordered_map<std::string, int> indegree; // è½¬ç½®è¡¨èŠ‚ç‚¹å…¥åº¦
 	while (node_map_it != this->m_node_map.end()) {
 		indegree[node_map_it->first] = 0;
 		++node_map_it;
 	}
 
-	while (reverse_table_it != this->m_reverse_table.end()) { // ×ªÖÃ±íÈë¶È
+	while (reverse_table_it != this->m_reverse_table.end()) { // è½¬ç½®è¡¨å…¥åº¦
 		std::vector<Node*> adj_nodes = reverse_table_it->second;
 		for (int i = 0; i < adj_nodes.size(); ++i) {
 			++indegree[(adj_nodes[i])->get_name()];
@@ -141,6 +146,9 @@ Graph::~Graph() {
 		node_map_it->second = 0;
 		++node_map_it;
 	}
+	m_node_map.clear();
+	m_adj_table.clear();
+	m_reverse_table.clear();
 }
 
 

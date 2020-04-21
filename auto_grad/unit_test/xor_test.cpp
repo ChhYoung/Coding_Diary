@@ -81,35 +81,36 @@ int main() {
 	VirtualNode* bias2 = new VirtualNode("Bias", "2");
 
 	//构建虚拟图
-	VirtualGraph vg;
-	vg.add_node("", input_x);
-	vg.add_node("", w_1);
-	vg.add_node(input_x->get_name(), mult1);
-	vg.add_node(w_1->get_name(), mult1);
-	vg.add_node("", b_1);
-	vg.add_node(mult1->get_name(), bias1);
-	vg.add_node(b_1->get_name(), bias1);
-	vg.add_node(bias1->get_name(), sig1);
-	vg.add_node("", w_2);
-	vg.add_node(sig1->get_name(), mult2);
-	vg.add_node(w_2->get_name(), mult2);
-	vg.add_node("", b_2);
-	vg.add_node(mult2->get_name(), bias2);
-	vg.add_node(b_2->get_name(), bias2);
-	vg.add_node(bias2->get_name(), sig2);
-	vg.add_node("", input_y);
-	vg.add_node(sig2->get_name(), minus);
-	vg.add_node(input_y->get_name(), minus);
-	vg.add_node(minus->get_name(), ss);
+	VirtualGraph* vg = new VirtualGraph();
+	vg->add_node("", input_x);
+	vg->add_node("", w_1);
+	vg->add_node(input_x->get_name(), mult1);
+	vg->add_node(w_1->get_name(), mult1);
+	vg->add_node("", b_1);
+	vg->add_node(mult1->get_name(), bias1);
+	vg->add_node(b_1->get_name(), bias1);
+	vg->add_node(bias1->get_name(), sig1);
+	vg->add_node("", w_2);
+	vg->add_node(sig1->get_name(), mult2);
+	vg->add_node(w_2->get_name(), mult2);
+	vg->add_node("", b_2);
+	vg->add_node(mult2->get_name(), bias2);
+	vg->add_node(b_2->get_name(), bias2);
+	vg->add_node(bias2->get_name(), sig2);
+	vg->add_node("", input_y);
+	vg->add_node(sig2->get_name(), minus);
+	vg->add_node(input_y->get_name(), minus);
+	vg->add_node(minus->get_name(), ss);
 
 	// 生成计算图
 	ComputeGraph* train_cg = new ComputeGraph();
-	vg.build_compute_graph(train_cg);
+	vg->build_compute_graph(train_cg);
 	// 构建转置图
 	train_cg->build_reverse_graph();
 	// 训练
 	for (int i = 0; i < 10000; ++i) {
 		if (i >= 9900) {
+			cout << "loop:" << i << endl;
 			cout << "input: ";
 			int ptr = ((Input*)(train_cg->get_node("Input:1:0:")))->m_data_ptr;
 			((Input*)(train_cg->get_node("Input:1:0:")))->m_data[ptr]->display();
@@ -119,11 +120,12 @@ int main() {
 		train_cg->back_propagation();
 		if (i >= 9900) {
 			cout << "xor: ";
-			((OperatorNode*)(sig2->m_op_node_list[0]))->m_output->display();
+			((OperatorNode*)(sig2->m_op_node_map["Sigmoid:2:0:"]))->m_output->display();
 			cout << endl;
 		}
 		train_cg->release_tensor(); // 释放迭代的中间变量 
 	}
 	delete train_cg;
+	delete vg;
 	return 1;
 }

@@ -5,7 +5,8 @@
 #include "OperatorNode.h"
 #include "Graph.h"
 #include <string>
-#include <vector>
+//#include <vector>
+#include <unordered_map>
 
 namespace AG {
 
@@ -14,7 +15,8 @@ public:
 	Tensor* m_data;
 	std::vector<Tensor*> m_input_data;
 
-	std::vector<Node*> m_op_node_list;
+	//std::vector<Node*> m_op_node_list;
+	std::unordered_map<std::string,Node*>  m_op_node_map;
 	int m_share_parameter;
 	VirtualNode(std::string type, std::string id, int share_parameter = 0);
 

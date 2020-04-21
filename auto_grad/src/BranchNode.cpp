@@ -6,8 +6,7 @@
 
 using namespace AG;
 
-BranchNode::BranchNode(std::string type, std::string id):Node(type,id){}
-
-Node* BranchNode::choose_node(int idx, Graph* compute_graph) {
-	return nullptr;
+BranchNode::BranchNode(std::string type, std::string id, Node* (*func)(int, Graph*, BranchNode*)) :Node(type, id) {
+	m_dep_op_node_name = "";
+	choose_node = func;
 }

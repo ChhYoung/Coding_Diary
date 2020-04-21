@@ -18,5 +18,4 @@ public:
 
 
 
-
 #endif //!COMPUTEGRAPH_H_

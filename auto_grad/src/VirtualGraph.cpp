@@ -10,33 +10,36 @@ Node* VirtualGraph::build_compute_graph(Graph* compute_graph, int idx ) {
 	std::vector<Node*> topo_result;
 	topological_sort(m_adj_table, topo_result);
 	Node* end_node = nullptr;
-	for (int i = 0; i < topo_result.size(); ++i) { //¹¹½¨
+	for (int i = 0; i < topo_result.size(); ++i) { //æ„å»º
 		if (topo_result[i]->m_name[0] == "Loop") {
 			LoopNode* loop_node = (LoopNode*)topo_result[i];
-			loop_node->inner_loop(compute_graph); //Ö´ĞĞÑ­»·
+			loop_node->inner_loop(compute_graph); //æ‰§è¡Œå¾ªç¯
 			end_node = loop_node->m_end_compute_node;
 		}
 		else if (topo_result[i]->m_name[0] == "Branch") {
-			// ·ÖÖ§½Úµã
+			// åˆ†æ”¯èŠ‚ç‚¹
 		}
-		else { // ÆÕÍ¨ĞéÄâ½Úµã
+		else { 
+			// æ™®é€šè™šæ‹ŸèŠ‚ç‚¹
 			VirtualNode* v_node = (VirtualNode*)topo_result[i];
-			if (v_node->m_parents.size() == 0) { //Ìí¼ÓÈë¶ÈÎª0µÄ½Úµã
-				Node* op_node = v_node->get_op_node(idx); //¹¹Ôì½Úµã
-				compute_graph->add_node("", op_node);//¼ÆËãÍ¼ÖĞÌí¼Ó½Úµã
-				((OperatorNode*)op_node)->op();//Ö´ĞĞ¼ÆËã
+			// æ·»åŠ æ— å‰é©±çš„èŠ‚ç‚¹
+			if (v_node->m_parents.size() == 0) { //æ·»åŠ å…¥åº¦ä¸º0çš„èŠ‚ç‚¹
+				Node* op_node = v_node->get_op_node(idx); //æ„é€ èŠ‚ç‚¹
+				compute_graph->add_node("", op_node);//è®¡ç®—å›¾ä¸­æ·»åŠ èŠ‚ç‚¹
+				((OperatorNode*)op_node)->op();//æ‰§è¡Œè®¡ç®—
 				end_node = op_node;
 			}
 			else {
+				// æ·»åŠ æœ‰å‰é©±çš„èŠ‚ç‚¹
 				std::vector<Node*> parents_op_node;
 				v_node->get_parents_op_nodes(idx, compute_graph, parents_op_node);
 				int need_op_node = 1;
 				for (int i = 0; i < parents_op_node.size(); ++i) {
 					if (parents_op_node[i] == 0) {
-						need_op_node = 0; // ´æÔÚÃ»ÓĞÉú³ÉÒÀÀµµÄ¼ÆËã½Úµã
+						need_op_node = 0; // å­˜åœ¨æ²¡æœ‰ç”Ÿæˆä¾èµ–çš„è®¡ç®—èŠ‚ç‚¹
 					}
 				}
-				if (need_op_node == 1) { // ¼ÆËãµ±Ç°ÒÀÀµ
+				if (need_op_node == 1) { // è®¡ç®—å½“å‰ä¾èµ–
 					Node* op_node = v_node->get_op_node(idx);
 					for (int i = 0; i < parents_op_node.size(); ++i) {
 						compute_graph->add_node(parents_op_node[i]->get_name(), op_node);
@@ -51,5 +54,16 @@ Node* VirtualGraph::build_compute_graph(Graph* compute_graph, int idx ) {
 }
 
 VirtualGraph::~VirtualGraph() {
-	std::cout << " virtual graph free " << std::endl;
+	std::cout << "virtual graph free " << std::endl;
+	//é‡Šæ”¾è™šæ‹ŸèŠ‚ç‚¹
+	std::cout << "virtual graph free" << std::endl;
+	std::unordered_map<std::string, Node*>::iterator node_map_it = m_node_map.begin();
+	while (node_map_it != m_node_map.end()) {
+		delete node_map_it->second;
+		node_map_it->second = nullptr;
+		++node_map_it;
+	}
+	m_node_map.clear();
+	m_adj_table.clear();
+	m_reverse_table.clear();
 }
