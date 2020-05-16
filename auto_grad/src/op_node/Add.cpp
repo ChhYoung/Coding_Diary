@@ -3,10 +3,9 @@
 #include <vector>
 using namespace AG;
 
-
 Add::Add(std::string type, std::string id, std::string idx) : OperatorNode(type, id, idx) {
 }
- 
+
 void Add::op() {
     Tensor* parent0_output = ((OperatorNode*)m_parents[0])->m_output;
     Tensor* parent1_output = ((OperatorNode*)m_parents[1])->m_output;

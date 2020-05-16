@@ -1,112 +1,117 @@
-  
+
 # <center> 机器学习实验报告 <center>
-  
-  
+
+
   <br/><br/><br/><br/>
-  
+
   <br/><br/><br/><br/>
   <br/><br/><br/><br/>
 ### <center> 姓名：杨崇焕
-  
+
 ### <center> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;学号：U201610531
-  
+
 ### <center> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;班级：电信中英1601
-  
+
 ### <center> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实验内容：SVM
-  
+
   <br/><br/><br/><br/>
     <br/><br/><br/><br/>
       <br/><br/><br/><br/>
         <br/><br/><br/><br/>
 <div STYLE="page-break-after: always;"></div>
 ### 二.实验任务：
-  
+
 任务一：分别用线性SVM和高斯核SVM预测对数据进行分类
 任务二：使用高斯核SVM对给定数据集进行分类
 任务三：使用线性SVM实现对垃圾邮件分类
-  
-  
+
+
 ### 三.实验原理：
-  
+
 ##### 1. SVM求解:
-  
-  
+
+
 根据拉格朗日对偶性转换成如下形式，再由KKT条件求出满足α*，由α\*得到最优的w\*，b\*
 ![](pics/SVM.png )
 再得
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?w^*=&#x5C;sum_{i=1}^N&#x5C;alpha_i^*y_ix_i"/></p>  
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?b^*=y_j-&#x5C;sum_{i=1}^N&#x5C;alpha_i^*y_i(x_i^Tx_j)"/></p>  
-  
+
 ##### 2. 软间隔SVM:
-  
+
 当数据集不是线性可分时，样本点不满足函数间隔大于等于1的约束条件，为解决该问题引入非负松弛变量ξ，使约束条件变为<p align="center"><img src="https://latex.codecogs.com/gif.latex?y_i(w^Tx_i+b)&#x5C;geq1-&#x5C;xi_i"/></p>  
-  
+
 引入惩罚系数C>0,则目标函数变为<p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;frac{1}{2}||w||^2+C&#x5C;sum_{i=1}^N&#x5C;xi_i"/></p>  
-  
-  
+
+
 C越大越接近于硬间隔
 问题又变成
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;min_{w,b,&#x5C;xi}%20&#x5C;frac{1}{2}||w||^2+C&#x5C;sum_{i=1}^N&#x5C;xi_i"/></p>  
-  
+
 ##### s.t.
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?y_i(w^Tx_i+b)&#x5C;geq1-&#x5C;xi_i"/></p>  
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;xi_i&#x5C;geq0"/></p>  
-  
+
 ##### 3. 核函数:
-  
+
 若数据不线性可分，则引入核函数，将其映射到新的空间
 **核函数**：设X为输入空间(欧式空间<img src="https://latex.codecogs.com/gif.latex?R^n"/>的子集)，H为特征空间(希尔伯特空间)，存在一个X到H的映射<p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;Phi(x):X&#x5C;rightarrow%20H"/></p>  
-  
+
 则核函数为<p align="center"><img src="https://latex.codecogs.com/gif.latex?{x,z}&#x5C;in%20X"/></p>  
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?K(x,z)=&#x5C;Phi(x)^T&#x5C;Phi(z)^T"/></p>  
-  
+
 SVM求解又变成
 ![](pics/核函数.png )
-  
+
 ![](pics/常用核函数.png )
-  
+
 ##### 4.  SMO
-  
+
 为快速求解SVM，采用启发式算法SMO(sequential minimal optimization),包括两个部分：求解两个变量二次规划的解析方法和选择变量的启发方法
 **基本思路**
 > 1. 若所有变量**α**都满足最优化的KKT条件则最后化问题的解就得到
 > 2. 否则：取两个变量，固定其他变量，针对这两个变量构建一个二次规划问题，优化这两个变量
-  
+
 **两个变量α的更新：**
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?未剪辑%20&#x5C;alpha_2^{new,unc}=&#x5C;alpha^{old}_2+&#x5C;frac{y_2(E_1-E_2)}{&#x5C;eta}"/></p>  
-  
-<p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha^{old}_2=&#x5C;begin{cases}H,&#x5C;alpha_2^{new,unc}&gt;H&#x5C;&#x5C;&#x5C;alpha_2^{new,unc},L&#x5C;leq&#x5C;alpha_2^{new,unc}&#x5C;leq%20H&#x5C;&#x5C;L,&#x5C;alpha_2^{new,unc}&gt;L&#x5C;end{cases}"/></p>  
-  
+
+<p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha^{old}_2=&#x5C;begin{cases}H,&#x5C;alpha_2^{new,unc}&gt;H&#x5C;&#x5C;
+&#x5C;alpha_2^{new,unc},L&#x5C;leq&#x5C;alpha_2^{new,unc}&#x5C;leq%20H&#x5C;&#x5C;
+L,&#x5C;alpha_2^{new,unc}&gt;L&#x5C;end{cases}"/></p>  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha^{new}_1=&#x5C;alpha_{old}+y_1y_2(&#x5C;alpha^{old}_2-&#x5C;alpha^{old}_2)"/></p>  
-  
+
 其中：<p align="center"><img src="https://latex.codecogs.com/gif.latex?&#x5C;eta=||&#x5C;Phi(x_1)-&#x5C;Phi(x_2)||^2"/></p>  
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?误差%20E_i%20=%20(&#x5C;sum_{j=1}^N&#x5C;alpha_jy_jK(x_j,x_i)+b)-y_i"/></p>  
-  
-<p align="center"><img src="https://latex.codecogs.com/gif.latex?L=&#x5C;begin{cases}&#x5C;max(0,&#x5C;alpha_2^{old}-&#x5C;alpha_1^{new})%20,y_1=y_2&#x5C;&#x5C;&#x5C;max(0,&#x5C;alpha_2^{old}-&#x5C;alpha_1^{new}-C)%20,y_1&#x5C;neq%20y_2&#x5C;end{cases}"/></p>  
-  
-<p align="center"><img src="https://latex.codecogs.com/gif.latex?H=&#x5C;begin{cases}&#x5C;min(C,C+&#x5C;alpha_2^{old}+&#x5C;alpha_1^{new})%20,y_1=y_2&#x5C;&#x5C;&#x5C;min(C,&#x5C;alpha_2^{old}+&#x5C;alpha_1^{new})%20,y_1&#x5C;neq%20y_2&#x5C;end{cases}"/></p>  
-  
+
+<p align="center"><img src="https://latex.codecogs.com/gif.latex?L=&#x5C;begin{cases}&#x5C;max(0,&#x5C;alpha_2^{old}-&#x5C;alpha_1^{new})%20,y_1=y_2&#x5C;&#x5C;
+&#x5C;max(0,&#x5C;alpha_2^{old}-&#x5C;alpha_1^{new}-C)%20,y_1&#x5C;neq%20y_2&#x5C;end{cases}"/></p>  
+
+<p align="center"><img src="https://latex.codecogs.com/gif.latex?H=&#x5C;begin{cases}&#x5C;min(C,C+&#x5C;alpha_2^{old}+&#x5C;alpha_1^{new})%20,y_1=y_2&#x5C;&#x5C;
+&#x5C;min(C,&#x5C;alpha_2^{old}+&#x5C;alpha_1^{new})%20,y_1&#x5C;neq%20y_2&#x5C;end{cases}"/></p>  
+
 **阈值b的更新：**
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?b_1^{new}=-E_1-y_1K_{11}(&#x5C;alpha_1^{new}-&#x5C;alpha_1^{old})-y_2K_{21}(&#x5C;alpha_2^{new}-&#x5C;alpha_2^{old})+b^{old}"/></p>  
-  
+
 <p align="center"><img src="https://latex.codecogs.com/gif.latex?b_2^{new}=-E21-y_1K_{12}(&#x5C;alpha_1^{new}-&#x5C;alpha_1^{old})-y_2K_{22}(&#x5C;alpha_2^{new}-&#x5C;alpha_2^{old})+b^{old}"/></p>  
-  
+
 如果<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_1^{new}"/>,<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_2^{new}"/>,同时满足0<<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_i^{new}"/><C,则<img src="https://latex.codecogs.com/gif.latex?b_1^{new}=b_2^{new}"/>
 如果<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_1^{new}"/>,<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_2^{new}"/>,是0或C，则取中点为<img src="https://latex.codecogs.com/gif.latex?b^{new}"/>
 **变量的选择：**
+
 > 1. 称第一个变量的选择为外层循环，在外层循环中选取违反KKT条件最严重的样本点
 >2. 称第二个变量的选择为内层循环，第二个变量的选择标准是希望能使<img src="https://latex.codecogs.com/gif.latex?&#x5C;alpha_2"/>有足够大的变化，使得<img src="https://latex.codecogs.com/gif.latex?|E_1-E_2|"/>最大。
 >3. 计算更新阈值b和误差E
-  
+
 ### 四.实验过程：
-  
+
 ##### 任务一：分别用线性SVM和高斯核SVM预测对数据进行分类
-  
+
 1. **利用SMO算法训练SVM**
 参考实验原理的实现过程：
 这里用简化版SMO，跳过寻找最佳α对的步骤
@@ -256,7 +261,7 @@ SVM_Functions.visualizeBoundaryLinear(X,y,model)
 得结果
 ![](pics/linearRAW.png )
 ![](pics/linearSVM.png )
-  
+
 **gaussian kernel**
 ```python
 X1,y1 = SVM_Functions.loadData('task1_gaussian.mat')
@@ -269,9 +274,9 @@ SVM_Functions.visualizeBoundaryGaussian(X1,y1,model_1,sigma=0.1)
 得结果
 ![](pics/GaRAW.png )
 ![](pics/ga.png )
-  
+
 #### 任务二：使用高斯核SVM对给定数据集进行分类
-  
+
 过程：利用任务一中得svmTrain_SMO()，通过迭代来改变C，sigma，来进行分类预测得精度
 ```python
 #求精度函数
@@ -299,7 +304,7 @@ for C in [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]:
 得结果
 ![](pics/accu.png )
 #### 任务三：使用线性SVM实现对垃圾邮件分类
-  
+
 过程：先载入训练集，划分为训练集和测试集，在训练集上训练SVM，测试结果并预测
 1. 载入训练集
 ```python
@@ -352,6 +357,5 @@ ans = SVMF.svmPredict(model, test_feat)
 np.savetxt('ans.txt',ans,fmt='%d')
 ```
 ### 五.实验总结：
-  
+
 通过这次实验，我更加理解了SVM相关理论及其优化实现方法。
-  

@@ -8,7 +8,7 @@ namespace AG {
 
 class OperatorNode : public Node {
 private:
-	float m_a; // Ñ§Ï°ÂÊ
+	float m_a; //???
 protected:
 	void chain_rule(Tensor* grad, int parent_idx);
 public:

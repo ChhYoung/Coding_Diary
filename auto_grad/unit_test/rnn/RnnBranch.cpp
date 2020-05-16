@@ -27,4 +27,5 @@ Node* RnnBranch::choose_node(int idx, Graph* compute_graph) {
 		std::string name = "Mult:h:" + oss.str();
 		return compute_graph->get_node(name);
 	}
+
 }

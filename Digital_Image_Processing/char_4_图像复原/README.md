@@ -249,7 +249,7 @@ $G(u,v) = H(u,v)F(u,v) + N(u,v)$
 
 > 双线性方程建立几何联系
 
-![](C:\Users\RRYou\Desktop\Code_D\Coding_Diary\Digital_Image_Processing\char_4_图像复原\pics\双线性方程建立几何联系.png)
+![](./pics/双线性方程建立几何联系.png)
 
 - 灰度插值
 
