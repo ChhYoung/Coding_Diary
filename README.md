@@ -1,4 +1,7 @@
 # <center> Coding Dairy
+## 由于网络问题，本项目后续更新迁移到gitee  ： 
+https://gitee.com/YangChonghuan/Coding_Diary.git
+ 
 >This repo contains some funny projects to help improve coding ability and it's more about the design and details of implement. It will include the following themes:
 >- machine learning and deep learning 
 >- data mining
